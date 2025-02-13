@@ -17,5 +17,5 @@ Veronika Mangotic
 Antony Sajesh
 Elsha Valluru
 
-##Statement of Work: 
+## Statement of Work: 
 Our project aims to help people compile their recipies and generate shopping lists as simply as possible.
