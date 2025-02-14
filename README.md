@@ -14,7 +14,7 @@ Uma Uppuloori
 Jenny Chan
 Anush Kambala
 Veronika Mangotic
-Antony Sajesh
+ Antony Sajesh
 Elsha Valluru
 
 ## Statement of Work: 
