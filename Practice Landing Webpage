@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>NomNom Bites Homepage</title>
+
+    <style>
+        body 
+        {
+          background-color: #ab3737; /* red */
+        }
+    </style>
 </head>
 
 <body>
