@@ -19,6 +19,7 @@
       justify-content: space-between; /* pushes left + right apart */
       align-items: center;
       padding: 20px;
+      top: 0;
     }
     .logo {
       color: white;
@@ -34,6 +35,48 @@
       color: white;
       text-decoration: none;
     }
+
+    .page-content {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* The login box */
+    .login-box {
+      background-color: rgba(0, 0, 0, 0.7); /* semi-transparent black */
+      padding: 50px;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+    
+    /* Input fields */
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    
+    /* Button */
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .login-box button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>  
@@ -48,10 +91,18 @@
         <a href="/">Shop</a>
       </div>
       </div>
-      </div>
     </nav>
-  
-  	<h1>Login Page</h1>
+
+    <div class="page-content">
+  	<div class="login-box">
+      <h2>Login</h2>
+      <form>
+        <input type="text" placeholder="Username" required>
+        <input type="password" placeholder="Password" required>
+        <button type="submit">Log In</button>
+      </form>
+    </div>
+    </div>
   </section>
 </body>
 </html>
