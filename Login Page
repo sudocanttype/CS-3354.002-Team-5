@@ -8,16 +8,38 @@
       margin: 0;
       padding: 0;
       background-image: url('login_background.png'); /* your image path */
-      background-size: cover;      /* make it cover the whole screen */
+      background-size: contain;     /* shows full image without cropping */
       background-position: center; /* center it */
       background-repeat: no-repeat; /* don’t repeat it */
       height: 100vh;               /* full viewport height */
+      background-color: black;  /* 🖤 this fills the space behind/around the image */
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between; /* pushes left + right apart */
+      align-items: center;
+      padding: 20px;
+    }
+    .logo {
+      color: white;
+      font-size: 24px;
+    }
+    
+    .nav-items {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .nav-items a {
+      color: white;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>  
   <section>
     <nav>
+      <div class="navbar">
       <div class="logo">NomNom Bites</div>
       <div class="nav-items">
         <a href="/">Home</a>
@@ -25,8 +47,9 @@
         <a href="/">About</a>
         <a href="/">Shop</a>
       </div>
+      </div>
+      </div>
     </nav>
-  	  </div>
   
   	<h1>Login Page</h1>
   </section>
