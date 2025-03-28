@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NomNom Bites Login Page</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('login_background.png'); /* your image path */
+      background-size: cover;      /* make it cover the whole screen */
+      background-position: center; /* center it */
+      background-repeat: no-repeat; /* don’t repeat it */
+      height: 100vh;               /* full viewport height */
+    }
+  </style>
+</head>
+<body>  
+  <section>
+    <nav>
+      <div class="logo">NomNom Bites</div>
+      <div class="nav-items">
+        <a href="/">Home</a>
+        <a href="/">My Recipes</a>
+        <a href="/">About</a>
+        <a href="/">Shop</a>
+      </div>
+    </nav>
+  	  </div>
+  
+  	<h1>Login Page</h1>
+  </section>
+</body>
+</html>
