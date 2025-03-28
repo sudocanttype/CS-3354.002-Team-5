@@ -23,7 +23,7 @@
         }
     
         .fancy-button:hover {
-          background-color: #e5533d; /* light grey */
+          background-color: #82BCBC; /* light blue-green */
         }
     </style>
 </head>
@@ -42,7 +42,9 @@
 
     <section>
         <p>Generate, Share, and Store the recipes that you love!!!</p>
-        <button class="fancy-button">Get Started</button>
+	<a href="login.html">
+        	<button class="fancy-button">Get Started</button>
+	</a>
         </div>
     </section>
 </body>
