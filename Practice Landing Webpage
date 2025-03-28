@@ -9,6 +9,26 @@
         {
           background-color: #ab3737; /* red */
         }
+	.navbar {
+	      display: flex;
+	      justify-content: space-between; /* pushes left + right apart */
+	      align-items: center;
+	      padding: 20px;
+    	}
+    	.logo {
+	      color: white;
+	      font-size: 24px;
+	}
+    
+	.nav-items {
+	      display: flex;
+	      gap: 20px;
+    	}
+    
+    	.nav-items a {
+	      color: white;
+	      text-decoration: none;
+    	}
 
         .fancy-button 
         {
@@ -30,6 +50,7 @@
 
 <body>
     <nav>
+	<div class="navbar">
         <div class="logo">NomNom Bites</div>
         <div class="nav-items">
             <a href="/">Home</a>
@@ -37,6 +58,8 @@
             <a href="/">About</a>
             <a href="/">Shop</a>
         </div>
+	</div>
+	</div>
     </nav>
     <h1>Welcome to NomNom Bites</h1>
 
@@ -45,7 +68,6 @@
 	<a href="login.html">
         	<button class="fancy-button">Get Started</button>
 	</a>
-        </div>
     </section>
 </body>
 </html>
