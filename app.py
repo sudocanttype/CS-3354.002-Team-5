@@ -13,5 +13,9 @@ def landingpage():  # homepage of application
 def loginpage():
     return render_template('loginpage.html')
 
+@app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
+def myrecipes():
+    return render_template('recipes.html')
+
 if __name__ == '__main__':
     app.run()
