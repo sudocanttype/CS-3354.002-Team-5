@@ -45,29 +45,127 @@
         .fancy-button:hover {
           background-color: #82BCBC; /* light blue-green */
         }
+	.hero {
+      		padding: 80px 20px;
+      		text-align: center;
+      		background-color: #82BCBC;
+    	}
+
+    	.hero h1 {
+	      font-size: 3rem;
+	      margin-bottom: 0.5rem;
+    	}
+
+    	.hero h2 {
+	      font-size: 1.5rem;
+	      font-weight: normal;
+	      margin-bottom: 1rem;
+    	}
+
+	.hero p {
+	      font-size: 1rem;
+	      margin-bottom: 2rem;
+	      color: #666;
+	}
+	.how-it-works {
+	      padding: 60px 20px;
+	      text-align: center;
+	    }
+	
+	    .how-it-works h2 {
+	      font-size: 2rem;
+	      margin-bottom: 40px;
+	    }
+	
+	    .card-container {
+	      display: flex;
+	      flex-wrap: wrap;
+	      justify-content: center;
+	      gap: 20px;
+	    }
+	
+	    .card {
+	      background-color: #f3f3f3;
+	      border-radius: 12px;
+	      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+	      width: 250px;
+	      padding: 30px 20px;
+	      text-align: center;
+	      transition: transform 0.3s ease;
+	    }
+	
+	    .card:hover {
+	      transform: translateY(-5px);
+	    }
+	
+	    .card-icon {
+	      font-size: 40px;
+	      margin-bottom: 20px;
+	      color: #2979ff;
+	    }
+	
+	    .card-title {
+	      font-size: 1.2rem;
+	      margin-bottom: 10px;
+	      font-weight: bold;
+	    }
+	
+	    .card-description {
+	      font-size: 0.95rem;
+	      color: #555;
+	    }
     </style>
 </head>
 
 <body>
-    <nav>
-	<div class="navbar">
-        <div class="logo">NomNom Bites</div>
-        <div class="nav-items">
-            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-            <a href="#">My Recipes</a> <!-- In href "#" makes a button clickable but does not redirect-->
-            <a href="#">About</a>
-            <a href="#">Shop</a>
-        </div>
-	</div>
-	</div>
-    </nav>
-    <h1>Welcome to NomNom Bites</h1>
+	<nav>
+		<div class="navbar">
+	        <div class="logo">NomNom Bites</div>
+	        <div class="nav-items">
+	            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+	            <a href="#">My Recipes</a> <!-- In href "#" makes a button clickable but does not redirect-->
+	            <a href="#">About</a>
+	            <a href="#">Shop</a>
+	        </div>
+		</div>
+		</div>
+	</nav>
+	<section class="hero">
+    		<h1>Welcome to NomNom Bites</h1>
+		<h2>Turn your pantry into a meal masterpiece</h2>
+		<p>Enter the ingredients you have, and we’ll whip up delicious recipes in seconds.</p>
+	</section>
 
-    <section>
-        <p>Generate, Share, and Store the recipes that you love!!!</p>
-	<a href="{{ url_for('loginpage') }}">
-        	<button class="fancy-button">Get Started</button>
-	</a>
-    </section>
+	<section class="how-it-works">
+	    <h2>How It Works</h2>
+	    <div class="card-container">
+	      
+	      <div class="card">
+	        <div class="card-icon"><i class="fas fa-list"></i></div>
+	        <div class="card-title">Enter Ingredients</div>
+	        <div class="card-description">List what you’ve got in your kitchen.</div>
+	      </div>
+	
+	      <div class="card">
+	        <div class="card-icon"><i class="fas fa-magic"></i></div>
+	        <div class="card-title">Click Generate</div>
+	        <div class="card-description">We’ll cook up recipes just for you.</div>
+	      </div>
+	
+	      <div class="card">
+	        <div class="card-icon"><i class="fas fa-utensils"></i></div>
+	        <div class="card-title">Cook & Enjoy</div>
+	        <div class="card-description">Follow the steps and enjoy your meal!</div>
+	      </div>
+	
+	    </div>
+	</section>
+
+    	<section>
+        	<p>Generate, Share, and Store the recipes that you love!!!</p>
+		<a href="{{ url_for('loginpage') }}">
+        		<button class="fancy-button">Get Started</button>
+		</a>
+    	</section>
 </body>
 </html>
