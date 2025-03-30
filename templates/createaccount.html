@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>NomNom Bites Login Page</title>
+  <title>NomNom Bites Create an Account Page</title>
   <style>
     body {
       margin: 0;
@@ -67,7 +67,7 @@
     
     /* Button */
     .login-box button {
-      width: 70%;
+      width: 60%;
       padding: 12px;
       margin: 10px 0;
       background-color: #4CAF50;
@@ -76,13 +76,14 @@
       border-radius: 5px;
       cursor: pointer;
       text-align: center;
+      justify-content: center;
     }
     
     .login-box button:hover {
       background-color: #45a049;
     }
 
-    .createaccount {
+    .login {
       color:white; 
       padding:20px;
       text-align:"center";
@@ -105,13 +106,16 @@
 
     <div class="page-content">
   	<div class="login-box">
-      <h2>Login</h2>
+      <h2 style="text-align: center;">Create an Account</h2>
       <form>
+        <input type="text" placeholder="Name" required>
+        <input type="text" placeholder="Email" required>
         <input type="text" placeholder="Username" required>
-        <input type="password" placeholder="Password" required>
-        <button style="justify-content: center;" type="submit">Log In</button>
-        <div class="createaccount">
-          <a style="color:white;" href="{{ url_for('createaccount') }}">Don't have an account? Create one here!</a>
+        <input type="password" placeholder="Password" required>  <!-- need to add check if password and confirm password are the same-->
+        <input type="password" placeholder="Confirm Password" required>
+        <button style="justify-content: center;" type="submit">Create account</button>
+        <div class="login">
+            <a style="color:white;" href="{{ url_for('loginpage') }}">Already have an account? Login here!</a>
         </div>
       </form>
     </div>
@@ -120,11 +124,17 @@
 </body>
 </html>
 
-<!-- if account is not found, display an error msg and prompt user to reenter info-->
+<!-- if email is not valid, then display an error msg and prompt user to reenter email-->
+<!-- password checking? do we want to place restrictions on it?-->
 
 <!-- backend psuedocode:
-  - user types in username and password
-  - system checks if username is in the database of current users and password matches
-    - if not, then display error msg and prompt user to reenter info or to create an account
-    - else, open up user's account
+  - user types in name, username, password and confirm password
+  - system checks if username and/or email already exists in the database of current users
+    - if it does, then system asks user to login instead
+    - else, add username, password, and name to database of current users and open up user's account
+
+  - system checks if password is the same as confirm password
+    - if it is and user DNE yet, then create account by adding info to database
+    - if not, error msg is displayed and prompts user to reenter password info
 -->
+
