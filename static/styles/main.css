@@ -340,6 +340,21 @@ button {
   object-fit: cover;
 }
 
+.empty-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: var(--color-surface-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-image::before {
+  content: '+';
+  font-size: 36px;
+  color: var(--color-text-light);
+}
+
 .image-upload-btn {
   position: absolute;
   bottom: var(--space-3);
@@ -405,6 +420,23 @@ button {
   object-fit: cover;
   border-radius: var(--radius-sm);
   margin-right: var(--space-3);
+}
+
+.empty-img {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  margin-right: var(--space-3);
+  background-color: var(--color-surface-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-img::before {
+  content: '+';
+  font-size: 18px;
+  color: var(--color-text-light);
 }
 
 .ingredient-name {
@@ -614,4 +646,4 @@ button {
   .btn {
     width: 100%;
   }
-}
+} 
