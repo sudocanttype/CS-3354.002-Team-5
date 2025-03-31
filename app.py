@@ -20,7 +20,7 @@ sample_recipe = {
 }
 
 @app.route('/')
-def home():
+def landingpage():
     return render_template('practicelandingwebpage.html')
 
 @app.route('/loginpage')
