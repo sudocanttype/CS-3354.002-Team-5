@@ -31,6 +31,10 @@ def loginpage():
 def myrecipes():
     return render_template('recipes.html')
 
+@app.route('/aboutus')
+def aboutus():
+    return render_template('aboutus.html')
+
 @app.route('/recipes')
 def recipes_list():
     recipes = {1: sample_recipe}

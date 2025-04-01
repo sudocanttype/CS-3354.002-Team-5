@@ -105,19 +105,10 @@
         }
 
         .team-member-img {
-            background-color: #e6e6e6;
             width: 100%;
             aspect-ratio: 1/1;
+            object-fit: cover; /* This maintains the aspect ratio while filling the space */
             margin-bottom: 10px;
-        }
-
-        .team-member-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .team-member-title {
-            margin-bottom: 20px;
         }
 
         /* Footer */
@@ -169,13 +160,6 @@
             color: #666;
             text-decoration: none;
         }
-
-        .team-member-img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover; /* This maintains the aspect ratio while filling the space */
-            margin-bottom: 10px;
-         }
     </style>
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -185,9 +169,9 @@
     <nav>
         <div class="nav-brand">NomNom Bites</div>
         <div class="nav-links">
-            <a href="recipes.html">My Recipes</a>
-            <a href="generate.html">Generate Recipe</a>
-            <a href="about.html">About Us</a>
+            <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+            <a href="#">Generate Recipe</a>
+            <a href="{{ url_for('aboutus') }}">About Us</a>
             <button class="shop-btn">Shop</button>
         </div>
     </nav>
@@ -201,12 +185,14 @@
         <h2>What NomNom Bites Is</h2>
         <div class="about-section">
             <div class="about-text">
-                <p><b>NomNom Bites</b> is a recipe maker and tracker designed to simplify your cooking experience. We understand the frustration of finding recipes only to realize you're missing key ingredients, or the challenge of deciding what to make with what you already have. Our platform solves these problems by recommending delicious recipes based on ingredients you already have in your kitchen.Our <b>intelligent recipe recommendation system</b> eliminates the tedious process of manually checking each recipe against your pantry inventory. Simply input what you have on hand, and we'll suggest creative and practical meal ideas tailored to your available ingredients. This not only saves you time and reduces food waste, but also inspires culinary creativity when you're stuck in a cooking rut.</p>
-                 <br>
-                <p>Beyond recommendations, NomNom Bites serves as your <b>complete recipe management system</b>. Explore popular dishes, save your favorites, create and organize your personal recipe collection, and share your culinary creations with our community. We've also integrated grocery shopping capabilities, allowing you to easily order missing ingredients without leaving the platform.Whether you're a beginner cook learning the basics, a busy professional seeking quick meal solutions, a college student on a budget, or a family looking to diversify your dinner routine, <b>NomNom Bites is designed with your needs in mind</b>. Join us in transforming the way you approach cooking - making it more efficient, less wasteful, and infinitely more enjoyable.</p>
+                <p><b>NomNom Bites</b> is a recipe maker and tracker that recommends meals based on ingredients you already have. We eliminate the frustration of finding recipes only to discover you're missing key items.</p>
+                <br>
+                <p>Our <b>intelligent recommendation system</b> lets you simply input your available ingredients, and we'll suggest creative meal ideas that match. This saves time, reduces food waste, and inspires culinary creativity.</p>
+                <br>
+                <p>Beyond recommendations, we offer a <b>complete recipe management system</b> where you can explore popular dishes, save favorites, and share your creations. Our integrated grocery shopping makes ordering missing ingredients seamless.</p>
             </div>
             <div class="about-image">
-                <img src="images/veggies.jpeg" alt="Fresh vegetables and fruits">
+                <img src="{{ url_for('static', filename='images/aboutusimg/veggies.jpeg') }}" alt="Fresh vegetables and fruits">
             </div>
         </div>
 
@@ -214,47 +200,47 @@
         <h2>Who We Are</h2>
         <div class="team-grid">
             <!-- First row of team members -->
-            <div class="team-member">   
-                <img src="images/ahmed.png" alt="Team Member Name" class="team-member-img">
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/ahmed.png') }}" alt="Ahmed" class="team-member-img">
                 <div class="team-member-name">Ahmed</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
             <div class="team-member">
-                <img src="images/anush.png" alt="Team Member Name" class="team-member-img">
+                <img src="{{ url_for('static', filename='images/aboutusimg/anush.png') }}" alt="Anush" class="team-member-img">
                 <div class="team-member-name">Anush</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
             <div class="team-member">
-                <img src="images/veronika.png" alt="Team Member Name" class="team-member-img">
+                <img src="{{ url_for('static', filename='images/aboutusimg/veronika.png') }}" alt="Veronika" class="team-member-img">
                 <div class="team-member-name">Veronika</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
             <div class="team-member">
-                <img src="images/elsha.png" alt="Team Member Name" class="team-member-img">
+                <img src="{{ url_for('static', filename='images/aboutusimg/elsha.png') }}" alt="Elsha" class="team-member-img">
                 <div class="team-member-name">Elsha</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
 
             <!-- Second row of team members -->
             <div class="team-member">
-                <img src="images/oscar.png" alt="Team Member Name" class="team-member-img">
+                <img src="{{ url_for('static', filename='images/aboutusimg/oscar.png') }}" alt="Oscar" class="team-member-img">
                 <div class="team-member-name">Oscar</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
             <div class="team-member">
-                <img src="images/uma.png" alt="Team Member Name" class="team-member-img">
+                <img src="{{ url_for('static', filename='images/aboutusimg/uma.png') }}" alt="Uma" class="team-member-img">
                 <div class="team-member-name">Uma</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
             <div class="team-member">
-                <img src="images/antony.png" alt="Team Member Name" class="team-member-img">
+                <img src="{{ url_for('static', filename='images/aboutusimg/antony.png') }}" alt="Antony" class="team-member-img">
                 <div class="team-member-name">Antony</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
             <div class="team-member">
-                <img src="images/jenny.png" alt="Team Member Name" class="team-member-img">
+                <img src="{{ url_for('static', filename='images/aboutusimg/jenny.png') }}" alt="Jenny" class="team-member-img">
                 <div class="team-member-name">Jenny</div>
-                <div class="team-member-title">Title</div>
+                <div class="team-member-title">Developer</div>
             </div>
         </div>
     </div>
@@ -276,7 +262,7 @@
                 <h3>My Recipes</h3>
                 <ul class="footer-links">
                     <li><a href="#">Favorite Recipes</a></li>
-                    <li><a href="#">Disliked Rcipes</a></li>
+                    <li><a href="#">Disliked Recipes</a></li>
                     <li><a href="#">Generate Recipes</a></li>
                 </ul>
             </div>
