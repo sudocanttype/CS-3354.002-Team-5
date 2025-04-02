@@ -26,5 +26,10 @@ def loginpage():
 def shop():
     return render_template('grocerystorepage.html', products=products)
 
+@app.route('/checkout')
+def checkout():
+    cart_items = []
+    return render_template('checkout.html', cart_items=cart_items)
+
 if __name__ == '__main__':
     app.run()

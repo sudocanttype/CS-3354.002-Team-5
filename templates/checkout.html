@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - NomNom Bites</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+</head>
+<body>
+
+<header>
+    <nav class="navbar">
+        <div class="logo">NomNom Bites</div>
+        <div class="nav-links">
+            <a href="{{ url_for('landingpage') }}">Home</a>
+            <a href="#">My Recipes</a>
+            <a href="#">Generate Recipe</a>
+            <a href="#">About</a>
+            <a href="{{ url_for('shop') }}" class="shop-btn">Shop</a>
+            <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
+        </div>
+    </nav>
+</header>
+
+<main class="checkout-container">
+    <h1>Grocery Store Check Out</h1>
+
+    <section class="cart-items">
+        <h2>Items</h2>
+
+        {% if cart_items %}
+        <p>Check your items before proceeding to payment</p>
+        <div class="items-list">
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.name }}">
+                <div class="item-details">
+                    <h3>{{ item.name }}</h3>
+                    <div class="quantity-control">
+                        <button class="decrease" onclick="updateQuantity('{{ item.id }}', -1)">-</button>
+                        <span id="quantity-{{ item.id }}">{{ item.quantity }}</span>
+                        <button class="increase" onclick="updateQuantity('{{ item.id }}', 1)">+</button>
+                    </div>
+                    <p class="price">${{ item.price }}</p>
+                    <button class="remove-item" onclick="removeItem('{{ item.id }}')">🗑 Remove item</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-cart">You don't have any items in your cart.</p>
+        {% endif %}
+    </section>
+</main>
+
+<footer>
+    <div class="footer-links">
+        <div class="section">
+            <h4>My Recipes</h4>
+            <a href="#">Favorite Recipes</a>
+            <a href="#">Disliked Recipes</a>
+        </div>
+        <div class="section">
+            <h4>Shop</h4>
+            <a href="#">Groceries</a>
+            <a href="#">Checkout</a>
+        </div>
+        <div class="section">
+            <h4>Help</h4>
+            <a href="#">Customer Support</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
