@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if is_edit_mode %}Edit{% else %}Create{% endif %} Recipe | NomNom Bites</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../static/styles/main.css">
+</head>
+<body>
+  <main class="app-container">
+    <header class="app-header">
+      <div class="container">
+        <a href="/" class="logo">NomNom Bites</a>
+        <nav class="nav-menu">
+          <ul>
+            <li><a href="/recipes" class="nav-link">My Recipes</a></li>
+            <li><a href="/generate" class="nav-link">Generate Recipe</a></li>
+          </ul>
+          <a href="/profile" class="profile-link">
+            <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <section class="page-header">
+        <h1 class="page-title">{% if is_edit_mode %}Edit{% else %}Create{% endif %} Recipe</h1>
+      </section>
+      
+      <form class="recipe-form" method="POST" action="{{ form_action }}">
+        <div class="form-group">
+          <label for="recipe-title" class="form-label">Recipe Title</label>
+          <input type="text" id="recipe-title" name="title" class="form-control" 
+                 value="{{ recipe.title or '' }}" placeholder="Enter recipe title">
+        </div>
+
+        <div class="recipe-editor">
+          <div class="recipe-image-container">
+            {% if recipe.image %}
+            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image">
+            {% else %}
+            <div class="recipe-image empty-image"></div>
+            {% endif %}
+            <button type="button" class="image-upload-btn">
+              <span class="visually-hidden">{% if is_edit_mode %}Change{% else %}Upload{% endif %} image</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
+                <path d="m15 7 4-4"></path>
+                <path d="M9 15h3"></path>
+                <path d="M9 18h6"></path>
+                <path d="M15 10.5V3h-3"></path>
+                <path d="m18 3 3 3"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="recipe-details-container">
+            <section class="recipe-section">
+              <h2 class="section-title">Ingredients</h2>
+              <div class="ingredient-list">
+                {% if is_edit_mode and recipe.ingredients %}
+                  {% for ingredient in recipe.ingredients %}
+                  <div class="ingredient-item">
+                    {% if ingredient.image %}
+                    <img src="{{ ingredient.image }}" alt="{{ ingredient.name }}" class="ingredient-img">
+                    {% else %}
+                    <div class="ingredient-img empty-img"></div>
+                    {% endif %}
+                    <span class="ingredient-name">{{ ingredient.name }}</span>
+                    <button type="button" class="btn-icon remove-ingredient" aria-label="Remove {{ ingredient.name }}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                <button type="button" class="btn-add add-ingredient">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Add Ingredient</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="recipe-section">
+              <h2 class="section-title">Instructions</h2>
+              <div class="instruction-list">
+                {% if is_edit_mode and recipe.instructions %}
+                  {% for instruction in recipe.instructions %}
+                  <div class="instruction-item">
+                    <span class="step-number">{{ loop.index }}</span>
+                    <input type="text" class="form-control" name="instructions[]" value="{{ instruction }}">
+                    <button type="button" class="btn-icon remove-step" aria-label="Remove step">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                <button type="button" class="btn-add add-step">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>Add Step</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="recipe-section">
+              <h2 class="section-title">Details</h2>
+              <div class="details-grid">
+                <div class="form-group">
+                  <label for="prep-time" class="form-label">Preparation Time</label>
+                  <div class="time-input">
+                    <input type="number" id="prep-time" name="prep_time" class="form-control" 
+                           value="{{ recipe.prep_time or '' }}" placeholder="0">
+                    <span class="time-unit">minutes</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="cook-time" class="form-label">Cooking Time</label>
+                  <div class="time-input">
+                    <input type="number" id="cook-time" name="cook_time" class="form-control" 
+                           value="{{ recipe.cook_time or '' }}" placeholder="0">
+                    <span class="time-unit">minutes</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="serving-size" class="form-label">Serving Size</label>
+                  <input type="number" id="serving-size" name="serving_size" class="form-control" 
+                         value="{{ recipe.serving_size or '' }}" placeholder="1">
+                </div>
+              </div>
+            </section>
+
+            <section class="recipe-section">
+              <h2 class="section-title">Tags</h2>
+              <div class="tags-container">
+                {% if is_edit_mode and recipe.tags %}
+                  {% for tag in recipe.tags %}
+                  <div class="tag">
+                    <span class="tag-text">{{ tag }}</span>
+                    <input type="hidden" name="tags[]" value="{{ tag }}">
+                    <button type="button" class="btn-icon tag-remove" aria-label="Remove {{ tag }} tag">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                <div class="tag-input-container">
+                  <input type="text" class="tag-input" placeholder="Add a tag...">
+                  <button type="button" class="btn-icon tag-add" aria-label="Add tag">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            {% if is_edit_mode %}Save{% else %}Create{% endif %} Recipe
+          </button>
+        </div>
+        
+        {% if is_edit_mode %}
+        <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+        {% endif %}
+      </form>
+    </div>
+  </main>
+  <script src="../static/scripts/recipe_form.js"></script>
+</body>
+</html> 

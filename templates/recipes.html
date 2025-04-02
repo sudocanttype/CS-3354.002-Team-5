@@ -1,0 +1,130 @@
+<!DOCTYPE html> <!--Anush Kambala and Oscar Lay-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Recipes</title>
+    <style>
+    body {
+            font-family: 'Verdana', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+        }
+    .navbar {
+      display: flex;
+      justify-content: space-between; /* pushes left + right apart */
+      align-items: center;
+      padding: 20px;
+      top: 0;
+        }
+    .logo {
+      color: white;
+      font-size: 24px;
+        }
+    .nav-items {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .nav-items a {
+      color: white;
+      text-decoration: none;
+    }
+    .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+    }
+    .recipes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+    }
+    .recipe-box {
+            background: #fff;
+            color: black;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+    }
+    .edit-btn {
+            background-color: #b22222;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+    }
+    .filter {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <nav>
+          <div class="navbar">
+          <div class="logo">NomNom Bites</div>
+          <div class="nav-items">
+            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+            <a href="{{url_for('myrecipes')}}">My Recipes</a>
+            <a href="#">About</a>
+            <a href="#">Shop</a>
+          </div>
+          </div>
+        </nav>
+    <div class="container">
+        <p>These recipes are part of your personal collection—your very own recipe book! You can always come back here to see your modified recipes and save time when you're in a rush!</p>
+        
+        <div class="filter">
+            <label for="recipe-filter">Filter(Favorites/All Recipes):</label> 
+            <select id="recipe-filter">
+                <option value="all">All Results</option>
+                <option value="favorites">Favorites</option>
+            </select>
+        </div>
+
+        <div class="filter">
+            <label for="recipe-filter2">Filter(Dietary Restrictions):</label>
+            <select id="recipe-filter2">
+                <option value="all">All Results</option>
+                <option value="nomeat">No Meat</option>
+                <option value="nodairy">No Dairy</option>
+                <option value="noegg">No Egg</option>
+                <option value="nogluten">No Gluten</option>
+            </select>
+        </div>
+
+        <div class="recipes"> <!--The recipes will be generated using a post endpoint that return a block of json. The json will refer to the individual divs initating a generation process returning the recipes from the database. -->
+            <div class="recipe-box">
+                <h3>Lemonade</h3>
+                <p>10 min</p>
+                <button class="edit-btn">Edit Recipe</button>
+            </div>
+            <div class="recipe-box">
+                <h3>Cheese Pizza</h3>
+                <p>30 min</p>
+                <button class="edit-btn">Edit Recipe</button>
+            </div>
+            <div class="recipe-box">
+                <h3>Vodka Pasta</h3>
+                <p>35 min</p>
+                <button class="edit-btn">Edit Recipe</button>
+            </div>
+            <div class="recipe-box">
+                <h3>Chocolate Chip Cookies</h3>
+                <p>30 min</p>
+                <button class="edit-btn">Edit Recipe</button>
+            </div>
+            <div class="recipe-box">
+                <h3>BAD RECIPE</h3>
+                <p>30 min</p>
+                <button class="edit-btn">Edit Recipe</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
