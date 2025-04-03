@@ -123,7 +123,7 @@
 	        <div class="logo">NomNom Bites</div>
 	        <div class="nav-items">
 	            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-	            <a href="#">My Recipes</a> <!-- In href "#" makes a button clickable but does not redirect-->
+	            <a href="{{url_for('myrecipes')}}">My Recipes</a> 
 	            <a href="#">About</a>
 	            <a href="{{ url_for('shop') }}">Shop</a>
 	        </div>

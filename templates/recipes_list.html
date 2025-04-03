@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Recipes | NomNom Bites</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../static/styles/main.css">
+  <style>
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: var(--space-5);
+      margin-bottom: var(--space-7);
+    }
+    
+    .recipe-card {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    
+    .recipe-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .recipe-card-img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+    
+    .empty-card-img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background-color: var(--color-surface-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .empty-card-img::before {
+      content: 'No Image';
+      color: var(--color-text-light);
+      font-style: italic;
+    }
+    
+    .recipe-card-content {
+      padding: var(--space-4);
+    }
+    
+    .recipe-card-title {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    
+    .recipe-card-meta {
+      color: var(--color-text-light);
+      font-size: var(--font-size-sm);
+      display: flex;
+      gap: var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+    
+    .recipe-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+    
+    .recipe-card-tag {
+      font-size: var(--font-size-xs);
+      background-color: var(--color-honey);
+      color: var(--color-white);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-round);
+    }
+    
+    .add-recipe {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-surface-alt);
+      border: 2px dashed var(--color-divider);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      height: 100%;
+      transition: all var(--transition-fast);
+    }
+    
+    .add-recipe:hover {
+      background-color: var(--color-surface);
+      border-color: var(--color-honey);
+    }
+    
+    .add-recipe-icon {
+      background-color: var(--color-honey);
+      color: var(--color-white);
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-round);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-3);
+    }
+    
+    .add-recipe-text {
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <main class="app-container">
+    <header class="app-header">
+      <div class="container">
+        <a href="/" class="logo">NomNom Bites</a>
+        <nav class="nav-menu">
+          <ul>
+            <li><a href="/recipes" class="nav-link">My Recipes</a></li>
+            <li><a href="/generate" class="nav-link">Generate Recipe</a></li>
+          </ul>
+          <a href="/profile" class="profile-link">
+            <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container">
+      <section class="page-header">
+        <h1 class="page-title">My Recipes</h1>
+      </section>
+      
+      <div class="recipe-grid">
+        {% for recipe_id, recipe in recipes.items() %}
+          <a href="{{ url_for('edit_recipe', recipe_id=recipe_id) }}" class="recipe-card">
+            {% if recipe.image %}
+            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-card-img">
+            {% else %}
+            <div class="recipe-card-img empty-card-img"></div>
+            {% endif %}
+            <div class="recipe-card-content">
+              <h2 class="recipe-card-title">{{ recipe.title }}</h2>
+              <div class="recipe-card-meta">
+                <span>{{ recipe.prep_time + recipe.cook_time }} mins</span>
+                <span>{{ recipe.serving_size }} serving(s)</span>
+              </div>
+              <div class="recipe-card-tags">
+                {% for tag in recipe.tags %}
+                  <span class="recipe-card-tag">{{ tag }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+        
+        <a href="{{ url_for('create_recipe') }}" class="add-recipe">
+          <div class="add-recipe-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <span class="add-recipe-text">Add New Recipe</span>
+        </a>
+      </div>
+    </div>
+  </main>
+  <script src="../static/scripts/recipes_list.js"></script>
+</body>
+</html> 
