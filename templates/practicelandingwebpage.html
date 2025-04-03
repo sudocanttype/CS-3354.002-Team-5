@@ -145,13 +145,16 @@
 	        <div class="card-title">Enter Ingredients</div>
 	        <div class="card-description">List what you’ve got in your kitchen.</div>
 	      </div>
-	
-	      <div class="card">
-	        <div class="card-icon"><i class="fas fa-magic"></i></div>
-	        <div class="card-title">Click Generate</div>
-	        <div class="card-description">We’ll cook up recipes just for you.</div>
-	      </div>
-	
+		  
+		  <div class="card">
+			<div class="card-icon"><i class="fas fa-magic"></i></div>
+			<div class="card-title">Click Generate</div>
+			<div class="card-description">We’ll cook up recipes just for you.</div>
+			<a href="{{ url_for('generate') }}">
+				<button class="fancy-button">Try It Now</button>
+			</a>
+		</div>
+		
 	      <div class="card">
 	        <div class="card-icon"><i class="fas fa-utensils"></i></div>
 	        <div class="card-title">Cook & Enjoy</div>
