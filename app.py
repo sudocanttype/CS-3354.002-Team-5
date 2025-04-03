@@ -62,7 +62,7 @@ def generate():
         'sugar': 'Honey or Maple Syrup'
     }
     
-    suggested_su
+    suggested_subs= {}
     bs = {} #store substitutions
     #get or recieve ingredients with POST
     if request.method == 'POST':

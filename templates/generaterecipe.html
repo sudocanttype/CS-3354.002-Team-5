@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-
     <meta charset="UTF-8">
-
-
     <title>NomNom Bites | Ingredient Helper</title>
-
-
 
     <style>
         body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: #ab3737; 
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #ab3737;
             color: white;
             margin: 0;
             padding: 0;
         }
 
-        h1, h2 {
-            font-family: 'DM Serif Display', serif;
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-items a {
+            color: white;
+            text-decoration: none;
         }
 
         .container {
@@ -37,7 +48,7 @@
         h1 {
             text-align: center;
             font-size: 2.8rem;
-            color: #ab3737;
+            color: #000000;
             margin-bottom: 25px;
         }
 
@@ -56,20 +67,18 @@
             resize: none;
         }
 
-        
-        button {
+        .fancy-button {
             background-color: #000000;
             color: white;
-            padding: 12px 30px;
-            font-size: 16px;
+            font-size: 18px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 10px;
-            margin-top: 20px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            margin-top: 20px;
         }
 
-        button:hover {
+        .fancy-button:hover {
             background-color: #82BCBC;
             color: #000;
         }
@@ -104,29 +113,36 @@
             font-size: 14px;
             color: white;
         }
-
-
     </style>
 </head>
 <body>
+
+    <!-- Nav matches landing page -->
+    <nav>
+        <div class="navbar">
+            <div class="logo">NomNom Bites</div>
+            <div class="nav-items">
+                <a href="{{ url_for('landingpage') }}">Home</a>
+                <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+                <a href="#">About</a>
+                <a href="#">Shop</a>
+            </div>
+        </div>
+    </nav>
 
     <div class="container">
         <h1>Recipe Generator</h1>
 
         <form method="POST">
-
             <label for="ingredients">What ingredients do you have?</label>
             <textarea name="ingredients" id="ingredients" rows="5" placeholder="e.g. eggs, milk, sugar"></textarea>
-            <button type="submit">Generate Substitutions</button>
+            <button type="submit" class="fancy-button">Generate Substitutions</button>
         </form>
-
 
         {% if suggestions %}
         <div class="results">
             <h2>Smart Ingredient Swaps</h2>
             <ul>
-
-
                 {% for item, sub in suggestions.items() %}
                     <li><span class="substitute">{{ item.title() }}</span> → {{ sub }}</li>
                 {% endfor %}
