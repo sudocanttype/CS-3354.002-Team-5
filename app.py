@@ -45,96 +45,88 @@ def aboutus():
 
 @app.route('/createrecipe')
 def create_recipe():
-    return render_template('createrecipe.html')
+    return render_template('recipe_form.html', 
+                          is_edit_mode=False, 
+                          recipe={}, 
+                          form_action='/recipes/create')
 
-recipes_data = {
-    1: {
-        'id': 1,
-        'title': 'Lemonade',
-        'image': '/static/images/recipes/lemonade.png',
-        'ingredients': [
-            {'name': 'Lemons', 'image': '/static/images/ingredients/lemon.png'},
-            {'name': 'Sugar', 'image': '/static/images/ingredients/sugar.png'},
-            {'name': 'Water', 'image': '/static/images/ingredients/water.png'}
-        ],
-        'instructions': ['Squeeze lemons', 'Mix with sugar and water'],
-        'prep_time': 10,
-        'cook_time': 0,
-        'serving_size': 4,
-        'tags': ['Drink', 'Summer']
-    },
-    2: {
-        'id': 2,
-        'title': 'Cheese Pizza',
-        'image': '/static/images/recipes/pizza.png',
-        'ingredients': [
-            {'name': 'Dough', 'image': '/static/images/ingredients/dough.png'},
-            {'name': 'Cheese', 'image': '/static/images/ingredients/cheese.png'},
-            {'name': 'Tomato Sauce', 'image': '/static/images/ingredients/tomato-sauce.png'}
-        ],
-        'instructions': ['Prepare dough', 'Add sauce', 'Add cheese', 'Bake'],
-        'prep_time': 15,
-        'cook_time': 15,
-        'serving_size': 4,
-        'tags': ['Dairy', 'Italian']
-    },
-    3: {
-        'id': 3,
-        'title': 'Vodka Pasta',
-        'image': '/static/images/recipes/pasta.png',
-        'ingredients': [
-            {'name': 'Pasta', 'image': '/static/images/ingredients/pasta.png'},
-            {'name': 'Vodka', 'image': '/static/images/ingredients/vodka.png'},
-            {'name': 'Tomato Sauce', 'image': '/static/images/ingredients/tomato-sauce.png'},
-            {'name': 'Heavy Cream', 'image': '/static/images/ingredients/cream.png'}
-        ],
-        'instructions': ['Cook pasta', 'Make sauce with vodka', 'Mix pasta and sauce', 'Serve hot'],
-        'prep_time': 10,
-        'cook_time': 25,
-        'serving_size': 4,
-        'tags': ['Italian', 'Dinner']
-    },
-    4: {
-        'id': 4,
-        'title': 'Chocolate Chip Cookies',
-        'image': '/static/images/recipes/cookies.png',
-        'ingredients': [
-            {'name': 'Flour', 'image': '/static/images/ingredients/flour.png'},
-            {'name': 'Sugar', 'image': '/static/images/ingredients/sugar.png'},
-            {'name': 'Chocolate Chips', 'image': '/static/images/ingredients/chocolate-chips.png'},
-            {'name': 'Butter', 'image': '/static/images/ingredients/butter.png'}
-        ],
-        'instructions': ['Mix ingredients', 'Form dough balls', 'Bake at 350°F', 'Cool before serving'],
-        'prep_time': 15,
-        'cook_time': 15,
-        'serving_size': 12,
-        'tags': ['Dessert', 'Dairy']
-    },
-    5: {
-        'id': 5,
-        'title': 'BAD RECIPE',
-        'image': '/static/images/recipes/bad-recipe.png',
-        'ingredients': [
-            {'name': 'Bad Ingredient 1', 'image': '/static/images/ingredients/bad1.png'},
-            {'name': 'Bad Ingredient 2', 'image': '/static/images/ingredients/bad2.png'}
-        ],
-        'instructions': ['Do bad thing 1', 'Do bad thing 2'],
-        'prep_time': 15,
-        'cook_time': 15,
-        'serving_size': 1,
-        'tags': ['Bad']
-    }
-}
-
-
-@app.route('/editingpage/<int:recipe_id>')
+@app.route('/recipes/<int:recipe_id>/edit', methods=['GET','POST'])
 def edit_recipe(recipe_id):
-    recipe_data = recipes_data.get(recipe_id)
+    if request.method == 'POST':
+        ingredients= request.form.getlist('ingredients')
+        print("Updated ingredients: ", ingredients)
+        return redirect(url_for('recipes_list'))
     
-    if recipe_data is None:
-        return redirect(url_for('create_recipe'))
-        
-    return render_template('editingpage.html', recipe=recipe_data)
+
+    return render_template('recipe_form.html', 
+                          is_edit_mode=True, 
+                          recipe=sample_recipe, 
+                          form_action=f'/recipes/{recipe_id}/edit')
+
+@app.route('/generate', methods=['GET', 'POST'])
+def generate():
+    substitutions = {
+        'egg': '1/4 Cup Applesauce or Mashed Banana',
+        'milk': 'Almond Milk or Oat Milk',
+        'butter': 'Coconut Oil or Olive Oil',
+        'flour': 'Almond Flour or Oat Flour',
+        'sugar': 'Honey or Maple Syrup'
+    }
+
+    suggested_subs = {}
+
+    if request.method == 'POST':
+        ingredients_input = request.form['ingredients']
+        ingredients = [i.strip().lower() for i in ingredients_input.split(',')]
+
+        for item in ingredients:
+            if item in substitutions:
+                suggested_subs[item] = substitutions[item]
+            elif item.endswith('s'):
+                singular = item[:-1]
+                if singular in substitutions:
+                    suggested_subs[item] = substitutions[singular]
+
+        return render_template('generaterecipe.html', suggestions=suggested_subs, ingredients=ingredients_input)
+
+    return render_template('generaterecipe.html')
+
+
+from flask import request
+
+@app.route('/generate', methods=['GET', 'POST']) #generate recipe suggestions using user's input
+def generate():
+    substitutions = { #list of possible substitutions if user  is misiing ingredients 
+        'egg': '1/4 Cup Applesauce or Mashed Banana',
+        'milk': 'Almond Milk or Oat Milk',
+        'butter': 'Coconut Oil or Olive Oil',
+        'flour': 'Almond Flour or Oat Flour',
+        'sugar': 'Honey or Maple Syrup'
+    }
+    
+    suggested_subs= {}
+    bs = {} #store substitutions
+    #get or recieve ingredients with POST
+    if request.method == 'POST':
+        ingredients_input = request.form['ingredients']
+        ingredients = [i.strip().lower() for i in ingredients_input.split(',')]  #this line converts list to all lowercase
+
+        #Check for match
+
+        for item in ingredients:   # Tryy for the exact match first
+            if item in substitutions:
+                suggested_subs[item] = substitutions[item]    # Try for the  singular form if plural
+            elif item.endswith('s'):
+
+                singular = item[:-1]
+                if singular in substitutions:
+                    suggested_subs[item] = substitutions[singular]
+
+        return render_template('generaterecipe.html', suggestions=suggested_subs, ingredients=ingredients_input)
+
+    return render_template('generaterecipe.html')
+
+
 
 @app.route('/createaccount') #when you click "dont have an account? create one!" in login page
 def createaccount():
