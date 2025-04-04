@@ -1,94 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
-from models import Product, Recipe, User, MyRecipes
+from mock_data import products, recipes_data, my_recipes
 
 app = Flask(__name__)
-
-# Dummy data
-products = [
-    Product(1, "Pear", "A sweet, juicy fruit that grows on trees", 1.99, "pear.png"),
-    Product(2, "Apple", "A round fruit that grows on apple trees", 1.99, "apple.jpg"),
-    Product(3, "Chicken", "A lean, white poultry meat", 7.99, "chicken.jpg"),
-    Product(4, "Watermelon", "A large, juicy fruit with red flesh", 5.99, "watermelon.jpg"),
-]
-
-recipes_data = {
-    1: {
-        'id': 1,
-        'title': 'Lemonade',
-        'image': '/static/images/recipes/lemonade.png',
-        'ingredients': [
-            {'name': 'Lemons', 'image': '/static/images/ingredients/lemon.png'},
-            {'name': 'Sugar', 'image': '/static/images/ingredients/sugar.png'},
-            {'name': 'Water', 'image': '/static/images/ingredients/water.png'}
-        ],
-        'instructions': ['Squeeze lemons', 'Mix with sugar and water'],
-        'prep_time': 10,
-        'cook_time': 0,
-        'serving_size': 4,
-        'tags': ['Drink', 'Summer']
-    },
-    2: {
-        'id': 2,
-        'title': 'Cheese Pizza',
-        'image': '/static/images/recipes/pizza.png',
-        'ingredients': [
-            {'name': 'Dough', 'image': '/static/images/ingredients/dough.png'},
-            {'name': 'Cheese', 'image': '/static/images/ingredients/cheese.png'},
-            {'name': 'Tomato Sauce', 'image': '/static/images/ingredients/tomato-sauce.png'}
-        ],
-        'instructions': ['Prepare dough', 'Add sauce', 'Add cheese', 'Bake'],
-        'prep_time': 15,
-        'cook_time': 15,
-        'serving_size': 4,
-        'tags': ['Dairy', 'Italian']
-    },
-    3: {
-        'id': 3,
-        'title': 'Vodka Pasta',
-        'image': '/static/images/recipes/pasta.png',
-        'ingredients': [
-            {'name': 'Pasta', 'image': '/static/images/ingredients/pasta.png'},
-            {'name': 'Vodka', 'image': '/static/images/ingredients/vodka.png'},
-            {'name': 'Tomato Sauce', 'image': '/static/images/ingredients/tomato-sauce.png'},
-            {'name': 'Heavy Cream', 'image': '/static/images/ingredients/cream.png'}
-        ],
-        'instructions': ['Cook pasta', 'Make sauce with vodka', 'Mix pasta and sauce', 'Serve hot'],
-        'prep_time': 10,
-        'cook_time': 25,
-        'serving_size': 4,
-        'tags': ['Italian', 'Dinner']
-    },
-    4: {
-        'id': 4,
-        'title': 'Chocolate Chip Cookies',
-        'image': '/static/images/recipes/cookies.png',
-        'ingredients': [
-            {'name': 'Flour', 'image': '/static/images/ingredients/flour.png'},
-            {'name': 'Sugar', 'image': '/static/images/ingredients/sugar.png'},
-            {'name': 'Chocolate Chips', 'image': '/static/images/ingredients/chocolate-chips.png'},
-            {'name': 'Butter', 'image': '/static/images/ingredients/butter.png'}
-        ],
-        'instructions': ['Mix ingredients', 'Form dough balls', 'Bake at 350°F', 'Cool before serving'],
-        'prep_time': 15,
-        'cook_time': 15,
-        'serving_size': 12,
-        'tags': ['Dessert', 'Dairy']
-    },
-    5: {
-        'id': 5,
-        'title': 'BAD RECIPE',
-        'image': '/static/images/recipes/bad-recipe.png',
-        'ingredients': [
-            {'name': 'Bad Ingredient 1', 'image': '/static/images/ingredients/bad1.png'},
-            {'name': 'Bad Ingredient 2', 'image': '/static/images/ingredients/bad2.png'}
-        ],
-        'instructions': ['Do bad thing 1', 'Do bad thing 2'],
-        'prep_time': 15,
-        'cook_time': 15,
-        'serving_size': 1,
-        'tags': ['Bad']
-    }
-}
 
 @app.route('/')
 def landingpage():
@@ -125,11 +38,23 @@ def save_recipe():
 
 @app.route('/edit_recipe/<int:recipe_id>')
 def edit_recipe(recipe_id):
-    #Use mock data
     recipe = recipes_data.get(recipe_id)
     if not recipe:
         return redirect(url_for('myrecipes'))
-    return render_template('editingpage.html', recipe=recipe)
+        
+    recipe_data = {
+        'id': recipe.id,
+        'title': recipe.nameOfRecipe,
+        'image': recipe.image,
+        'ingredients': recipe.ingredients,
+        'instructions': recipe.instructions,
+        'prep_time': recipe.prep_time,
+        'cook_time': recipe.cook_time,
+        'serving_size': recipe.serving_size,
+        'tags': recipe.tags
+    }
+    
+    return render_template('editingpage.html', recipe=recipe_data)
 
 @app.route('/update_recipe/<int:recipe_id>', methods=['POST'])
 def update_recipe(recipe_id):
