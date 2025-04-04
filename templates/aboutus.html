@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - NomNom Bites</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #333;
+            color: white;
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .shop-btn {
+            background-color: white;
+            color:black;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 50px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .about-section {
+            display: flex;
+            margin-bottom: 50px;
+        }
+
+        .about-text {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .about-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .team-member {
+            text-align: center;
+        }
+
+        .team-member-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover; /* This maintains the aspect ratio while filling the space */
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #f9f9f9;
+            padding: 30px 50px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .footer-brand {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .footer-section {
+            margin-bottom: 20px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            color: #666;
+            text-decoration: none;
+        }
+    </style>
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-brand">NomNom Bites</div>
+        <div class="nav-links">
+            <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+            <a href="#">Generate Recipe</a>
+            <a href="{{ url_for('aboutus') }}">About Us</a>
+            <a href="{{ url_for('shop') }}">Shop</a>
+          
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- About Us Header -->
+        <h1>About Us</h1>
+
+        <!-- What NomNom Bites Is Section -->
+        <h2>What NomNom Bites Is</h2>
+        <div class="about-section">
+            <div class="about-text">
+                <p><b>NomNom Bites</b> is a recipe maker and tracker that recommends meals based on ingredients you already have. We eliminate the frustration of finding recipes only to discover you're missing key items.</p>
+                <br>
+                <p>Our <b>intelligent recommendation system</b> lets you simply input your available ingredients, and we'll suggest creative meal ideas that match. This saves time, reduces food waste, and inspires culinary creativity.</p>
+                <br>
+                <p>Beyond recommendations, we offer a <b>complete recipe management system</b> where you can explore popular dishes, save favorites, and share your creations. Our integrated grocery shopping makes ordering missing ingredients seamless.</p>
+            </div>
+            <div class="about-image">
+                <img src="{{ url_for('static', filename='images/aboutusimg/veggies.jpeg') }}" alt="Fresh vegetables and fruits">
+            </div>
+        </div>
+
+        <!-- Who We Are Section -->
+        <h2>Who We Are</h2>
+        <div class="team-grid">
+            <!-- First row of team members -->
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/ahmed.png') }}" alt="Ahmed" class="team-member-img">
+                <div class="team-member-name">Ahmed</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/anush.png') }}" alt="Anush" class="team-member-img">
+                <div class="team-member-name">Anush</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/veronika.png') }}" alt="Veronika" class="team-member-img">
+                <div class="team-member-name">Veronika</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/elsha.png') }}" alt="Elsha" class="team-member-img">
+                <div class="team-member-name">Elsha</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+
+            <!-- Second row of team members -->
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/oscar.png') }}" alt="Oscar" class="team-member-img">
+                <div class="team-member-name">Oscar</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/uma.png') }}" alt="Uma" class="team-member-img">
+                <div class="team-member-name">Uma</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/antony.png') }}" alt="Antony" class="team-member-img">
+                <div class="team-member-name">Antony</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+            <div class="team-member">
+                <img src="{{ url_for('static', filename='images/aboutusimg/jenny.png') }}" alt="Jenny" class="team-member-img">
+                <div class="team-member-name">Jenny</div>
+                <div class="team-member-title">Developer</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-brand">NOM-NOM Bites</div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>My Recipes</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Favorite Recipes</a></li>
+                    <li><a href="#">Disliked Recipes</a></li>
+                    <li><a href="#">Generate Recipes</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Groceries</a></li>
+                    <li><a href="#">Checkout</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Help</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Customer Support</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

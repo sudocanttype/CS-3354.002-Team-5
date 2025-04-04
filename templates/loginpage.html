@@ -1,3 +1,4 @@
+<!-- Veronika & Uma-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,21 +62,30 @@
       margin: 10px 0;
       border: none;
       border-radius: 5px;
+      justify-content: center;
     }
     
     /* Button */
     .login-box button {
-      width: 100%;
+      width: 70%;
       padding: 12px;
+      margin: 10px 0;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      text-align: center;
     }
     
     .login-box button:hover {
       background-color: #45a049;
+    }
+
+    .createaccount {
+      color:white; 
+      padding:20px;
+      text-align:"center";
     }
   </style>
 </head>
@@ -86,9 +96,9 @@
       <div class="logo">NomNom Bites</div>
       <div class="nav-items">
         <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-        <a href="#">My Recipes</a> <!-- In href "#" makes a button clickable but does not redirect-->
-        <a href="#">About</a>
-        <a href="#">Shop</a>
+        <a href="{{url_for('myrecipes')}}">My Recipes</a>
+        <a href="{{url_for('aboutus')}}">About</a>
+        <a href="{{ url_for('shop') }}">Shop</a>
       </div>
       </div>
     </nav>
@@ -99,10 +109,22 @@
       <form>
         <input type="text" placeholder="Username" required>
         <input type="password" placeholder="Password" required>
-        <button type="submit">Log In</button>
+        <button style="justify-content: center;" type="submit">Log In</button>
+        <div class="createaccount">
+          <a style="color:white;" href="{{ url_for('createaccount') }}">Don't have an account? Create one here!</a>
+        </div>
       </form>
     </div>
     </div>
   </section>
 </body>
 </html>
+
+<!-- if account is not found, display an error msg and prompt user to reenter info-->
+
+<!-- backend psuedocode:
+  - user types in username and password
+  - system checks if username is in the database of current users and password matches
+    - if not, then display error msg and prompt user to reenter info or to create an account
+    - else, open up user's account
+-->
