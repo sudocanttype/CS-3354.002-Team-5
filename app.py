@@ -114,6 +114,10 @@ def generate():
 
     return render_template('generaterecipe.html')
 
+@app.route('/createaccount') #when you click "dont have an account? create one!" in login page
+def createaccount():
+    return render_template('createaccount.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
