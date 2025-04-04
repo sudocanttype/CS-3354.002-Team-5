@@ -146,6 +146,7 @@
 	            <a href="{{url_for('myrecipes')}}">My Recipes</a> 
 	            <a href="{{url_for('aboutus')}}">About</a>
 	            <a href="{{ url_for('shop') }}">Shop</a>
+				<a href="{{ url_for('generate') }}">Generate</a>
 	        </div>
 		</div>
 		</div>
@@ -178,7 +179,10 @@
 	      </div>
 	
 	      <div class="card">
-	        <div class="card-icon"><i class="fas fa-magic"></i></div>
+			<p class="card-img">
+				<img src="{{ url_for('static', filename='landingpage/generatepic.avif') }}" alt="Generate Pic" width="250" height="150">
+			</p>
+			<div class="card-icon"><i class="fas fa-magic"></i></div>
 	        <div class="card-title">Click Generate</div>
 	        <div class="card-description">We’ll cook up recipes just for you.</div>
 	      </div>
