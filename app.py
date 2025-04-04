@@ -1,3 +1,18 @@
+
+from flask import Flask, render_template, request, redirect, url_for
+from models import Product
+
+app = Flask(__name__)
+
+# Dummy data
+products = [
+    Product(1, "Pear", "A sweet, juicy fruit that grows on trees", 1.99, "pear.png"),
+    Product(2, "Apple", "A round fruit that grows on apple trees", 1.99, "apple.jpg"),
+    Product(3, "Chicken", "A lean, white poultry meat", 7.99, "chicken.jpg"),
+    Product(4, "Watermelon", "A large, juicy fruit with red flesh", 5.99, "watermelon.jpg"),
+]
+
+
 from flask import Flask, render_template, redirect, url_for
 
 app = Flask(__name__)
@@ -19,6 +34,7 @@ sample_recipe = {
     'tags': ['Dairy']
 }
 
+
 @app.route('/')
 def landingpage():
     return render_template('practicelandingwebpage.html')
@@ -28,9 +44,25 @@ def loginpage():
     return render_template('loginpage.html')
 
 
+<<<<<<< HEAD
+=======
+@app.route('/shop')
+def shop():
+    return render_template('grocerystorepage.html', products=products)
+
+@app.route('/checkout')
+def checkout():
+    cart_items = []
+    return render_template('checkout.html', cart_items=cart_items)
+
+>>>>>>> fd6d871b3be0cfa4783649af178cc7bec8ddd9a1
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():
     return render_template('recipes.html')
+
+@app.route('/aboutus')
+def aboutus():
+    return render_template('aboutus.html')
 
 @app.route('/recipes')
 def recipes_list():
@@ -51,10 +83,13 @@ def edit_recipe(recipe_id):
                           recipe=sample_recipe, 
                           form_action=f'/recipes/{recipe_id}/edit')
 
+<<<<<<< HEAD
 @app.route('/createaccount') #when you click "dont have an account? create one!" in login page
 def createaccount():
     return render_template('createaccount.html')
 
+=======
+>>>>>>> fd6d871b3be0cfa4783649af178cc7bec8ddd9a1
 
 if __name__ == '__main__':
     app.run(debug=True)
