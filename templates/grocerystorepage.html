@@ -20,7 +20,7 @@
          <div class="nav-links">
        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
 	            <a href="{{url_for('myrecipes')}}">My Recipes</a>
-	            <a href="#">About</a> <!-- In href "#" makes a button clickable but does not redirect-->
+	            <a href="{{ url_for('aboutus') }}">About Us</a>
         <a href="{{ url_for('shop') }}">Shop</a>
         <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
         <a href="{{ url_for('generate') }}">Generate</a>
