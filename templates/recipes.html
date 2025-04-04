@@ -61,6 +61,16 @@
     .filter {
             margin: 20px 0;
         }
+    .create-btn {
+            background-color: #228B22;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin: 20px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -73,11 +83,16 @@
             <a href="{{url_for('myrecipes')}}">My Recipes</a>
             <a href="{{url_for('aboutus')}}">About</a>
             <a href="{{ url_for('shop') }}">Shop</a>
+            <a href="{{ url_for('generate') }}">Generate</a>
           </div>
           </div>
         </nav>
     <div class="container">
         <p>These recipes are part of your personal collection—your very own recipe book! You can always come back here to see your modified recipes and save time when you're in a rush!</p>
+        
+        <a href="{{ url_for('create_recipe') }}">
+            <button class="create-btn">Create New Recipe</button>
+        </a>
         
         <div class="filter">
             <label for="recipe-filter">Filter(Favorites/All Recipes):</label> 
@@ -102,27 +117,37 @@
             <div class="recipe-box">
                 <h3>Lemonade</h3>
                 <p>10 min</p>
-                <button class="edit-btn">Edit Recipe</button>
+                <a href="{{ url_for('edit_recipe', recipe_id=1) }}">
+                    <button class="edit-btn">Edit Recipe</button>
+                </a>
             </div>
             <div class="recipe-box">
                 <h3>Cheese Pizza</h3>
                 <p>30 min</p>
-                <button class="edit-btn">Edit Recipe</button>
+                <a href="{{ url_for('edit_recipe', recipe_id=2) }}">
+                    <button class="edit-btn">Edit Recipe</button>
+                </a>
             </div>
             <div class="recipe-box">
                 <h3>Vodka Pasta</h3>
                 <p>35 min</p>
-                <button class="edit-btn">Edit Recipe</button>
+                <a href="{{ url_for('edit_recipe', recipe_id=3) }}">
+                    <button class="edit-btn">Edit Recipe</button>
+                </a>
             </div>
             <div class="recipe-box">
                 <h3>Chocolate Chip Cookies</h3>
                 <p>30 min</p>
-                <button class="edit-btn">Edit Recipe</button>
+                <a href="{{ url_for('edit_recipe', recipe_id=4) }}">
+                    <button class="edit-btn">Edit Recipe</button>
+                </a>
             </div>
             <div class="recipe-box">
                 <h3>BAD RECIPE</h3>
                 <p>30 min</p>
-                <button class="edit-btn">Edit Recipe</button>
+                <a href="{{ url_for('edit_recipe', recipe_id=5) }}">
+                    <button class="edit-btn">Edit Recipe</button>
+                </a>
             </div>
         </div>
     </div>
