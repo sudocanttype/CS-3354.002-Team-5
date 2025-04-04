@@ -44,8 +44,6 @@ def loginpage():
     return render_template('loginpage.html')
 
 
-<<<<<<< HEAD
-=======
 @app.route('/shop')
 def shop():
     return render_template('grocerystorepage.html', products=products)
@@ -55,7 +53,6 @@ def checkout():
     cart_items = []
     return render_template('checkout.html', cart_items=cart_items)
 
->>>>>>> fd6d871b3be0cfa4783649af178cc7bec8ddd9a1
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():
     return render_template('recipes.html')
@@ -83,13 +80,10 @@ def edit_recipe(recipe_id):
                           recipe=sample_recipe, 
                           form_action=f'/recipes/{recipe_id}/edit')
 
-<<<<<<< HEAD
 @app.route('/createaccount') #when you click "dont have an account? create one!" in login page
 def createaccount():
     return render_template('createaccount.html')
 
-=======
->>>>>>> fd6d871b3be0cfa4783649af178cc7bec8ddd9a1
 
 if __name__ == '__main__':
     app.run(debug=True)
