@@ -1,4 +1,4 @@
-class Product:
+class Product: #class for the products the user is able to add to their cart
     def __init__(self, product_id, name, description, price, image):
         self.product_id = product_id
         self.name = name
@@ -13,7 +13,7 @@ class Product:
         pass
 
 
-class Recipe:
+class Recipe:  #class for recipes so that the user can view its details, edit, or create a recipe
     def __init__(self, nameOfRecipe, ingredients, instructions):
         self.nameOfRecipe = nameOfRecipe
         self.ingredients = ingredients
@@ -26,7 +26,7 @@ class Recipe:
         pass
 
 
-class Favorites:
+class Favorites:  #collection of the user's fav recipes to display when they filter for favorite recipes in the My Recipes page
     def __init__(self):
         self.favoriteRecipes = []  
     
@@ -37,7 +37,7 @@ class Favorites:
         return self.favoriteRecipes
 
 
-class MyRecipes:
+class MyRecipes:  #collection of the user's recipes including the favorites and recipes the user created/edited
     def __init__(self):
         self.myRecipes = []  
     
@@ -52,7 +52,7 @@ class MyRecipes:
             self.myRecipes.remove(recipe)
 
 
-class User:
+class User:  #user object to store user info and manage user details for login/log out and their recipes/cart
     def __init__(self, name, lastName, userName, password):
         self.name = name
         self.lastName = lastName
@@ -84,7 +84,7 @@ class User:
         return [product.name for product in self.groceryList.cartList]
 
 
-class GroceryList:
+class GroceryList:   #unique to a particular user and used to display all products the user added to their cart on the Checkout page
     def __init__(self):
         self.cart = [] 
         self.totalPrice = 0.0

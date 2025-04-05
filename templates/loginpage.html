@@ -89,32 +89,34 @@
     }
   </style>
 </head>
+
 <body>  
   <section>
     <nav>
-      <div class="navbar">
-      <div class="logo">NomNom Bites</div>
-      <div class="nav-items">
-        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-        <a href="{{url_for('myrecipes')}}">My Recipes</a>
-        <a href="{{url_for('aboutus')}}">About</a>
-        <a href="{{ url_for('shop') }}">Shop</a>
-      </div>
+      <div class="navbar">  <!--nav bar-->
+        <div class="logo">NomNom Bites</div>
+        <div class="nav-items">
+          <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+          <a href="{{url_for('myrecipes')}}">My Recipes</a>
+          <a href="{{url_for('aboutus')}}">About</a>
+          <a href="{{ url_for('shop') }}">Shop</a>
+          <a href="{{ url_for('generate') }}">Generate</a>
+        </div>
       </div>
     </nav>
 
-    <div class="page-content">
-  	<div class="login-box">
-      <h2>Login</h2>
-      <form>
-        <input type="text" placeholder="Username" required>
-        <input type="password" placeholder="Password" required>
-        <button style="justify-content: center;" type="submit">Log In</button>
-        <div class="createaccount">
-          <a style="color:white;" href="{{ url_for('createaccount') }}">Don't have an account? Create one here!</a>
-        </div>
-      </form>
-    </div>
+    <div class="page-content"> <!--login box with input fields that requires input to proceed-->
+      <div class="login-box">
+        <h2>Login</h2>
+        <form>
+          <input type="text" placeholder="Username" required>
+          <input type="password" placeholder="Password" required>
+          <button style="justify-content: center;" type="submit">Log In</button>
+          <div class="createaccount">
+            <a style="color:white;" href="{{ url_for('createaccount') }}">Don't have an account? Create one here!</a>
+          </div>
+        </form>
+      </div>
     </div>
   </section>
 </body>
@@ -126,5 +128,5 @@
   - user types in username and password
   - system checks if username is in the database of current users and password matches
     - if not, then display error msg and prompt user to reenter info or to create an account
-    - else, open up user's account
+    - else, open up user's account to My Recipes page
 -->
