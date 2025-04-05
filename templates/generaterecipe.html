@@ -1,3 +1,4 @@
+<!--Elsha & Uma-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +19,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
+            background-color: black;
         }
 
         .logo {
@@ -113,6 +115,36 @@
             font-size: 14px;
             color: white;
         }
+
+        .recipes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .recipe-box {
+            background: #fff;
+            color: black;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .recipe-container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .search-box{
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            resize: none;
+        }
     </style>
 </head>
 <body>
@@ -132,30 +164,73 @@
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container">  <!--overall container for 3 input boxes-->
         <h1>Recipe Generator</h1>
 
         <form method="POST">
-            <label for="ingredients">What ingredients do you have?</label>
-            <textarea name="ingredients" id="ingredients" rows="5" placeholder="e.g. eggs, milk, sugar"></textarea>
-            <button type="submit" class="fancy-button">Generate Substitutions</button>
-        </form>
+            <!--input box to search for recipe name-->
+            <label for="query">Already know what to make? Enter the recipe name here!</label>
+            <input class="search-box" type="text" name="query" id="query" placeholder="e.g. Lemonade">
 
-        {% if suggestions %}
+            <!--input box to enter ingredients then find a recipe that matches-->
+            <label for="ingredients" style="padding-top: 50px;">Enter the ingredients you have, and we'll find a recipe for you!</label>
+            <textarea name="query" id="ingredients" rows="5" placeholder="e.g. eggs, milk, sugar"></textarea>
+            
+            <!--generate recipes button for the 2 possible inputs above-->
+            <div style="text-align: center;"> 
+                <button type="submit" class="fancy-button" name="action" value="search">Generate Recipes</button>
+            </div>
+
+            <!--input box + button for the generate substition-->
+            <label for="ingredients" style="padding-top: 50px;">Missing an ingredient? No problem! Enter what you're missing, and we'll give you substitutions!</label>
+            <textarea name="ingredients" id="ingredients" rows="5" placeholder="e.g. eggs, milk, sugar"></textarea>
+            <div style="text-align: center;"> 
+                <button type="submit" class="fancy-button" name="action" value="subs">Generate Substitutions</button>
+            </div>
+        </form> 
+    </div>
+
+    <!-- database: recipes will be generated using a post endpoint that return a block of json
+     (referring to the individual divs starting a generation process returning the recipes from the db). -->
+
+    <div class="container"> <!--container to return the results of inputs from above-->
+        {% if suggestions %}   <!--return results of a substitution-->
         <div class="results">
-            <h2>Smart Ingredient Swaps</h2>
+            <h2 >Smart Ingredient Swaps</h2>
             <ul>
                 {% for item, sub in suggestions.items() %}
                     <li><span class="substitute">{{ item.title() }}</span> → {{ sub }}</li>
                 {% endfor %}
             </ul>
         </div>
-        {% endif %}
+        <!--maybe output a message if no substitution exist?-->
+        {% endif %} 
+
+        {% if result %}  <!--return results of a recipe based on name or ingredients-->
+        <div class="recipe-container">
+            <div class="recipes"> 
+                <div class="recipe-box">
+                    <h2>{{ result.title }}</h2>
+                    <p>{{ result.description }}</p>
+                    <a href="{{ url_for('edit_recipe', recipe_id=1) }}">
+                        <button class="edit-btn">Edit Recipe</button>
+                    </a>
+                    <button class="edit-btn">Add Recipe</button> <!--backend: clicking this button would add recipe to the user's my recipe page/list in the db-->
+                    <!--do we need a view recipe button too?-->
+                </div>
+            </div> 
+        </div>
+        {% elif request.method == 'POST' and not suggestions %} 
+            <p>No recipes found. :( Try a different name, recipe, or add more ingredients!</p>
+        {% endif %} 
     </div>
 
-    <footer>
+    <footer style="background-color: black">
         ✽ Built with love by the NomNom Team ✽
     </footer>
 
 </body>
 </html>
+
+<!--need to make the recipe boxes look better and closer to how they look in My Recipes page-->
+<!--need to fix: when you search for a sub that doesnt exist, a recipe error messgae is being displayed -->

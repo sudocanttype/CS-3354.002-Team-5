@@ -9,7 +9,6 @@
         body 
         {
           background-color: black;
-          background-color: #ab3737; /* red */
         }
 
 		.navbar {
@@ -139,7 +138,7 @@
 
 <body>
 	<nav>
-		<div class="navbar">
+		<div class="navbar"> <!--nav bar-->
 	        <div class="logo">NomNom Bites</div>
 	        <div class="nav-items">
 	            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
@@ -151,7 +150,7 @@
 		</div>
 		</div>
 	</nav>
-	<section class="hero">
+	<section class="hero">  <!--welcome to nom nom bites section-->
     	<p class="main-img">
 			<img src="{{ url_for('static', filename='landingpage/landingpagepic.png') }}" alt="Main Pic" width="500" height="300">
 		</p>
@@ -165,7 +164,7 @@
 		
 	</section>
 
-	<section class="how-it-works">
+	<section class="how-it-works">  <!--how it works section with the 3 cards-->
 		<h2 style="color: black;">How It Works</h2>
 	    <div class="card-container">
 	      
@@ -198,7 +197,7 @@
 	    </div>
 	</section>
 
-	<section class="hero">
+	<section class="hero"> <!--explore other features section w/ shop button-->
 		<h1>Explore our other features!</h1>
 		<p class="main-img">
 			<img src="{{ url_for('static', filename='landingpage/socialpic.png') }}" alt="Social Pic" width="400" height="300">
@@ -216,10 +215,10 @@
     </section>
 
 	<nav>
-		<div class="navbar">
+		<div class="navbar">  <!--bottom nav bar for consistency-->
 			<div class="logo">NomNom Bites</div>
 			<div class="nav-items">
-				<a href="{{ url_for('landingpage') }}">Back to Top</a> <!-- landingpage calls the function in app.py-->
+				<a href="{{ url_for('landingpage') }}">Back to Top</a> 
 				<a href="{{url_for('myrecipes')}}">My Recipes</a> 
 				<a href="{{url_for('aboutus')}}">About</a>
 				<a href="{{ url_for('shop') }}">Shop</a>
@@ -234,7 +233,7 @@
 <!-- need to implement this check: user must be logged in to view my recipes or shop pages-->
 <!-- need to discuss nav bar with team and make it consist amoung all pages-->
 
-<!-- check whether user is logged in before going to my recipes or shop page
+<!-- check whether user is logged in before going to my recipes, shop, or generate page
   - if user is logged in then display their respective pages
   - if user is not logged in, then promptthem to login
 -->
