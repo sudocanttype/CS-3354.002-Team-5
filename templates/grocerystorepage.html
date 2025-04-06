@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grocery Store</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/grocerystorestyle.css') }}" />
-  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='scripts/grocery.js') }}" defer ></script>
 </head>
 
 <body>
@@ -20,7 +20,7 @@
          <div class="nav-links">
        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
 	            <a href="{{url_for('myrecipes')}}">My Recipes</a>
-	            <a href="#">About</a> <!-- In href "#" makes a button clickable but does not redirect-->
+	            <a href="{{ url_for('aboutus') }}">About Us</a>
         <a href="{{ url_for('shop') }}">Shop</a>
         <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
         <a href="{{ url_for('generate') }}">Generate</a>
@@ -41,13 +41,13 @@
 
         <!-- Quantity Selector -->
         <div class="quantity-control">
-          <button class="decrease" onclick="updateQuantity({{ product.id }}, -1)">-</button>
-          <span id="quantity-{{ product.id }}" class="quantity">0</span>
-          <button class="increase" onclick="updateQuantity({{ product.id }}, 1)">+</button>
+          <button class="decrease" onclick="updateQuantity({{ product.product_id }}, -1)">-</button>
+          <span id="quantity-{{ product.product_id  }}" class="quantity">0</span>
+          <button class="increase" onclick="updateQuantity({{ product.product_id }}, 1)">+</button>
         </div>
 
         <!-- Add to Cart Button -->
-        <button class="add-to-cart" id="add-to-cart-{{ product.id }}" disabled onclick="addToCart({{ product.id }})">
+        <button class="add-to-cart" id="add-to-cart-{{ product.product_id }}" disabled onclick="addToCart({{ product.product_id }})">
           Add to Cart
         </button>
       </div>
