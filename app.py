@@ -28,20 +28,22 @@ def myrecipes():
 def aboutus():
     return render_template('aboutus.html')
 
-@app.route('/createrecipe')
+@app.route('/createrecipe') # displays the create recipe form
 def create_recipe():
     return render_template('createrecipe.html')
 
-@app.route('/save_recipe', methods=['POST'])
+@app.route('/save_recipe', methods=['POST']) # handles submission of new recipe form
 def save_recipe():
+    # todo: save the recipe data from the form to the database
     return redirect(url_for('myrecipes'))
 
-@app.route('/edit_recipe/<int:recipe_id>')
+@app.route('/edit_recipe/<int:recipe_id>') # displays form to edit an existing recipe
 def edit_recipe(recipe_id):
     recipe = recipes_data.get(recipe_id)
     if not recipe:
         return redirect(url_for('myrecipes'))
         
+    # format the recipe data for the template
     recipe_data = {
         'id': recipe.id,
         'title': recipe.nameOfRecipe,
@@ -56,8 +58,9 @@ def edit_recipe(recipe_id):
     
     return render_template('editingpage.html', recipe=recipe_data)
 
-@app.route('/update_recipe/<int:recipe_id>', methods=['POST'])
+@app.route('/update_recipe/<int:recipe_id>', methods=['POST']) # handles submission of edited recipe
 def update_recipe(recipe_id):
+    # todo: save the updated recipe data from the form to the database
     return redirect(url_for('myrecipes'))
 
 @app.route('/generate', methods=['GET', 'POST'])
