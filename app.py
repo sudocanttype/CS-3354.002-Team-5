@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def landingpage():
-    return render_template('practicelandingwebpage.html')
+    return render_template('landingwebpage.html')
 
 @app.route('/loginpage')
 def loginpage():
@@ -73,18 +73,30 @@ def generate():
     suggested_subs = {}
 
     if request.method == 'POST':
-        ingredients_input = request.form['ingredients']
-        ingredients = [i.strip().lower() for i in ingredients_input.split(',')]
+        action = request.form.get('action')
+        query = request.form.get('query', '').strip().lower()
+        result = None
+        
+        if action == 'search':
+            if(query == 'lemonade'):
+                result = {
+                    'title': 'Lemonade', 
+                    'description': 'Refreshing drink' 
+                }
+            return render_template('generaterecipe.html', result=result)
+        elif action == 'subs':
+            ingredients_input = request.form['ingredients']
+            ingredients = [i.strip().lower() for i in ingredients_input.split(',')]
 
-        for item in ingredients:
-            if item in substitutions:
-                suggested_subs[item] = substitutions[item]
-            elif item.endswith('s'):
-                singular = item[:-1]
-                if singular in substitutions:
-                    suggested_subs[item] = substitutions[singular]
+            for item in ingredients:
+                if item in substitutions:
+                    suggested_subs[item] = substitutions[item]
+                elif item.endswith('s'):
+                    singular = item[:-1]
+                    if singular in substitutions:
+                        suggested_subs[item] = substitutions[singular]
 
-        return render_template('generaterecipe.html', suggestions=suggested_subs, ingredients=ingredients_input)
+            return render_template('generaterecipe.html', suggestions=suggested_subs, ingredients=ingredients_input)
 
     return render_template('generaterecipe.html')
 
