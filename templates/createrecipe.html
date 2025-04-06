@@ -1,5 +1,7 @@
+<!--Jenny-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +9,10 @@
   <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../static/styles/main.css">
 </head>
+
 <body>
   <main class="app-container">
+    <!-- header with navigation -->
     <header class="app-header">
       <div class="container">
         <a href="/" class="logo">NomNom Bites</a>
@@ -24,10 +28,12 @@
     </header>
 
     <div class="container">
+      <!-- page title section -->
       <section class="page-header">
         <h1 class="page-title">Create Recipe</h1>
       </section>
-      
+
+      <!-- recipe creation form -->
       <form class="recipe-form" action="/save_recipe" method="POST">
         <div class="form-group">
           <label for="recipe-title" class="form-label">Recipe Title</label>
@@ -35,11 +41,13 @@
         </div>
 
         <div class="recipe-editor">
+          <!-- recipe image section -->
           <div class="recipe-image-container">
             <div class="recipe-image empty-image"></div>
             <button type="button" class="image-upload-btn">
               <span class="visually-hidden">Upload image</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
                 <path d="m15 7 4-4"></path>
                 <path d="M9 15h3"></path>
@@ -51,11 +59,14 @@
           </div>
 
           <div class="recipe-details-container">
+            <!-- ingredients section -->
             <section class="recipe-section">
               <h2 class="section-title">Ingredients</h2>
               <div class="ingredient-list">
+                <!-- add ingredient button -->
                 <button type="button" class="btn-add add-ingredient">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
@@ -64,11 +75,14 @@
               </div>
             </section>
 
+            <!-- instructions section -->
             <section class="recipe-section">
               <h2 class="section-title">Instructions</h2>
               <div class="instruction-list">
+                <!-- add step button -->
                 <button type="button" class="btn-add add-step">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
@@ -77,6 +91,7 @@
               </div>
             </section>
 
+            <!-- recipe details section -->
             <section class="recipe-section">
               <h2 class="section-title">Details</h2>
               <div class="details-grid">
@@ -103,13 +118,16 @@
               </div>
             </section>
 
+            <!-- tags section -->
             <section class="recipe-section">
               <h2 class="section-title">Tags</h2>
               <div class="tags-container">
+                <!-- tag input field -->
                 <div class="tag-input-container">
                   <input type="text" class="tag-input" placeholder="Add a tag...">
                   <button type="button" class="btn-icon tag-add" aria-label="Add tag">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
@@ -120,6 +138,7 @@
           </div>
         </div>
 
+        <!-- form action buttons -->
         <div class="form-actions">
           <a href="{{ url_for('myrecipes') }}" class="btn btn-secondary">Cancel</a>
           <button type="submit" class="btn btn-primary">Create Recipe</button>
@@ -127,6 +146,8 @@
       </form>
     </div>
   </main>
+  <!-- javascript for recipe creation functionality -->
   <script src="../static/scripts/createrecipe.js"></script>
 </body>
-</html> 
+
+</html>
