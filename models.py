@@ -1,3 +1,4 @@
+# Product class made by Ahmed Sherwani
 class Product: #class for the products the user is able to add to their cart
     def __init__(self, product_id, name, description, price, image):
         self.product_id = product_id

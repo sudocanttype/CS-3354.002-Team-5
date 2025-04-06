@@ -1,3 +1,4 @@
+// Made by Ahmed Sherwani
 // Enable/disable "Add to Cart" button based on quantity
 function updateQuantity(productId, change) {
     const quantitySpan = document.getElementById(`quantity-${productId}`);
