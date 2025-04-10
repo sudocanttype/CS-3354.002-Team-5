@@ -18,7 +18,20 @@
     .logo, .nav-link {
       color: white;
     }
-    
+    .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+    }
+
+    .nav-links {
+            display: flex;
+            gap: 25px;
+    }
+
+    .nav-links a {
+            color: white;
+            text-decoration: none;
+    }
     .page-title, .section-title, .form-label {
       color: #333;
     }
@@ -58,16 +71,25 @@
     <header class="app-header">
       <div class="container">
         <a href="/" class="logo">NomNom Bites</a>
-        <nav class="nav-menu">
-          <ul>
-            <li><a href="/recipes" class="nav-link">My Recipes</a></li>
-            <li><a href="/generate" class="nav-link">Generate Recipe</a></li>
-            <li><a href="{{ url_for('aboutus') }}" class="nav-link">About Us</a></li>
-          </ul>
-          <a href="/profile" class="profile-link">
-            <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
-          </a>
-        </nav>
+        <nav>
+          <div class="nav-brand">NomNom Bites</div>
+      
+          <div class="nav-links">
+              <a href="{{ url_for('landingpage') }}" class="nav-link">Home</a>
+              <a href="{{ url_for('myrecipes') }}" class="nav-link">My Recipes</a>
+              <a href="{{ url_for('create_recipe') }}" class="nav-link">Generate Recipe</a>
+              <a href="{{ url_for('aboutus') }}" class="nav-link">About Us</a>
+              <a href="{{ url_for('shop') }}" class="nav-link">Shop</a>
+      
+              <!-- Profile picture (unique to this page) -->
+              <a href="/profile" class="profile-link">
+                  <img src="{{ url_for('static', filename='images/profile/winnie.png') }}"
+                       alt="Your profile"
+                       class="profile-img">
+              </a>
+          </div>
+      </nav>
+      
       </div>
     </header>
 

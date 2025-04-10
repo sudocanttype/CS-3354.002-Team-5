@@ -135,11 +135,11 @@
         <nav class="navbar">
             <div class="logo">NomNom Bites</div>
             <div class="nav-links">
-                <a href="{{ url_for('landingpage') }}">Home</a>
-                <a href="{{url_for('myrecipes')}}">My Recipes</a>
-                <a href="#">Generate Recipe</a>
-                <a href="#">About</a>
-                <a href="{{ url_for('shop') }}" class="shop-btn">Shop</a>
+                <a href="{{ url_for('landingpage')}}">Home</a>
+                <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+                <a href="{{ url_for('create_recipe') }}">Generate Recipe</a>
+                <a href="{{ url_for('aboutus') }}">About Us</a>
+                <a href="{{ url_for('shop') }}">Shop</a>
                 <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
             </div>
         </nav>

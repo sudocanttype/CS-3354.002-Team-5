@@ -248,15 +248,23 @@
         <header class="app-header">
             <div class="container">
                 <a href="/" class="logo">NomNom Bites</a>
-                <nav class="nav-menu">
-                    <ul>
-                        <li><a href="/recipes" class="nav-link">My Recipes</a></li>
-                        <li><a href="/generate" class="nav-link">Generate Recipe</a></li>
-                        <li><a href="{{ url_for('aboutus') }}" class="nav-link">About Us</a></li>
-                    </ul>
-                    <a href="/profile" class="profile-link">
-                        <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
-                    </a>
+                <nav>
+                 
+              
+                  <div class="nav-links">
+                      <a href="{{ url_for('landingpage') }}" >Home</a>
+                      <a href="{{ url_for('myrecipes') }}" >My Recipes</a>
+                      <a href="{{ url_for('create_recipe') }}" >Generate Recipe</a>
+                      <a href="{{ url_for('aboutus') }}" >About Us</a>
+                      <a href="{{ url_for('shop') }}" >Shop</a>
+              
+                      <!-- Profile picture (unique to this page) -->
+                      <a href="/profile" class="profile-link">
+                          <img src="{{ url_for('static', filename='images/profile/winnie.png') }}"
+                               alt="Your profile"
+                               class="profile-img">
+                      </a>
+                  </div>
                 </nav>
             </div>
         </header>
