@@ -130,26 +130,72 @@
 		}
 
 		.card-img {
-			float: center;
-			margin-top: auto;
+			display: block;
+            margin: 0 auto;
 		}
+
+        .disabled-link {
+            color: gray;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        .login-banner {
+            background-color: #ffe0e0;
+            color: #b20000;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            margin: 10px 20px;
+            font-weight: bold;
+        }
+
+        .disabled-button {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
+<script>
+	function showBanner() {
+		const banner = document.getElementById("login-banner");
+		banner.style.display = "block";
+		setTimeout(() => {
+			banner.style.display = "none";
+		}, 3000);
+	}
+</script>
 
 <body>
 	<nav>
 		<div class="navbar"> <!--nav bar-->
-	        <div class="logo">NomNom Bites</div>
-	        <div class="nav-items">
-	            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-	            <a href="{{url_for('myrecipes')}}">My Recipes</a> 
-	            <a href="{{url_for('aboutus')}}">About</a>
-	            <a href="{{ url_for('shop') }}">Shop</a>
+		<div class="logo">NomNom Bites</div>
+		<div class="nav-items">
+			<a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+
+			{% if logged_in %}
+				<a href="{{ url_for('myrecipes') }}">My Recipes</a>
+				<a href="{{ url_for('shop') }}">Shop</a>
 				<a href="{{ url_for('generate') }}">Generate</a>
-	        </div>
+			{% else %}
+				<a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
+                <a href="{{ url_for('aboutus') }}">About</a>
+                <a class="disabled-link" href="#" onclick="showBanner()">Shop</a>
+				<a class="disabled-link" href="#" onclick="showBanner()">Generate</a>
+
+
+			{% endif %}
+
 		</div>
-		</div>
+	</div>
 	</nav>
+    <!-- Banner message outside nav bar -->
+<div id="login-banner" class="login-banner" style="display: none;">
+	⚠️ You must login to access this feature.
+</div>
+
 	<section class="hero">  <!--welcome to nom nom bites section-->
     	<p class="main-img">
 			<img src="{{ url_for('static', filename='landingpage/landingpagepic.png') }}" alt="Main Pic" width="500" height="300">
@@ -209,24 +255,35 @@
 		<h2>Shop</h2>
 		<p>Add the ingredients you need to you cart to make your recipe a reality.</p>
 
-		<a href="{{ url_for('shop') }}">
-        	<button class="fancy-button">Shop</button>
-		</a>
+        {% if logged_in %}
+            <a href="{{ url_for('shop') }}">
+                <button class="fancy-button">Shop</button>
+            </a>
+        {% else %}
+            <button class="fancy-button disabled-button" title="Please login to access the shop">Shop</button>
+        {% endif %}
+
     </section>
 
-	<nav>
-		<div class="navbar">  <!--bottom nav bar for consistency-->
-			<div class="logo">NomNom Bites</div>
-			<div class="nav-items">
-				<a href="{{ url_for('landingpage') }}">Back to Top</a> 
-				<a href="{{url_for('myrecipes')}}">My Recipes</a> 
-				<a href="{{url_for('aboutus')}}">About</a>
-				<a href="{{ url_for('shop') }}">Shop</a>
-			</div>
-		</div>
-		</div>
-	</nav>
+    <nav>
+        <div class="navbar">  <!--bottom nav bar for consistency-->
+            <div class="logo">NomNom Bites</div>
+            <div class="nav-items">
 
+                <a href="{{ url_for('landingpage') }}">Back to Top</a>
+
+                {% if logged_in %}
+                    <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+                    <a href="{{ url_for('shop') }}">Shop</a>
+                {% else %}
+                    <a class="disabled-link">My Recipes</a>
+                    <a class="disabled-link">Shop</a>
+                {% endif %}
+                <a href="{{ url_for('aboutus') }}">About</a>
+
+            </div>
+        </div>
+    </nav>
 </body>
 </html>
 

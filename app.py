@@ -1,11 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for
 from mock_data import products, recipes_data, my_recipes
 
 app = Flask(__name__)
 
 @app.route('/')
 def landingpage():
-    return render_template('landingwebpage.html')
+    user_logged_in = 'user' in session
+    return render_template('landingwebpage.html', logged_in=user_logged_in)
 
 @app.route('/loginpage')
 def loginpage():

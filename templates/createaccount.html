@@ -86,24 +86,61 @@
     .login {
       color:white; 
       padding:20px;
-      text-align:"center";
+      text-align: center;
+    }
+
+    .disabled-link {
+        color: gray;
+        cursor: not-allowed;
+        text-decoration: none;
+    }
+
+    .login-banner {
+        background-color: #ffe0e0;
+        color: #b20000;
+        padding: 10px;
+        text-align: center;
+        border-radius: 6px;
+        margin: 10px 20px;
+        font-weight: bold;
     }
   </style>
 </head>
+<script>
+  function showBanner() {
+    const banner = document.getElementById("login-banner");
+    banner.style.display = "block";
+    setTimeout(() => {
+      banner.style.display = "none";
+    }, 3000);
+  }
+</script>
 <body>  
   <section>
     <nav>
       <div class="navbar">
       <div class="logo">NomNom Bites</div>
       <div class="nav-items">
-        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-        <a href="{{url_for('myrecipes')}}">My Recipes</a>
-        <a href="{{url_for('aboutus')}}">About</a>
+        <a href="{{ url_for('landingpage') }}">Home</a>
+
+      {% if logged_in %}
+        <a href="{{ url_for('myrecipes') }}">My Recipes</a>
         <a href="{{ url_for('shop') }}">Shop</a>
         <a href="{{ url_for('generate') }}">Generate</a>
+      {% else %}
+        <a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
+         <a href="{{ url_for('aboutus') }}">About</a>
+        <a class="disabled-link" href="#" onclick="showBanner()">Shop</a>
+        <a class="disabled-link" href="#" onclick="showBanner()">Generate</a>
+      {% endif %}
+
       </div>
       </div>
     </nav>
+      <!-- Banner to show when user is not logged in -->
+      <div id="login-banner" class="login-banner" style="display: none;">
+          ⚠️ You must login to access this feature.
+      </div>
 
     <div class="page-content">
   	<div class="login-box">
