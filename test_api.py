@@ -11,7 +11,6 @@ class MockResponse:
 
 class TestAPI(unittest.TestCase):
     def test_get_products(self):
-        # Mock response for GET /api/products
         mock_products = [
             {"product_id": p.product_id, "name": p.name, "price": p.price, 
              "description": p.description, "image": p.image} 
@@ -26,7 +25,6 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(response.json()[1]["name"], "Apple")
     
     def test_get_recipes(self):
-        # Mock response for GET /api/recipes
         mock_recipes = [
             {"id": recipe.id, "nameOfRecipe": recipe.nameOfRecipe, 
              "prep_time": recipe.prep_time, "cook_time": recipe.cook_time,
@@ -36,17 +34,14 @@ class TestAPI(unittest.TestCase):
         ]
         response = MockResponse(mock_recipes, 200)
         
-        # Verify response
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 5)
         
-        # Find Lemonade recipe
         lemonade = next((r for r in response.json() if r["nameOfRecipe"] == "Lemonade"), None)
         self.assertIsNotNone(lemonade)
         self.assertEqual(lemonade["tags"], ["Drink", "Summer"])
         
     def test_get_recipe_detail(self):
-        # Mock response for GET /api/recipes/2 (Pizza)
         recipe = recipes_data[2]
         mock_recipe_detail = {
             "id": recipe.id,
@@ -61,14 +56,12 @@ class TestAPI(unittest.TestCase):
         }
         response = MockResponse(mock_recipe_detail, 200)
         
-        # Verify response
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["nameOfRecipe"], "Cheese Pizza")
         self.assertEqual(len(response.json()["ingredients"]), 3)
         self.assertEqual(len(response.json()["instructions"]), 4)
         
     def test_filter_recipes_by_tag(self):
-        # Mock response for GET /api/recipes?tag=Italian
         italian_recipes = [
             {"id": recipe.id, "nameOfRecipe": recipe.nameOfRecipe, 
              "prep_time": recipe.prep_time, "cook_time": recipe.cook_time,
@@ -79,7 +72,6 @@ class TestAPI(unittest.TestCase):
         ]
         response = MockResponse(italian_recipes, 200)
         
-        # Verify response
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)  # Pizza and Pasta are Italian
         recipe_names = [r["nameOfRecipe"] for r in response.json()]
