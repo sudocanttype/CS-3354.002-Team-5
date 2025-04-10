@@ -6,6 +6,58 @@
   <title>{% if is_edit_mode %}Edit{% else %}Create{% endif %} Recipe | NomNom Bites</title>
   <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../static/styles/main.css">
+  <style>
+    /* Override only font family and colors */
+    * {
+      font-family: Arial, sans-serif;
+    }
+    
+    .app-header {
+      background-color: #333;
+    }
+    
+    .logo, .nav-link {
+      color: white;
+    }
+    
+    .page-title, .section-title, .form-label {
+      color: #333;
+    }
+    
+    .btn-primary, .step-number, .tag, .image-upload-btn {
+      background-color: #333;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #555;
+    }
+    
+    .recipe-image, .empty-image, .btn-secondary, .btn-add, .ingredient-item {
+      background-color: #f9f9f9;
+    }
+    
+    .btn-secondary {
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #eee;
+    }
+    
+    .empty-image::before, .time-unit {
+      color: #666;
+    }
+    
+    .btn-icon, .ingredient-name {
+      color: #333;
+    }
+    
+    /* Add About Us link styles to match */
+    .nav-menu ul li:last-child {
+      margin-left: 0;
+    }
+  </style>
 </head>
 <body>
   <main class="app-container">
@@ -16,6 +68,7 @@
           <ul>
             <li><a href="/recipes" class="nav-link">My Recipes</a></li>
             <li><a href="/generate" class="nav-link">Generate Recipe</a></li>
+            <li><a href="{{ url_for('aboutus') }}" class="nav-link">About Us</a></li>
           </ul>
           <a href="/profile" class="profile-link">
             <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
@@ -190,4 +243,4 @@
   </main>
   <script src="../static/scripts/recipe_form.js"></script>
 </body>
-</html> 
+</html>

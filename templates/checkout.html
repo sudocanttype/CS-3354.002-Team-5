@@ -5,72 +5,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - NomNom Bites</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Navbar styling */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #333;
+            color: white;
+        }
+        
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .shop-btn, .checkout-btn {
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Checkout container */
+        .checkout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 50px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Cart items */
+        .cart-items {
+            margin-bottom: 50px;
+        }
+        
+        .cart-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            padding: 15px;
+        }
+        
+        .item-details h3 {
+            color: #333;
+        }
+        
+        .quantity-control button {
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50%;
+        }
+        
+        .price {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .remove-item {
+            color: #333;
+        }
+        
+        .empty-cart {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #f9f9f9;
+            padding: 30px 50px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .section h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .section a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-
-<header>
-    <nav class="navbar">
-        <div class="logo">NomNom Bites</div>
-        <div class="nav-links">
-            <a href="{{ url_for('landingpage') }}">Home</a>
-            <a href="{{url_for('myrecipes')}}">My Recipes</a>
-            <a href="#">Generate Recipe</a>
-            <a href="#">About</a>
-            <a href="{{ url_for('shop') }}" class="shop-btn">Shop</a>
-            <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
-        </div>
-    </nav>
-</header>
-
-<main class="checkout-container">
-    <h1>Grocery Store Check Out</h1>
-
-    <section class="cart-items">
-        <h2>Items</h2>
-
-        {% if cart_items %}
-        <p>Check your items before proceeding to payment</p>
-        <div class="items-list">
-            {% for item in cart_items %}
-            <div class="cart-item">
-                <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.name }}">
-                <div class="item-details">
-                    <h3>{{ item.name }}</h3>
-                    <div class="quantity-control">
-                        <button class="decrease" onclick="updateQuantity('{{ item.id }}', -1)">-</button>
-                        <span id="quantity-{{ item.id }}">{{ item.quantity }}</span>
-                        <button class="increase" onclick="updateQuantity('{{ item.id }}', 1)">+</button>
-                    </div>
-                    <p class="price">${{ item.price }}</p>
-                    <button class="remove-item" onclick="removeItem('{{ item.id }}')">🗑 Remove item</button>
-                </div>
+    <header>
+        <nav class="navbar">
+            <div class="logo">NomNom Bites</div>
+            <div class="nav-links">
+                <a href="{{ url_for('landingpage') }}">Home</a>
+                <a href="{{url_for('myrecipes')}}">My Recipes</a>
+                <a href="#">Generate Recipe</a>
+                <a href="#">About</a>
+                <a href="{{ url_for('shop') }}" class="shop-btn">Shop</a>
+                <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
             </div>
-            {% endfor %}
+        </nav>
+    </header>
+    <main class="checkout-container">
+        <h1>Grocery Store Check Out</h1>
+        <section class="cart-items">
+            <h2>Items</h2>
+            {% if cart_items %}
+            <p>Check your items before proceeding to payment</p>
+            <div class="items-list">
+                {% for item in cart_items %}
+                <div class="cart-item">
+                    <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.name }}">
+                    <div class="item-details">
+                        <h3>{{ item.name }}</h3>
+                        <div class="quantity-control">
+                            <button class="decrease" onclick="updateQuantity('{{ item.id }}', -1)">-</button>
+                            <span id="quantity-{{ item.id }}">{{ item.quantity }}</span>
+                            <button class="increase" onclick="updateQuantity('{{ item.id }}', 1)">+</button>
+                        </div>
+                        <p class="price">${{ item.price }}</p>
+                        <button class="remove-item" onclick="removeItem('{{ item.id }}')">🗑 Remove item</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-cart">You don't have any items in your cart.</p>
+            {% endif %}
+        </section>
+    </main>
+    <footer>
+        <div class="footer-links">
+            <div class="section">
+                <h4>My Recipes</h4>
+                <a href="#">Favorite Recipes</a>
+                <a href="#">Disliked Recipes</a>
+            </div>
+            <div class="section">
+                <h4>Shop</h4>
+                <a href="#">Groceries</a>
+                <a href="#">Checkout</a>
+            </div>
+            <div class="section">
+                <h4>Help</h4>
+                <a href="#">Customer Support</a>
+            </div>
         </div>
-        {% else %}
-        <p class="empty-cart">You don't have any items in your cart.</p>
-        {% endif %}
-    </section>
-</main>
-
-<footer>
-    <div class="footer-links">
-        <div class="section">
-            <h4>My Recipes</h4>
-            <a href="#">Favorite Recipes</a>
-            <a href="#">Disliked Recipes</a>
-        </div>
-        <div class="section">
-            <h4>Shop</h4>
-            <a href="#">Groceries</a>
-            <a href="#">Checkout</a>
-        </div>
-        <div class="section">
-            <h4>Help</h4>
-            <a href="#">Customer Support</a>
-        </div>
-    </div>
-</footer>
-
+    </footer>
 </body>
 </html>

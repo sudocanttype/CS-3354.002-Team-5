@@ -1,57 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grocery Store</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/grocerystorestyle.css') }}" />
-  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grocery Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/grocerystorestyle.css') }}" />
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px 0;
+        }
+        
+        header h1 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+        }
+        
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .checkout-btn {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .items-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 50px;
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .items-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .item h3 {
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        .price {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .quantity-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .quantity-control button {
+            background-color: #333;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .add-to-cart {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .add-to-cart:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
-
 <body>
-  <header>
-    <h1>Welcome to the Grocery Store</h1>
-
-      <nav>
-          <div class="navbar">
-              <!-- Left Logo -->
-              <div class="logo">NomNom Bites</div>
-
-         <div class="nav-links">
-       <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-	            <a href="{{url_for('myrecipes')}}">My Recipes</a>
-	            <a href="#">About</a> <!-- In href "#" makes a button clickable but does not redirect-->
-        <a href="{{ url_for('shop') }}">Shop</a>
-        <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
-         </div>
-          </div>
-    </nav>
-  </header>
-
-  <section class="items-section">
-    <h2>Our Products</h2>
-    <div class="items-container">
-      {% for product in products %}
-      <div class="item">
-        <img src="{{ url_for('static', filename='grocerystoreimages/' + product.image) }}" alt="{{ product.name }}" />
-        <h3>{{ product.name }}</h3>
-        <p>{{ product.description }}</p>
-        <p class="price">${{ product.price }}</p>
-
-        <!-- Quantity Selector -->
-        <div class="quantity-control">
-          <button class="decrease" onclick="updateQuantity({{ product.id }}, -1)">-</button>
-          <span id="quantity-{{ product.id }}" class="quantity">0</span>
-          <button class="increase" onclick="updateQuantity({{ product.id }}, 1)">+</button>
+    <header>
+        <h1>Welcome to the Grocery Store</h1>
+        <nav>
+            <div class="navbar">
+                <!-- Left Logo -->
+                <div class="logo">NomNom Bites</div>
+                <div class="nav-links">
+                    <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+                    <a href="{{url_for('myrecipes')}}">My Recipes</a>
+                    <a href="#">About</a> <!-- In href "#" makes a button clickable but does not redirect-->
+                    <a href="{{ url_for('shop') }}">Shop</a>
+                    <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <section class="items-section">
+        <h2>Our Products</h2>
+        <div class="items-container">
+            {% for product in products %}
+            <div class="item">
+                <img src="{{ url_for('static', filename='grocerystoreimages/' + product.image) }}" alt="{{ product.name }}" />
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <p class="price">${{ product.price }}</p>
+                <!-- Quantity Selector -->
+                <div class="quantity-control">
+                    <button class="decrease" onclick="updateQuantity({{ product.id }}, -1)">-</button>
+                    <span id="quantity-{{ product.id }}" class="quantity">0</span>
+                    <button class="increase" onclick="updateQuantity({{ product.id }}, 1)">+</button>
+                </div>
+                <!-- Add to Cart Button -->
+                <button class="add-to-cart" id="add-to-cart-{{ product.id }}" disabled onclick="addToCart({{ product.id }})">
+                    Add to Cart
+                </button>
+            </div>
+            {% endfor %}
         </div>
-
-        <!-- Add to Cart Button -->
-        <button class="add-to-cart" id="add-to-cart-{{ product.id }}" disabled onclick="addToCart({{ product.id }})">
-          Add to Cart
-        </button>
-      </div>
-      {% endfor %}
-    </div>
-  </section>
+    </section>
 </body>
 </html>

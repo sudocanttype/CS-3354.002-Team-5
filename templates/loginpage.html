@@ -1,108 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NomNom Bites Login Page</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-image: url('static/loginimages/login_background.png'); /* your image path */
-      background-size: contain;     /* shows full image without cropping */
-      background-position: center; /* center it */
-      background-repeat: no-repeat; /* don’t repeat it */
-      height: 100vh;               /* full viewport height */
-      background-color: black;  /* 🖤 this fills the space behind/around the image */
-    }
-    .navbar {
-      display: flex;
-      justify-content: space-between; /* pushes left + right apart */
-      align-items: center;
-      padding: 20px;
-      top: 0;
-    }
-    .logo {
-      color: white;
-      font-size: 24px;
-    }
-    
-    .nav-items {
-      display: flex;
-      gap: 20px;
-    }
-    
-    .nav-items a {
-      color: white;
-      text-decoration: none;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NomNom Bites Login Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-    .page-content {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('static/loginimages/login_background.png'); /* your image path */
+            background-size: contain; /* shows full image without cropping */
+            background-position: center; /* center it */
+            background-repeat: no-repeat; /* don't repeat it */
+            height: 100vh; /* full viewport height */
+            background-color: black; /* this fills the space behind/around the image */
+            color: #333;
+        }
 
-    /* The login box */
-    .login-box {
-      background-color: rgba(0, 0, 0, 0.7); /* semi-transparent black */
-      padding: 50px;
-      border-radius: 10px;
-      width: 400px;
-      text-align: center;
-      color: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6);
-    }
-    
-    /* Input fields */
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 5px;
-    }
-    
-    /* Button */
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    
-    .login-box button:hover {
-      background-color: #45a049;
-    }
-  </style>
+        /* Navigation Bar - Matching About Us page */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #333;
+            color: white;
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .page-content {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The login box */
+        .login-box {
+            background-color: rgba(0, 0, 0, 0.7); /* semi-transparent black */
+            padding: 50px;
+            border-radius: 10px;
+            width: 400px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.6);
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Input fields */
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Button */
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .login-box button:hover {
+            background-color: #555;
+        }
+    </style>
 </head>
-<body>  
-  <section>
-    <nav>
-      <div class="navbar">
-      <div class="logo">NomNom Bites</div>
-      <div class="nav-items">
-        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-        <a href="{{url_for('myrecipes')}}">My Recipes</a>
-        <a href="{{url_for('aboutus')}}">About</a>
-        <a href="{{ url_for('shop') }}">Shop</a>
-      </div>
-      </div>
-    </nav>
-
-    <div class="page-content">
-  	<div class="login-box">
-      <h2>Login</h2>
-      <form>
-        <input type="text" placeholder="Username" required>
-        <input type="password" placeholder="Password" required>
-        <button type="submit">Log In</button>
-      </form>
-    </div>
-    </div>
-  </section>
+<body>
+    <section>
+        <nav>
+            <div class="nav-brand">NomNom Bites</div>
+            <div class="nav-links">
+                <a href="{{ url_for('landingpage') }}">Home</a>
+                <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+                <a href="{{ url_for('aboutus') }}">About Us</a>
+                <a href="{{ url_for('shop') }}">Shop</a>
+            </div>
+        </nav>
+        <div class="page-content">
+            <div class="login-box">
+                <h2>Login</h2>
+                <form>
+                    <input type="text" placeholder="Username" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit">Log In</button>
+                </form>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

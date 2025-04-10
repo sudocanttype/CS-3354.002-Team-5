@@ -1,171 +1,209 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NomNom Bites Homepage</title>
-
     <style>
-        body 
-        {
-          background-color: #ab3737; /* red */
+        /* Reset and Base Styles - Matching About Us page */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
-	.navbar {
-	      display: flex;
-	      justify-content: space-between; /* pushes left + right apart */
-	      align-items: center;
-	      padding: 20px;
-    	}
-    	.logo {
-	      color: white;
-	      font-size: 24px;
-	}
-    
-	.nav-items {
-	      display: flex;
-	      gap: 20px;
-    	}
-    
-    	.nav-items a {
-	      color: white;
-	      text-decoration: none;
-    	}
 
-        .fancy-button 
-        {
-          background-color: #000000; /* black */
-          color: white;
-          font-family: 'Verdana', sans-serif;
-          font-size: 18px;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
+        body {
+            color: #333;
+            line-height: 1.6;
         }
-    
-        .fancy-button:hover {
-          background-color: #82BCBC; /* light blue-green */
+
+        /* Navigation Bar - Matching About Us page */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #333;
+            color: white;
         }
-	.hero {
-      		padding: 80px 20px;
-      		text-align: center;
-      		background-color: #82BCBC;
-    	}
 
-    	.hero h1 {
-	      font-size: 3rem;
-	      margin-bottom: 0.5rem;
-    	}
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
 
-    	.hero h2 {
-	      font-size: 1.5rem;
-	      font-weight: normal;
-	      margin-bottom: 1rem;
-    	}
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
 
-	.hero p {
-	      font-size: 1rem;
-	      margin-bottom: 2rem;
-	      color: #666;
-	}
-	.how-it-works {
-	      padding: 60px 20px;
-	      text-align: center;
-	    }
-	
-	    .how-it-works h2 {
-	      font-size: 2rem;
-	      margin-bottom: 40px;
-	    }
-	
-	    .card-container {
-	      display: flex;
-	      flex-wrap: wrap;
-	      justify-content: center;
-	      gap: 20px;
-	    }
-	
-	    .card {
-	      background-color: #f3f3f3;
-	      border-radius: 12px;
-	      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-	      width: 250px;
-	      padding: 30px 20px;
-	      text-align: center;
-	      transition: transform 0.3s ease;
-	    }
-	
-	    .card:hover {
-	      transform: translateY(-5px);
-	    }
-	
-	    .card-icon {
-	      font-size: 40px;
-	      margin-bottom: 20px;
-	      color: #2979ff;
-	    }
-	
-	    .card-title {
-	      font-size: 1.2rem;
-	      margin-bottom: 10px;
-	      font-weight: bold;
-	    }
-	
-	    .card-description {
-	      font-size: 0.95rem;
-	      color: #555;
-	    }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Hero Section - Preserving original layout with updated colors */
+        .hero {
+            padding: 80px 20px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .hero h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
+
+        /* How It Works Section - Preserving layout with updated styling */
+        .how-it-works {
+            padding: 60px 20px;
+            text-align: center;
+            background-color: white;
+        }
+
+        .how-it-works h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 250px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        /* Get Started Section */
+        .get-started {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #fff;
+        }
+
+        .get-started p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .shop-btn {
+            background-color: #333;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .shop-btn:hover {
+            background-color: #555;
+        }
     </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-	<nav>
-		<div class="navbar">
-	        <div class="logo">NomNom Bites</div>
-	        <div class="nav-items">
-	            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-	            <a href="{{url_for('myrecipes')}}">My Recipes</a> 
-	            <a href="{{url_for('aboutus')}}">About</a>
-	            <a href="{{ url_for('shop') }}">Shop</a>
-	        </div>
-		</div>
-		</div>
-	</nav>
-	<section class="hero">
-    		<h1>Welcome to NomNom Bites</h1>
-		<h2>Turn your pantry into a meal masterpiece</h2>
-		<p>Enter the ingredients you have, and we’ll whip up delicious recipes in seconds.</p>
-	</section>
+    <!-- Navigation Bar - Matched to About Us page -->
+    <nav>
+        <div class="nav-brand">NomNom Bites</div>
+        <div class="nav-links">
+            <a href="{{ url_for('landingpage') }}">Home</a>
+            <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+            <a href="{{ url_for('aboutus') }}">About Us</a>
+            <button class="shop-btn">Shop</button>
+        </div>
+    </nav>
 
-	<section class="how-it-works">
-	    <h2>How It Works</h2>
-	    <div class="card-container">
-	      
-	      <div class="card">
-	        <div class="card-icon"><i class="fas fa-list"></i></div>
-	        <div class="card-title">Enter Ingredients</div>
-	        <div class="card-description">List what you’ve got in your kitchen.</div>
-	      </div>
-	
-	      <div class="card">
-	        <div class="card-icon"><i class="fas fa-magic"></i></div>
-	        <div class="card-title">Click Generate</div>
-	        <div class="card-description">We’ll cook up recipes just for you.</div>
-	      </div>
-	
-	      <div class="card">
-	        <div class="card-icon"><i class="fas fa-utensils"></i></div>
-	        <div class="card-title">Cook & Enjoy</div>
-	        <div class="card-description">Follow the steps and enjoy your meal!</div>
-	      </div>
-	
-	    </div>
-	</section>
+    <!-- Hero Section - Preserved original content -->
+    <section class="hero">
+        <h1>Welcome to NomNom Bites</h1>
+        <h2>Turn your pantry into a meal masterpiece</h2>
+        <p>Enter the ingredients you have, and we'll whip up delicious recipes in seconds.</p>
+    </section>
 
-    	<section>
-        	<p>Generate, Share, and Store the recipes that you love!!!!</p>
-		<a href="{{ url_for('loginpage') }}">
-        		<button class="fancy-button">Get Started</button>
-		</a>
-    	</section>
+    <!-- How It Works Section - Preserved original content -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="card-container">
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-list"></i></div>
+                <div class="card-title">Enter Ingredients</div>
+                <div class="card-description">List what you've got in your kitchen.</div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-magic"></i></div>
+                <div class="card-title">Click Generate</div>
+                <div class="card-description">We'll cook up recipes just for you.</div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fas fa-utensils"></i></div>
+                <div class="card-title">Cook & Enjoy</div>
+                <div class="card-description">Follow the steps and enjoy your meal!</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get Started Section - Preserved original content but with updated styling -->
+    <section class="get-started">
+        <p>Generate, Share, and Store the recipes that you love!!!!</p>
+        <a href="{{ url_for('loginpage') }}">
+            <button class="shop-btn">Get Started</button>
+        </a>
+    </section>
 </body>
 </html>
