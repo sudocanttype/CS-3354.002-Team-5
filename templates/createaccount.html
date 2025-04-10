@@ -1,0 +1,141 @@
+<!-- Veronika & Uma-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>NomNom Bites Create an Account Page</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('static/loginimages/login_background.png'); /* your image path */
+      background-size: contain;     /* shows full image without cropping */
+      background-position: center; /* center it */
+      background-repeat: no-repeat; /* don’t repeat it */
+      height: 100vh;               /* full viewport height */
+      background-color: black;  /* 🖤 this fills the space behind/around the image */
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between; /* pushes left + right apart */
+      align-items: center;
+      padding: 20px;
+      top: 0;
+    }
+    .logo {
+      color: white;
+      font-size: 24px;
+    }
+    
+    .nav-items {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .nav-items a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .page-content {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* The login box */
+    .login-box {
+      background-color: rgba(0, 0, 0, 0.7); /* semi-transparent black */
+      padding: 50px;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+    }
+    
+    /* Input fields */
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      justify-content: center;
+    }
+    
+    /* Button */
+    .login-box button {
+      width: 60%;
+      padding: 12px;
+      margin: 10px 0;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      justify-content: center;
+    }
+    
+    .login-box button:hover {
+      background-color: #45a049;
+    }
+
+    .login {
+      color:white; 
+      padding:20px;
+      text-align:"center";
+    }
+  </style>
+</head>
+<body>  
+  <section>
+    <nav>
+      <div class="navbar">
+      <div class="logo">NomNom Bites</div>
+      <div class="nav-items">
+        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+        <a href="{{url_for('myrecipes')}}">My Recipes</a>
+        <a href="{{url_for('aboutus')}}">About</a>
+        <a href="{{ url_for('shop') }}">Shop</a>
+        <a href="{{ url_for('generate') }}">Generate</a>
+      </div>
+      </div>
+    </nav>
+
+    <div class="page-content">
+  	<div class="login-box">
+      <h2 style="text-align: center;">Create an Account</h2>
+      <form>
+        <input type="text" placeholder="Name" required>
+        <input type="text" placeholder="Email" required>
+        <input type="text" placeholder="Username" required>
+        <input type="password" placeholder="Password" required>  <!-- need to add check if password and confirm password are the same-->
+        <input type="password" placeholder="Confirm Password" required>
+        <button style="justify-content: center;" type="submit">Create account</button>
+        <div class="login">
+            <a style="color:white;" href="{{ url_for('loginpage') }}">Already have an account? Login here!</a>
+        </div>
+      </form>
+    </div>
+    </div>
+  </section>
+</body>
+</html>
+
+<!-- if email is not valid, then display an error msg and prompt user to reenter email-->
+<!-- password checking? do we want to place restrictions on it?-->
+
+<!-- backend psuedocode:
+  - user types in name, username, password and confirm password
+  - system checks if username and/or email already exists in the database of current users
+    - if it does, then system asks user to login instead
+    - else, add username, password, and name to database of current users and open up user's account
+
+  - system checks if password is the same as confirm password
+    - if it is and user DNE yet, then create account by adding info to database
+    - if not, error msg is displayed and prompts user to reenter password info
+-->
+
