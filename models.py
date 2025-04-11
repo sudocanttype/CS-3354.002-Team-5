@@ -54,10 +54,11 @@ class MyRecipes:  #collection of the user's recipes including the favorites and 
 
 
 class User:  #user object to store user info and manage user details for login/log out and their recipes/cart
-    def __init__(self, name, lastName, userName, password):
+    def __init__(self, name, lastName, email, userName, password):
         self.name = name
         self.lastName = lastName
         self.userName = userName
+        self.email = email
         self.password = password 
         self.favorites = Favorites()
         self.myRecipes = MyRecipes()

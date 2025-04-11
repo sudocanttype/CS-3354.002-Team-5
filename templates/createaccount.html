@@ -145,14 +145,16 @@
     <div class="page-content">
   	<div class="login-box">
       <h2 style="text-align: center;">Create an Account</h2>
-      <form>
-        <input type="text" placeholder="Name" required>
-        <input type="text" placeholder="Email" required>
-        <input type="text" placeholder="Username" required>
-        <input type="password" placeholder="Password" required>  <!-- need to add check if password and confirm password are the same-->
-        <input type="password" placeholder="Confirm Password" required>
-        <button style="justify-content: center;" type="submit">Create account</button>
-        <div class="login">
+        <form method="POST" action="{{ url_for('createaccount') }}">
+            <input name="name" type="text" placeholder="Name" required>
+            <input name="last_name" type="text" placeholder="Last Name" required>
+            <input name="email" type="text" placeholder="Email" required>
+            <input name="username" type="text" placeholder="Username" required>
+            <input name="password" type="password" placeholder="Password" required>
+            <input name="confirm" type="password" placeholder="Confirm Password" required>
+            <button type="submit">Create Account</button>
+
+            <div class="login">
             <a style="color:white;" href="{{ url_for('loginpage') }}">Already have an account? Login here!</a>
         </div>
       </form>

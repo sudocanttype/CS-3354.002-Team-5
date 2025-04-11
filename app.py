@@ -1,16 +1,102 @@
 from flask import Flask, session, render_template, request, redirect, url_for
 from mock_data import products, recipes_data, my_recipes
+import boto3
+import hashlib
+from datetime import timedelta
 
 app = Flask(__name__)
+app.secret_key = 'PKkqBBiNrVDTQtUc5oxd0zMUD3/qpvINvefbmlTt'
+app.permanent_session_lifetime = timedelta(days=1)
+
+# AWS DynamoDB Setup
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # or your region
+user_table = dynamodb.Table('Users')
+
+# Helper function to hash passwords
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
 
 @app.route('/')
 def landingpage():
     user_logged_in = 'user' in session
-    return render_template('landingwebpage.html', logged_in=user_logged_in)
+    first_name = session.get('name')
+    last_name = session.get('last_name')
+    return render_template('landingwebpage.html', logged_in=user_logged_in, first_name=first_name, last_name=last_name)
 
-@app.route('/loginpage')
+# ----------------------
+# LOGIN
+# ----------------------
+@app.route('/loginpage', methods=['GET', 'POST'])
 def loginpage():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = hash_password(request.form['password'])
+
+        try:
+            response = user_table.get_item(Key={'username': username})
+            user = response.get('Item')
+
+            if user and user['password_hash'] == password:
+                session['user'] = username
+                session['name'] = user['name']
+                session['last_name'] = user['last_name']
+                return redirect(url_for('landingpage'))
+
+            else:
+                error = "Invalid username and password. Please check your credentials."
+                return render_template('loginpage.html', error=error)
+
+        except Exception as e:
+            return render_template('loginpage.html', error="Error logging in")
+
     return render_template('loginpage.html')
+
+# ----------------------
+# CREATE ACCOUNT
+# ----------------------
+@app.route('/createaccount', methods=['GET', 'POST']) #when you click "don't have an account? create one!" in login page
+def createaccount():
+
+    if request.method == 'POST':
+        name = request.form['name']
+        last_name = request.form['last_name']
+        email = request.form['email']
+        username = request.form['username']
+        password = request.form['password']
+        confirm = request.form['confirm']
+
+        if password != confirm:
+            return render_template('createaccount.html', error="Passwords do not match")
+
+        hashed = hash_password(password)
+
+        try:
+            user_table.put_item(Item={
+                'username': username,
+                'name': name,
+                'last_name': last_name,
+                'email': email,
+                'password_hash': hashed
+            })
+            session['user'] = username
+            session['name'] = name
+            session['last_name'] = last_name
+            return redirect(url_for('landingpage'))
+
+        except Exception as e:
+            return render_template('createaccount.html', error=f"Error creating account: {e}")
+
+    return render_template('createaccount.html')
+
+# ----------------------
+# LOGOUT
+# ----------------------
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('landingpage'))
+
 
 @app.route('/shop')
 def shop():
@@ -104,9 +190,7 @@ def generate():
 
     return render_template('generaterecipe.html')
 
-@app.route('/createaccount') #when you click "dont have an account? create one!" in login page
-def createaccount():
-    return render_template('createaccount.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -144,10 +144,18 @@
     <div class="page-content"> <!--login box with input fields that requires input to proceed-->
       <div class="login-box">
         <h2>Login</h2>
-        <form>
-          <input type="text" placeholder="Username" required>
-          <input type="password" placeholder="Password" required>
-          <button style="justify-content: center;" type="submit">Log In</button>
+
+          {% if error %}
+              <div class="login-banner">
+                  {{ error }}
+              </div>
+          {% endif %}
+
+          <form method="POST" action="{{ url_for('loginpage') }}">
+          <input name="username" type="text" placeholder="Username" required>
+          <input name="password" type="password" placeholder="Password" required>
+          <button type="submit">Log In</button>
+
           <div class="createaccount">
             <a style="color:white;" href="{{ url_for('createaccount') }}">Don't have an account? Create one here!</a>
           </div>

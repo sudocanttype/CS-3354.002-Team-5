@@ -179,6 +179,7 @@
 				<a href="{{ url_for('myrecipes') }}">My Recipes</a>
 				<a href="{{ url_for('shop') }}">Shop</a>
 				<a href="{{ url_for('generate') }}">Generate</a>
+                <a href="{{ url_for('logout') }}">Sign Out</a> <!-- added logout link here -->
 			{% else %}
 				<a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
                 <a href="{{ url_for('aboutus') }}">About</a>
@@ -204,10 +205,14 @@
 		<h2>Turn your pantry into a meal masterpiece</h2>
 		<p>Enter the ingredients you have, and we’ll whip up delicious recipes in seconds.</p>
 		<p style="color: black;">Generate, share, and store the recipes that you love!</p>
-		<a href="{{ url_for('loginpage') }}">
-        	<button class="fancy-button">Get Started</button>
-		</a>
-		
+        {% if logged_in %}
+        <p>Welcome, {{ first_name }} {{ last_name }}!</p>
+        <button class="fancy-button disabled-button">Get Started</button>
+        {% else %}
+            <a href="{{ url_for('loginpage') }}">
+                <button class="fancy-button">Get Started</button>
+            </a>
+        {% endif %}
 	</section>
 
 	<section class="how-it-works">  <!--how it works section with the 3 cards-->
