@@ -4,38 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if is_edit_mode %}Edit{% else %}Create{% endif %} Recipe | NomNom Bites</title>
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+
+  <!-- ───── Site‑wide font, colours, and reset (matches About Us) ───── -->
+  <style>
+    /* Reset & base font */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;      /* site‑wide font */
+    }
+
+    body {
+      background-color: #fff;              /* light base */
+      color: #333;                         /* primary text colour */
+    }
+
+    /* ─────────── Navbar (identical across the site) ─────────── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* ─────────── Button overrides ─────────── */
+    .btn,
+    .btn-primary,
+    .btn-secondary {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #555;
+    }
+  </style>
+
+  <!-- keep your existing project‑specific stylesheet(s) -->
   <link rel="stylesheet" href="../static/styles/main.css">
 </head>
-<body>
-  <main class="app-container">
-    <header class="app-header">
-      <div class="container">
-        <a href="/" class="logo">NomNom Bites</a>
-        <nav class="nav-menu">
-          <ul>
-            <li><a href="/recipes" class="nav-link">My Recipes</a></li>
-            <li><a href="/generate" class="nav-link">Generate Recipe</a></li>
-          </ul>
-          <a href="/profile" class="profile-link">
-            <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
-          </a>
-        </nav>
-      </div>
-    </header>
 
+<body>
+  <!-- ─────────── Site‑wide Navbar ─────────── -->
+  <nav>
+    <div class="nav-brand">NomNom Bites</div>
+    <div class="nav-links">
+      <a href="{{ url_for('landingpage') }}">Home</a>
+      <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+      <a href="{{ url_for('aboutus') }}">About Us</a>
+      <a href="{{ url_for('shop') }}">Shop</a>
+      <a href="{{ url_for('generate') }}">Generate</a>
+    </div>
+  </nav>
+
+  <main class="app-container">
     <div class="container">
       <section class="page-header">
-        <h1 class="page-title">{% if is_edit_mode %}Edit{% else %}Create{% endif %} Recipe</h1>
+        <h1 class="page-title">
+          {% if is_edit_mode %}Edit{% else %}Create{% endif %} Recipe
+        </h1>
       </section>
       
       <form class="recipe-form" method="POST" action="{{ form_action }}">
+        <!-- ─────────── Title ─────────── -->
         <div class="form-group">
           <label for="recipe-title" class="form-label">Recipe Title</label>
           <input type="text" id="recipe-title" name="title" class="form-control" 
                  value="{{ recipe.title or '' }}" placeholder="Enter recipe title">
         </div>
 
+        <!-- ─────────── Image + ingredients / instructions / details ─────────── -->
         <div class="recipe-editor">
           <div class="recipe-image-container">
             {% if recipe.image %}
@@ -44,8 +104,13 @@
             <div class="recipe-image empty-image"></div>
             {% endif %}
             <button type="button" class="image-upload-btn">
-              <span class="visually-hidden">{% if is_edit_mode %}Change{% else %}Upload{% endif %} image</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <span class="visually-hidden">
+                {% if is_edit_mode %}Change{% else %}Upload{% endif %} image
+              </span>
+              <!-- upload icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
                 <path d="m15 7 4-4"></path>
                 <path d="M9 15h3"></path>
@@ -57,6 +122,7 @@
           </div>
 
           <div class="recipe-details-container">
+            <!-- ───── Ingredients ───── -->
             <section class="recipe-section">
               <h2 class="section-title">Ingredients</h2>
               <div class="ingredient-list">
@@ -70,7 +136,9 @@
                     {% endif %}
                     <span class="ingredient-name">{{ ingredient.name }}</span>
                     <button type="button" class="btn-icon remove-ingredient" aria-label="Remove {{ ingredient.name }}">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                       </svg>
@@ -79,7 +147,9 @@
                   {% endfor %}
                 {% endif %}
                 <button type="button" class="btn-add add-ingredient">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
@@ -88,6 +158,7 @@
               </div>
             </section>
 
+            <!-- ───── Instructions ───── -->
             <section class="recipe-section">
               <h2 class="section-title">Instructions</h2>
               <div class="instruction-list">
@@ -97,7 +168,9 @@
                     <span class="step-number">{{ loop.index }}</span>
                     <input type="text" class="form-control" name="instructions[]" value="{{ instruction }}">
                     <button type="button" class="btn-icon remove-step" aria-label="Remove step">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                       </svg>
@@ -106,7 +179,9 @@
                   {% endfor %}
                 {% endif %}
                 <button type="button" class="btn-add add-step">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                       viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
@@ -115,6 +190,7 @@
               </div>
             </section>
 
+            <!-- ───── Details (prep / cook / serving) ───── -->
             <section class="recipe-section">
               <h2 class="section-title">Details</h2>
               <div class="details-grid">
@@ -144,6 +220,7 @@
               </div>
             </section>
 
+            <!-- ───── Tags ───── -->
             <section class="recipe-section">
               <h2 class="section-title">Tags</h2>
               <div class="tags-container">
@@ -153,7 +230,9 @@
                     <span class="tag-text">{{ tag }}</span>
                     <input type="hidden" name="tags[]" value="{{ tag }}">
                     <button type="button" class="btn-icon tag-remove" aria-label="Remove {{ tag }} tag">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                       </svg>
@@ -164,7 +243,9 @@
                 <div class="tag-input-container">
                   <input type="text" class="tag-input" placeholder="Add a tag...">
                   <button type="button" class="btn-icon tag-add" aria-label="Add tag">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
@@ -172,9 +253,10 @@
                 </div>
               </div>
             </section>
-          </div>
-        </div>
+          </div> <!-- /recipe-details-container -->
+        </div>   <!-- /recipe-editor -->
 
+        <!-- ───── Form actions ───── -->
         <div class="form-actions">
           <button type="button" class="btn btn-secondary">Cancel</button>
           <button type="submit" class="btn btn-primary">
@@ -188,6 +270,8 @@
       </form>
     </div>
   </main>
+
+  <!-- project‑specific JS -->
   <script src="../static/scripts/recipe_form.js"></script>
 </body>
-</html> 
+</html>

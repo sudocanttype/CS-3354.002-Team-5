@@ -1,231 +1,237 @@
 <!-- Veronika & Uma-->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>NomNom Bites Homepage</title>
 
     <style>
-        body 
-        {
-          background-color: black;
+        /* ---------- Reset & base styles ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;          /* same font as About Us */
         }
 
-		.navbar {
-	      display: flex;
-	      justify-content: space-between; /* pushes left + right apart */
-	      align-items: center;
-	      padding: 20px;
-    	}
-
-    	.logo {
-	      color: white;
-	      font-size: 24px;
-		}
-    
-		.nav-items {
-	      display: flex;
-	      gap: 20px;
-    	}
-    
-    	.nav-items a {
-	      color: white;
-	      text-decoration: none;
-    	}
-
-        .fancy-button 
-        {
-          background-color: #000000; /* black */
-          color: white;
-          font-family: 'Verdana', sans-serif;
-          font-size: 18px;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
+        body {
+            background-color: #fff;                  /* light base like About Us */
+            color: #333;                             /* primary text colour */
         }
-    
+
+        /* ---------- IDENTICAL NAVBAR ---------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* ---------- Buttons ---------- */
+        .fancy-button {
+            background-color: #fff;                  /* matches .shop-btn */
+            color: #000;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
         .fancy-button:hover {
-          background-color: #82BCBC;  /* light blue-green */
-		  color: black;
+            background-color: #333;                 /* dark hover */
+            color: #fff;
         }
 
-		.hero {
-      		padding: 120px 20px;
-      		text-align: left;
-      		background-color: white;
-    	}
+        /* ---------- Sections ---------- */
+        .hero {
+            padding: 120px 20px;
+            text-align: left;
+            background-color: #fff;
+        }
 
-    	.hero h1 {
-	      font-size: 3rem;
-	      margin-bottom: 0.5rem;
-		  margin-top: auto;
-    	}
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            margin-top: auto;
+        }
 
-    	.hero h2 {
-	      font-size: 1.5rem;
-	      font-weight: normal;
-	      margin-bottom: 1rem;
-    	}
+        .hero h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
+            margin-bottom: 1rem;
+        }
 
-		.hero p {
-	      font-size: 1rem;
-	      margin-bottom: 2rem;
-	      color: #666;
-		}
-		
-		.how-it-works {
-	      padding: 60px 20px;
-	      text-align: center;
-		  background-color: #ab3737;
-	    }
-	
-	    .how-it-works h2 {
-	      font-size: 2rem;
-	      margin-bottom: 40px;
-	    }
-	
-	    .card-container {
-	      display: flex;
-	      flex-wrap: wrap;
-	      justify-content: center;
-	      gap: 20px;
-	    }
-	
-	    .card {
-	      background-color: #f3f3f3;
-	      border-radius: 12px;
-	      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-	      width: 250px;
-	      padding: 30px 20px;
-	      text-align: center;
-	      transition: transform 0.3s ease;
-	    }
-	
-	    .card:hover {
-	      transform: translateY(-5px);
-	    }
-	
-	    .card-icon {
-	      font-size: 40px;
-	      margin-bottom: 20px;
-	      color: #2979ff;
-	    }
-	
-	    .card-title {
-	      font-size: 1.2rem;
-	      margin-bottom: 10px;
-	      font-weight: bold;
-	    }
-	
-	    .card-description {
-	      font-size: 0.95rem;
-	      color: #555;
-	    }
+        .hero p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
 
-		.main-img {
-			float: right;
-			padding-right: 60px;
-			margin-top: auto;
-		}
+        .how-it-works {
+            padding: 60px 20px;
+            text-align: center;
+            background-color: #f9f9f9;              /* light neutral */
+        }
 
-		.card-img {
-			float: center;
-			margin-top: auto;
-		}
+        .how-it-works h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #f3f3f3;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 250px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #2979ff;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .main-img {
+            float: right;
+            padding-right: 60px;
+            margin-top: auto;
+        }
+
+        .card-img {
+            float: center;
+            margin-top: auto;
+        }
     </style>
 </head>
 
 <body>
-	<nav>
-		<div class="navbar"> <!--nav bar-->
-	        <div class="logo">NomNom Bites</div>
-	        <div class="nav-items">
-	            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-	            <a href="{{url_for('myrecipes')}}">My Recipes</a> 
-	            <a href="{{url_for('aboutus')}}">About</a>
-	            <a href="{{ url_for('shop') }}">Shop</a>
-				<a href="{{ url_for('generate') }}">Generate</a>
-	        </div>
-		</div>
-		</div>
-	</nav>
-	<section class="hero">  <!--welcome to nom nom bites section-->
-    	<p class="main-img">
-			<img src="{{ url_for('static', filename='landingpage/landingpagepic.png') }}" alt="Main Pic" width="500" height="300">
-		</p>
-		<h1>Welcome to NomNom Bites</h1>
-		<h2>Turn your pantry into a meal masterpiece</h2>
-		<p>Enter the ingredients you have, and we’ll whip up delicious recipes in seconds.</p>
-		<p style="color: black;">Generate, share, and store the recipes that you love!</p>
-		<a href="{{ url_for('loginpage') }}">
-        	<button class="fancy-button">Get Started</button>
-		</a>
-		
-	</section>
+    <!--nav bar-->
+    <nav>
+        <div class="nav-brand">NomNom Bites</div>
+        <div class="nav-links">
+            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+            <a href="{{ url_for('myrecipes') }}">My Recipes</a> 
+            <a href="{{ url_for('aboutus') }}">About Us</a>
+            <a href="{{ url_for('shop') }}">Shop</a>
+            <a href="{{ url_for('generate') }}">Generate</a>
+        </div>
+    </nav>
 
-	<section class="how-it-works">  <!--how it works section with the 3 cards-->
-		<h2 style="color: black;">How It Works</h2>
-	    <div class="card-container">
-	      
-	      <div class="card">
-			<p class="card-img">
-				<img src="{{ url_for('static', filename='landingpage/enterpic.jpg') }}" alt="Enter Pic" width="250" height="150">
-			</p>
-	        <div class="card-icon"><i class="fas fa-list"></i></div>
-	        <div class="card-title">Enter Ingredients</div>
-	        <div class="card-description">List what you’ve got in your kitchen.</div>
-	      </div>
-	
-	      <div class="card">
-			<p class="card-img">
-				<img src="{{ url_for('static', filename='landingpage/generatepic.avif') }}" alt="Generate Pic" width="250" height="150">
-			</p>
-			<div class="card-icon"><i class="fas fa-magic"></i></div>
-	        <div class="card-title">Click Generate</div>
-	        <div class="card-description">We’ll cook up recipes just for you.</div>
-	      </div>
-	
-	      <div class="card">
-	        <p class="card-img">
-				<img src="{{ url_for('static', filename='landingpage/cookpic.jpg') }}" alt="Cook Pic" width="250" height="150">
-			</p>
-			<div class="card-icon"><i class="fas fa-utensils"></i></div>
-	        <div class="card-title">Cook & Enjoy</div>
-	        <div class="card-description">Follow the steps and enjoy your meal!</div>
-	      </div>
-	    </div>
-	</section>
-
-	<section class="hero"> <!--explore other features section w/ shop button-->
-		<h1>Explore our other features!</h1>
-		<p class="main-img">
-			<img src="{{ url_for('static', filename='landingpage/socialpic.png') }}" alt="Social Pic" width="400" height="300">
-		</p>
-		<h2>Defined Steps</h2>
-		<p>Recipes are generated, providing detailed steps!</p>
-		<h2>Community Sharing</h2>
-		<p>Attain recipes available publicly in the NomNom Bites community.</p>
-		<h2>Shop</h2>
-		<p>Add the ingredients you need to you cart to make your recipe a reality.</p>
-
-		<a href="{{ url_for('shop') }}">
-        	<button class="fancy-button">Shop</button>
-		</a>
+    <section class="hero">  <!--welcome to nom nom bites section-->
+        <p class="main-img">
+            <img src="{{ url_for('static', filename='landingpage/landingpagepic.png') }}" alt="Main Pic" width="500" height="300">
+        </p>
+        <h1>Welcome to NomNom Bites</h1>
+        <h2>Turn your pantry into a meal masterpiece</h2>
+        <p>Enter the ingredients you have, and we’ll whip up delicious recipes in seconds.</p>
+        <p style="color: black;">Generate, share, and store the recipes that you love!</p>
+        <a href="{{ url_for('loginpage') }}">
+            <button class="fancy-button">Get Started</button>
+        </a>
     </section>
 
-	<nav>
-		<div class="navbar">  <!--bottom nav bar for consistency-->
-			<div class="logo">NomNom Bites</div>
-			<div class="nav-items">
-				<a href="{{ url_for('landingpage') }}">Back to Top</a> 
-				<a href="{{url_for('myrecipes')}}">My Recipes</a> 
-				<a href="{{url_for('aboutus')}}">About</a>
-				<a href="{{ url_for('shop') }}">Shop</a>
-			</div>
-		</div>
-		</div>
-	</nav>
+    <section class="how-it-works">  <!--how it works section with the 3 cards-->
+        <h2>How It Works</h2>
+        <div class="card-container">
+            <div class="card">
+                <p class="card-img">
+                    <img src="{{ url_for('static', filename='landingpage/enterpic.jpg') }}" alt="Enter Pic" width="250" height="150">
+                </p>
+                <div class="card-icon"><i class="fas fa-list"></i></div>
+                <div class="card-title">Enter Ingredients</div>
+                <div class="card-description">List what you’ve got in your kitchen.</div>
+            </div>
+
+            <div class="card">
+                <p class="card-img">
+                    <img src="{{ url_for('static', filename='landingpage/generatepic.avif') }}" alt="Generate Pic" width="250" height="150">
+                </p>
+                <div class="card-icon"><i class="fas fa-magic"></i></div>
+                <div class="card-title">Click Generate</div>
+                <div class="card-description">We’ll cook up recipes just for you.</div>
+            </div>
+
+            <div class="card">
+                <p class="card-img">
+                    <img src="{{ url_for('static', filename='landingpage/cookpic.jpg') }}" alt="Cook Pic" width="250" height="150">
+                </p>
+                <div class="card-icon"><i class="fas fa-utensils"></i></div>
+                <div class="card-title">Cook & Enjoy</div>
+                <div class="card-description">Follow the steps and enjoy your meal!</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="hero"> <!--explore other features section w/ shop button-->
+        <h1>Explore our other features!</h1>
+        <p class="main-img">
+            <img src="{{ url_for('static', filename='landingpage/socialpic.png') }}" alt="Social Pic" width="400" height="300">
+        </p>
+        <h2>Defined Steps</h2>
+        <p>Recipes are generated, providing detailed steps!</p>
+        <h2>Community Sharing</h2>
+        <p>Attain recipes available publicly in the NomNom Bites community.</p>
+        <h2>Shop</h2>
+        <p>Add the ingredients you need to your cart to make your recipe a reality.</p>
+
+        <a href="{{ url_for('shop') }}">
+            <button class="fancy-button">Shop</button>
+        </a>
+    </section>
+
+    <nav>  <!--bottom nav bar for consistency-->
+        <div class="nav-brand">NomNom Bites</div>
+        <div class="nav-links">
+            <a href="{{ url_for('landingpage') }}">Back to Top</a> 
+            <a href="{{ url_for('myrecipes') }}">My Recipes</a> 
+            <a href="{{ url_for('aboutus') }}">About Us</a>
+            <a href="{{ url_for('shop') }}">Shop</a>
+        </div>
+    </nav>
 
 </body>
 </html>
@@ -235,5 +241,5 @@
 
 <!-- check whether user is logged in before going to my recipes, shop, or generate page
   - if user is logged in then display their respective pages
-  - if user is not logged in, then promptthem to login
+  - if user is not logged in, then prompt them to login
 -->

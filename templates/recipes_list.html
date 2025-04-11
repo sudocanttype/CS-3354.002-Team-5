@@ -4,8 +4,64 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Recipes | NomNom Bites</title>
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+
+  <!-- ───── Site‑wide font, colours, and reset (matches About Us) ───── -->
+  <style>
+    /* Reset & base font */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;      /* site‑wide font */
+    }
+
+    body {
+      background-color: #fff;              /* light base */
+      color: #333;                         /* primary text colour */
+    }
+
+    /* ─────────── Navbar (identical across the site) ─────────── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* ─────────── Button / card overrides (dark accent) ─────────── */
+    .add-recipe-icon,
+    .btn {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .add-recipe:hover .add-recipe-icon,
+    .btn:hover {
+      background-color: #555;
+    }
+  </style>
+
+  <!-- keep your existing project‑specific stylesheet(s) -->
   <link rel="stylesheet" href="../static/styles/main.css">
+
+  <!-- page‑specific grid / card styles (unchanged except colour vars still work) -->
   <style>
     .recipe-grid {
       display: grid;
@@ -92,6 +148,7 @@
       padding: var(--space-6);
       height: 100%;
       transition: all var(--transition-fast);
+      text-decoration: none;
     }
     
     .add-recipe:hover {
@@ -100,8 +157,6 @@
     }
     
     .add-recipe-icon {
-      background-color: var(--color-honey);
-      color: var(--color-white);
       width: 48px;
       height: 48px;
       border-radius: var(--radius-round);
@@ -117,23 +172,22 @@
     }
   </style>
 </head>
-<body>
-  <main class="app-container">
-    <header class="app-header">
-      <div class="container">
-        <a href="/" class="logo">NomNom Bites</a>
-        <nav class="nav-menu">
-          <ul>
-            <li><a href="/recipes" class="nav-link">My Recipes</a></li>
-            <li><a href="/generate" class="nav-link">Generate Recipe</a></li>
-          </ul>
-          <a href="/profile" class="profile-link">
-            <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
-          </a>
-        </nav>
-      </div>
-    </header>
 
+<body>
+  <!-- ─────────── Site‑wide Navbar ─────────── -->
+  <nav>
+    <div class="nav-brand">NomNom Bites</div>
+    <div class="nav-links">
+      <a href="{{ url_for('landingpage') }}">Home</a>
+      <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+      <a href="{{ url_for('aboutus') }}">About Us</a>
+      <a href="{{ url_for('shop') }}">Shop</a>
+      <a href="{{ url_for('generate') }}">Generate</a>
+    </div>
+  </nav>
+
+  <!-- ─────────── Main content ─────────── -->
+  <main class="app-container">
     <div class="container">
       <section class="page-header">
         <h1 class="page-title">My Recipes</h1>
@@ -164,7 +218,9 @@
         
         <a href="{{ url_for('create_recipe') }}" class="add-recipe">
           <div class="add-recipe-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
@@ -174,6 +230,8 @@
       </div>
     </div>
   </main>
+
+  <!-- project‑specific JS -->
   <script src="../static/scripts/recipes_list.js"></script>
 </body>
-</html> 
+</html>

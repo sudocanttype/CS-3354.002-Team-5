@@ -5,65 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Recipes</title>
     <style>
-    body {
-            font-family: 'Verdana', sans-serif;
+        /* ---------- Reset & base styles ---------- */
+        * {
             margin: 0;
             padding: 0;
-            background-color: black;
-            color: white;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;              /* same font as About Us */
         }
-    .navbar {
-      display: flex;
-      justify-content: space-between; /* pushes left + right apart */
-      align-items: center;
-      padding: 20px;
-      top: 0;
+
+        body {
+            background-color: #fff;                      /* light base */
+            color: #333;                                 /* primary text colour */
         }
-    .logo {
-      color: white;
-      font-size: 24px;
+
+        /* ---------- IDENTICAL NAVBAR ---------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #333;
+            color: #fff;
         }
-    .nav-items {
-      display: flex;
-      gap: 20px;
-    }
-    
-    .nav-items a {
-      color: white;
-      text-decoration: none;
-    }
-    .container {
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* ---------- Page‑specific styles ---------- */
+        .container {
             max-width: 900px;
             margin: auto;
             padding: 20px;
             text-align: center;
-    }
-    .recipes {
+        }
+
+        .recipes {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-    }
-    .recipe-box {
-            background: #fff;
-            color: black;
+        }
+
+        .recipe-box {
+            background: #f9f9f9;                         /* light card */
+            color: #333;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
-    }
-    .edit-btn {
-            background-color: #b22222;
-            color: white;
+        }
+
+        .edit-btn {
+            background-color: #333;                      /* dark button */
+            color: #fff;
             padding: 5px 10px;
             border: none;
             margin-top: 10px;
             cursor: pointer;
-    }
-    .filter {
+            border-radius: 5px;
+        }
+
+        .edit-btn:hover {
+            background-color: #555;
+        }
+
+        .filter {
             margin: 20px 0;
         }
-    .create-btn {
-            background-color: #228B22;
-            color: white;
+
+        .create-btn {
+            background-color: #333;                      /* dark button */
+            color: #fff;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -71,87 +93,92 @@
             cursor: pointer;
             font-size: 16px;
         }
+
+        .create-btn:hover {
+            background-color: #555;
+        }
     </style>
 </head>
+
 <body>
     <section>
         <nav>
-          <div class="navbar"> <!-- Navigation sBar for page -->
-          <div class="logo">NomNom Bites</div>
-          <div class="nav-items">
-            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-            <a href="{{url_for('myrecipes')}}">My Recipes</a>
-            <a href="{{url_for('aboutus')}}">About</a>
-            <a href="{{ url_for('shop') }}">Shop</a>
-            <a href="{{ url_for('generate') }}">Generate</a>
-          </div>
-          </div>
+            <div class="nav-brand">NomNom Bites</div> <!-- Navigation Bar for page -->
+            <div class="nav-links">
+                <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+                <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+                <a href="{{ url_for('aboutus') }}">About Us</a>
+                <a href="{{ url_for('shop') }}">Shop</a>
+                <a href="{{ url_for('generate') }}">Generate</a>
+            </div>
         </nav>
-    <div class="container">
-        <p>These recipes are part of your personal collection—your very own recipe book! You can always come back here to see your modified recipes and save time when you're in a rush!</p>
-        
-        <a href="{{ url_for('create_recipe') }}">
-            <button class="create-btn">Create New Recipe</button> <!-- Create Recipe Button -->
-        </a>
-        
-        <div class="filter">
-            <label for="recipe-filter">Filter(Favorites/All Recipes):</label> <!-- Favorites Filter which corresponds to use case for this module-->
-            <select id="recipe-filter">
-                <option value="all">All Results</option>
-                <option value="favorites">Favorites</option>
-            </select>
-        </div>
 
-        <div class="filter">
-            <label for="recipe-filter2">Filter(Dietary Restrictions):</label> <!-- Dietary Filter which corresponds to use case for this module-->
-            <select id="recipe-filter2">
-                <option value="all">All Results</option>
-                <option value="nomeat">No Meat</option>
-                <option value="nodairy">No Dairy</option>
-                <option value="noegg">No Egg</option>
-                <option value="nogluten">No Gluten</option>
-            </select>
-        </div>
+        <div class="container">
+            <p>These recipes are part of your personal collection—your very own recipe book! You can always come back here to see your modified recipes and save time when you're in a rush!</p>
+            
+            <a href="{{ url_for('create_recipe') }}">
+                <button class="create-btn">Create New Recipe</button> <!-- Create Recipe Button -->
+            </a>
+            
+            <div class="filter">
+                <label for="recipe-filter">Filter(Favorites/All Recipes):</label> <!-- Favorites Filter which corresponds to use case for this module-->
+                <select id="recipe-filter">
+                    <option value="all">All Results</option>
+                    <option value="favorites">Favorites</option>
+                </select>
+            </div>
 
-        <div class="recipes"> <!-- DB Access Psuedocode: The recipes will be generated using a post endpoint that return a block of json. The json will refer to the individual divs initating a generation process returning the recipes from the database. -->
-            <div class="recipe-box">
-                <h3>Lemonade</h3>
-                <p>10 min</p>
-                <a href="{{ url_for('edit_recipe', recipe_id=1) }}">
-                    <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-                </a>
+            <div class="filter">
+                <label for="recipe-filter2">Filter(Dietary Restrictions):</label> <!-- Dietary Filter which corresponds to use case for this module-->
+                <select id="recipe-filter2">
+                    <option value="all">All Results</option>
+                    <option value="nomeat">No Meat</option>
+                    <option value="nodairy">No Dairy</option>
+                    <option value="noegg">No Egg</option>
+                    <option value="nogluten">No Gluten</option>
+                </select>
             </div>
-            <div class="recipe-box">
-                <h3>Cheese Pizza</h3>
-                <p>30 min</p>
-                <a href="{{ url_for('edit_recipe', recipe_id=2) }}">
-                    <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-                </a>
-            </div>
-            <div class="recipe-box">
-                <h3>Vodka Pasta</h3>
-                <p>35 min</p>
-                <a href="{{ url_for('edit_recipe', recipe_id=3) }}">
-                    <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-                </a>
-            </div>
-            <div class="recipe-box">
-                <h3>Chocolate Chip Cookies</h3>
-                <p>30 min</p>
-                <a href="{{ url_for('edit_recipe', recipe_id=4) }}">
-                    <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-                </a>
-            </div>
-            <div class="recipe-box">
-                <h3>BAD RECIPE</h3>
-                <p>30 min</p>
-                <a href="{{ url_for('edit_recipe', recipe_id=5) }}">
-                    <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-                </a>
+
+            <div class="recipes"> <!-- DB Access Psuedocode: The recipes will be generated using a post endpoint that return a block of json. The json will refer to the individual divs initating a generation process returning the recipes from the database. -->
+                <div class="recipe-box">
+                    <h3>Lemonade</h3>
+                    <p>10 min</p>
+                    <a href="{{ url_for('edit_recipe', recipe_id=1) }}">
+                        <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+                    </a>
+                </div>
+                <div class="recipe-box">
+                    <h3>Cheese Pizza</h3>
+                    <p>30 min</p>
+                    <a href="{{ url_for('edit_recipe', recipe_id=2) }}">
+                        <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+                    </a>
+                </div>
+                <div class="recipe-box">
+                    <h3>Vodka Pasta</h3>
+                    <p>35 min</p>
+                    <a href="{{ url_for('edit_recipe', recipe_id=3) }}">
+                        <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+                    </a>
+                </div>
+                <div class="recipe-box">
+                    <h3>Chocolate Chip Cookies</h3>
+                    <p>30 min</p>
+                    <a href="{{ url_for('edit_recipe', recipe_id=4) }}">
+                        <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+                    </a>
+                </div>
+                <div class="recipe-box">
+                    <h3>BAD RECIPE</h3>
+                    <p>30 min</p>
+                    <a href="{{ url_for('edit_recipe', recipe_id=5) }}">
+                        <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
     </section>
 </body>
+
 <!-- DB Access Psuedocode: The recipes will be generated using a post endpoint that return a block of json. The json will refer to the individual divs initating a generation process returning the recipes from the database. -->
 </html>

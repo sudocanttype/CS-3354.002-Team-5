@@ -14,29 +14,68 @@ User should be able to deselect items by hitting minus button and click update c
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grocery Store</title>
+  <title>Grocery Store | NomNom Bites</title>
+
+  <!-- ───── Site‑wide font & colour overrides (matches About Us) ───── -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;          /* site‑wide font */
+    }
+
+    body {
+      background-color: #fff;                  /* light base */
+      color: #333;                             /* primary text colour */
+    }
+
+    /* ─────────── Navbar (identical across pages) ─────────── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+
+  <!-- keep existing project‑specific stylesheet & JS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/grocerystorestyle.css') }}" />
-  <script src="{{ url_for('static', filename='scripts/grocery.js') }}" defer ></script>
+  <script src="{{ url_for('static', filename='scripts/grocery.js') }}" defer></script>
 </head>
 
 <body>
   <header>
     <h1>Welcome to the Grocery Store</h1>
 
-      <nav>
-          <div class="navbar">
-              <!-- Left Logo -->
-              <div class="logo">NomNom Bites</div>
-
-         <div class="nav-links">
-       <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-	            <a href="{{url_for('myrecipes')}}">My Recipes</a>
-	            <a href="{{ url_for('aboutus') }}">About Us</a>
+    <!-- ─────────── Site‑wide Navbar ─────────── -->
+    <nav>
+      <div class="nav-brand">NomNom Bites</div>
+      <div class="nav-links">
+        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py -->
+        <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+        <a href="{{ url_for('aboutus') }}">About Us</a>
         <a href="{{ url_for('shop') }}">Shop</a>
         <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
         <a href="{{ url_for('generate') }}">Generate</a>
-         </div>
-          </div>
+      </div>
     </nav>
   </header>
 
@@ -53,12 +92,17 @@ User should be able to deselect items by hitting minus button and click update c
         <!-- Quantity Selector -->
         <div class="quantity-control">
           <button class="decrease" onclick="updateQuantity({{ product.product_id }}, -1)">-</button>
-          <span id="quantity-{{ product.product_id  }}" class="quantity">0</span>
+          <span id="quantity-{{ product.product_id }}" class="quantity">0</span>
           <button class="increase" onclick="updateQuantity({{ product.product_id }}, 1)">+</button>
         </div>
 
         <!-- Add to Cart Button -->
-        <button class="add-to-cart" id="add-to-cart-{{ product.product_id }}" disabled onclick="addToCart({{ product.product_id }})">
+        <button
+          class="add-to-cart"
+          id="add-to-cart-{{ product.product_id }}"
+          disabled
+          onclick="addToCart({{ product.product_id }})"
+        >
           Add to Cart
         </button>
       </div>
