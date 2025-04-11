@@ -145,6 +145,11 @@
     <div class="page-content">
   	<div class="login-box">
       <h2 style="text-align: center;">Create an Account</h2>
+        {% if error %}
+            <div class="login-banner">
+                {{ error }}
+            </div>
+        {% endif %}
         <form method="POST" action="{{ url_for('createaccount') }}">
             <input name="name" type="text" placeholder="Name" required>
             <input name="last_name" type="text" placeholder="Last Name" required>

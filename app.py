@@ -3,6 +3,7 @@ from mock_data import products, recipes_data, my_recipes
 import boto3
 import hashlib
 from datetime import timedelta
+from boto3.dynamodb.conditions import Attr
 
 app = Flask(__name__)
 app.secret_key = 'PKkqBBiNrVDTQtUc5oxd0zMUD3/qpvINvefbmlTt'
@@ -69,6 +70,26 @@ def createaccount():
         if password != confirm:
             return render_template('createaccount.html', error="Passwords do not match")
 
+        #  Check if username already exists
+        try:
+            existing_user = user_table.get_item(Key={'username': username}).get('Item')
+            if existing_user:
+                return render_template('createaccount.html',
+                                       error="Username already exists. Please choose another one.")
+        except Exception as e:
+            return render_template('createaccount.html', error=f"Error checking username: {e}")
+
+        # Check for duplicate email
+        try:
+            email_check = user_table.scan(
+                FilterExpression=Attr('email').eq(email)
+            )
+            if email_check['Items']:
+                return render_template('createaccount.html', error="An account with this email already exists.")
+        except Exception as e:
+            return render_template('createaccount.html', error=f"Error checking email: {e}")
+
+        # Save user
         hashed = hash_password(password)
 
         try:
