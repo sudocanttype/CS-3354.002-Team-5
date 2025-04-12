@@ -6,42 +6,50 @@
     <title>NomNom Bites | Ingredient Helper</title>
 
     <style>
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #ab3737;
-            color: white;
+        /* ---------- Reset & base styles ---------- */
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;          /* same font as About Us */
         }
 
-        .navbar {
+        body {
+            background-color: #fff;                  /* light base */
+            color: #333;                             /* primary text colour */
+        }
+
+        /* ---------- IDENTICAL NAVBAR ---------- */
+        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
-            background-color: black;
+            padding: 15px 50px;
+            background-color: #333;
+            color: #fff;
         }
 
-        .logo {
-            color: white;
-            font-size: 24px;
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
         }
 
-        .nav-items {
+        .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 25px;
         }
 
-        .nav-items a {
-            color: white;
+        .nav-links a {
+            color: #fff;
             text-decoration: none;
         }
 
+        /* ---------- Page‑specific styles ---------- */
         .container {
             max-width: 700px;
             margin: 60px auto;
             padding: 40px;
-            background-color: #ffffff;
+            background-color: #f9f9f9;              /* light card */
             border-radius: 16px;
             box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
             color: #333;
@@ -50,7 +58,7 @@
         h1 {
             text-align: center;
             font-size: 2.8rem;
-            color: #000000;
+            color: #000;
             margin-bottom: 25px;
         }
 
@@ -60,7 +68,7 @@
             margin-bottom: 10px;
         }
 
-        textarea {
+        textarea, .search-box {
             width: 100%;
             padding: 15px;
             font-size: 16px;
@@ -70,8 +78,8 @@
         }
 
         .fancy-button {
-            background-color: #000000;
-            color: white;
+            background-color: #333;                 /* dark button */
+            color: #fff;
             font-size: 18px;
             padding: 10px 20px;
             border: none;
@@ -81,8 +89,8 @@
         }
 
         .fancy-button:hover {
-            background-color: #82BCBC;
-            color: #000;
+            background-color: #555;
+            color: #fff;
         }
 
         .results {
@@ -91,7 +99,7 @@
 
         .results h2 {
             font-size: 22px;
-            color: #ab3737;
+            color: #333;
             margin-bottom: 15px;
         }
 
@@ -113,7 +121,7 @@
             text-align: center;
             margin: 60px 0 20px;
             font-size: 14px;
-            color: white;
+            color: #333;
         }
 
         .recipes {
@@ -123,8 +131,8 @@
         }
 
         .recipe-box {
-            background: #fff;
-            color: black;
+            background: #f9f9f9;
+            color: #333;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -137,13 +145,18 @@
             text-align: center;
         }
 
-        .search-box{
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            resize: none;
+        .edit-btn {
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .edit-btn:hover {
+            background-color: #555;
         }
     </style>
 </head>
@@ -151,16 +164,13 @@
 
     <!-- Nav matches landing page -->
     <nav>
-        <div class="navbar">
-            <div class="logo">NomNom Bites</div>
-            <div class="nav-items">
-                <a href="{{ url_for('landingpage') }}">Home</a>
-                <a href="{{ url_for('myrecipes') }}">My Recipes</a>
-                <a href="{{ url_for('aboutus') }}">About</a>                
-                <a href="{{ url_for('shop') }}">Shop</a>
-                <a href="{{ url_for('generate') }}">Generate</a>
-
-            </div>
+        <div class="nav-brand">NomNom Bites</div>
+        <div class="nav-links">
+            <a href="{{ url_for('landingpage') }}">Home</a>
+            <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+            <a href="{{ url_for('aboutus') }}">About Us</a>                
+            <a href="{{ url_for('shop') }}">Shop</a>
+            <a href="{{ url_for('generate') }}">Generate</a>
         </div>
     </nav>
 
@@ -196,7 +206,7 @@
     <div class="container"> <!--container to return the results of inputs from above-->
         {% if suggestions %}   <!--return results of a substitution-->
         <div class="results">
-            <h2 >Smart Ingredient Swaps</h2>
+            <h2>Smart Ingredient Swaps</h2>
             <ul>
                 {% for item, sub in suggestions.items() %}
                     <li><span class="substitute">{{ item.title() }}</span> → {{ sub }}</li>
@@ -225,7 +235,7 @@
         {% endif %} 
     </div>
 
-    <footer style="background-color: black">
+    <footer style="background-color: #333">
         ✽ Built with love by the NomNom Team ✽
     </footer>
 

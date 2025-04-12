@@ -1,32 +1,87 @@
 <!--Jenny-->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Recipe | NomNom Bites</title>
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+
+  <!-- ───── Site‑wide font & reset (matches About Us) ───── -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;          /* site‑wide font */
+    }
+
+    body {
+      background-color: #fff;                  /* light base */
+      color: #333;                             /* primary text colour */
+    }
+
+    /* ─────────── Navbar (identical across pages) ─────────── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* ─────────── Button overrides ─────────── */
+    .btn,
+    .btn-primary,
+    .btn-secondary {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      cursor: pointer;
+      text-decoration: none; /* for <a class="btn"> */
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background-color: #555;
+    }
+  </style>
+
+  <!-- keep your existing project‑specific stylesheet(s) -->
   <link rel="stylesheet" href="../static/styles/main.css">
 </head>
 
 <body>
-  <main class="app-container">
-    <!-- header with navigation -->
-    <header class="app-header">
-      <div class="container">
-        <a href="/" class="logo">NomNom Bites</a>
-        <nav class="nav-menu">
-          <ul>
-            <li><a href="{{ url_for('myrecipes') }}" class="nav-link">My Recipes</a></li>
-          </ul>
-          <a href="/profile" class="profile-link">
-            <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
-          </a>
-        </nav>
-      </div>
-    </header>
+  <!-- ─────────── Site‑wide Navbar ─────────── -->
+  <nav>
+    <div class="nav-brand">NomNom Bites</div>
+    <div class="nav-links">
+      <a href="{{ url_for('landingpage') }}">Home</a>
+      <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+      <a href="{{ url_for('aboutus') }}">About Us</a>
+      <a href="{{ url_for('shop') }}">Shop</a>
+      <a href="{{ url_for('generate') }}">Generate</a>
+    </div>
+  </nav>
 
+  <main class="app-container">
     <div class="container">
       <!-- page title section -->
       <section class="page-header">
@@ -146,8 +201,8 @@
       </form>
     </div>
   </main>
+
   <!-- javascript for recipe creation functionality -->
   <script src="../static/scripts/createrecipe.js"></script>
 </body>
-
 </html>
