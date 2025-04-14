@@ -3,7 +3,7 @@ from mock_data import products, recipes_data, my_recipes
 import boto3
 import hashlib
 from datetime import timedelta
-from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Attr, Key
 
 app = Flask(__name__)
 app.secret_key = 'PKkqBBiNrVDTQtUc5oxd0zMUD3/qpvINvefbmlTt'
@@ -12,7 +12,7 @@ app.permanent_session_lifetime = timedelta(days=1)
 # AWS DynamoDB Setup
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # or your region
 user_table = dynamodb.Table('Users')
-
+recipes_table = dynamodb.Table('RecipeActual')
 # Helper function to hash passwords
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -130,7 +130,19 @@ def checkout():
 
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():
-    return render_template('recipes.html')
+    if 'user' not in session:
+        return redirect(url_for('loginpage'))
+    
+    username = session['user']
+
+    response = recipes_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    )
+
+    recipes = response.get('Items', [])
+
+    # Pass recipes to the template
+    return render_template('recipes.html', recipes=recipes)
 
 @app.route('/aboutus')
 def aboutus():
