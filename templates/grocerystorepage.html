@@ -1,6 +1,5 @@
 <!--
 This code is made by Ahmed Sherwani
-
 This HTML file is a Flask template for a grocery store webpage.
 It sets up the page structure, links to a CSS file and JavaScript for styling and interactivity, and uses Jinja2 templating to dynamically display products passed from the backend.
 It includes a navigation bar, a product listing section with quantity selectors, and "Add to Cart" functionality.
@@ -12,102 +11,108 @@ User should be able to deselect items by hitting minus button and click update c
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grocery Store | NomNom Bites</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grocery Store | NomNom Bites</title>
+<!-- ───── Site‑wide font & colour overrides (matches About Us) ───── -->
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: Arial, sans-serif; /* site‑wide font */
+ }
+body {
+background-color: #fff; /* light base */
+color: #333; /* primary text colour */
+ }
+/* ─────────── Navbar (identical across pages) ─────────── */
+nav {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 15px 50px;
+background-color: #333;
+color: #fff;
+ }
+.nav-brand {
+font-size: 1.2rem;
+font-weight: bold;
+ }
+.nav-links {
+display: flex;
+ }
+.nav-links a {
+color: #fff;
+text-decoration: none;
+margin-right: 15px;
+ }
 
-  <!-- ───── Site‑wide font & colour overrides (matches About Us) ───── -->
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;          /* site‑wide font */
-    }
+/* Simple header styling fix */
+.store-header {
+  text-align: center;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
 
-    body {
-      background-color: #fff;                  /* light base */
-      color: #333;                             /* primary text colour */
-    }
-
-    /* ─────────── Navbar (identical across pages) ─────────── */
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 50px;
-      background-color: #333;
-      color: #fff;
-    }
-
-    .nav-brand {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 25px;
-    }
-
-    .nav-links a {
-      color: #fff;
-      text-decoration: none;
-    }
-  </style>
-
-  <!-- keep existing project‑specific stylesheet & JS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/grocerystorestyle.css') }}" />
-  <script src="{{ url_for('static', filename='scripts/grocery.js') }}" defer></script>
+/* Section heading alignment */
+.items-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+</style>
+<!-- keep existing project‑specific stylesheet & JS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/grocerystorestyle.css') }}" />
+<script src="{{ url_for('static', filename='scripts/grocery.js') }}" defer></script>
 </head>
-
 <body>
-  <header>
-    <h1>Welcome to the Grocery Store</h1>
+<!-- ─────────── Site‑wide Navbar ─────────── -->
+<nav>
+  <div class="nav-brand">NomNom Bites</div>
+  <div class="nav-links">
+    <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py -->
+    <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+    <a href="{{ url_for('aboutus') }}">About Us</a>
+    <a href="{{ url_for('shop') }}">Shop</a>
+    <a href="{{ url_for('generate') }}">Generate</a>
+    <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
+    
+  </div>
+</nav>
 
-    <!-- ─────────── Site‑wide Navbar ─────────── -->
-    <nav>
-      <div class="nav-brand">NomNom Bites</div>
-      <div class="nav-links">
-        <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py -->
-        <a href="{{ url_for('myrecipes') }}">My Recipes</a>
-        <a href="{{ url_for('aboutus') }}">About Us</a>
-        <a href="{{ url_for('shop') }}">Shop</a>
-        <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
-        <a href="{{ url_for('generate') }}">Generate</a>
+<div class="store-header">
+  <h1>Welcome to the Grocery Store</h1>
+</div>
+
+<section class="items-section">
+  <h2>Our Products</h2>
+  <div class="items-container">
+    {% for product in products %}
+    <div class="item">
+      <img src="{{ url_for('static', filename='grocerystoreimages/' + product.image) }}" alt="{{ product.name }}" />
+      <h3>{{ product.name }}</h3>
+      <p>{{ product.description }}</p>
+      <p class="price">${{ product.price }}</p>
+      <!-- Quantity Selector -->
+      <div class="quantity-control">
+        <button class="decrease" onclick="updateQuantity({{ product.product_id }}, -1)">-</button>
+        <span id="quantity-{{ product.product_id }}" class="quantity">0</span>
+        <button class="increase" onclick="updateQuantity({{ product.product_id }}, 1)">+</button>
       </div>
-    </nav>
-  </header>
-
-  <section class="items-section">
-    <h2>Our Products</h2>
-    <div class="items-container">
-      {% for product in products %}
-      <div class="item">
-        <img src="{{ url_for('static', filename='grocerystoreimages/' + product.image) }}" alt="{{ product.name }}" />
-        <h3>{{ product.name }}</h3>
-        <p>{{ product.description }}</p>
-        <p class="price">${{ product.price }}</p>
-
-        <!-- Quantity Selector -->
-        <div class="quantity-control">
-          <button class="decrease" onclick="updateQuantity({{ product.product_id }}, -1)">-</button>
-          <span id="quantity-{{ product.product_id }}" class="quantity">0</span>
-          <button class="increase" onclick="updateQuantity({{ product.product_id }}, 1)">+</button>
-        </div>
-
-        <!-- Add to Cart Button -->
-        <button
-          class="add-to-cart"
-          id="add-to-cart-{{ product.product_id }}"
-          disabled
-          onclick="addToCart({{ product.product_id }})"
-        >
-          Add to Cart
-        </button>
-      </div>
-      {% endfor %}
+      <!-- Add to Cart Button -->
+      <button
+        class="add-to-cart"
+        id="add-to-cart-{{ product.product_id }}"
+        disabled
+        onclick="addToCart({{ product.product_id }})"
+      >
+        Add to Cart
+      </button>
     </div>
-  </section>
+    {% endfor %}
+  </div>
+</section>
 </body>
 </html>
