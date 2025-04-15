@@ -1,7 +1,8 @@
-from flask import Flask, session, render_template, request, redirect, url_for, flash
+from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
 from mock_data import recipes_data, my_recipes
 import boto3
 import hashlib
+import time
 from datetime import timedelta
 from boto3.dynamodb.conditions import Attr, Key
 
@@ -13,6 +14,7 @@ app.permanent_session_lifetime = timedelta(days=1)
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # or your region
 user_table = dynamodb.Table('Users')
 products_table = dynamodb.Table('Products')
+cart_table = dynamodb.Table('Cart')
 
 
 recipes_table = dynamodb.Table('RecipeActual')
@@ -129,13 +131,42 @@ def shop():
         flash("You must be logged in to access the shop.")
         return redirect(url_for('loginpage'))
 
+    username = session['user']
     response = products_table.scan()
     products = response['Items']  # Pulled from DynamoDB
 
+    cart_response = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    )
+    cart_items = cart_response.get('Items', [])
+    total_quantity = sum(item['quantity'] for item in cart_items)
+
+
     first_name = session.get('name')
     last_name = session.get('last_name')
-    return render_template('grocerystorepage.html', products=products, first_name=first_name, last_name=last_name)
+    return render_template('grocerystorepage.html', products=products, first_name=first_name, last_name=last_name, cart_count=total_quantity)
 
+
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    if 'user' not in session:
+        return jsonify({'message': 'Please log in first'}), 403
+
+    data = request.get_json()
+    username = session['user']
+    product_id = int(data['product_id'])
+    quantity = int(data['quantity'])
+
+    try:
+        cart_table.put_item(Item={
+            'username': username,
+            'product_id': product_id,
+            'quantity': quantity,
+            'added_at': str(int(time.time()))
+        })
+        return jsonify({'message': f'Added {quantity} of item {product_id} to your cart!'})
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
 @app.route('/checkout')
 def checkout():
     cart_items = []
