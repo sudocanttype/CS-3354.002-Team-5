@@ -173,43 +173,20 @@
     </div>
 
     <div class="recipes"> <!-- DB Access Psuedocode: The recipes will be generated using a post endpoint that return a block of json. The json will refer to the individual divs initiating a generation process returning the recipes from the database. -->
+      {% for recipe in recipes %}
       <div class="recipe-box">
-        <h3>Lemonade</h3>
-        <p>10 min</p>
-        <a href="{{ url_for('edit_recipe', recipe_id=1) }}">
+        <h3>{{recipe.recipe_title}}</h3>
+        <p>{{recipe.cook_time}}</p>
+        <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
           <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
         </a>
       </div>
-      <div class="recipe-box">
-        <h3>Cheese Pizza</h3>
-        <p>30 min</p>
-        <a href="{{ url_for('edit_recipe', recipe_id=2) }}">
-          <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-        </a>
-      </div>
-      <div class="recipe-box">
-        <h3>Vodka Pasta</h3>
-        <p>35 min</p>
-        <a href="{{ url_for('edit_recipe', recipe_id=3) }}">
-          <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-        </a>
-      </div>
-      <div class="recipe-box">
-        <h3>Chocolate Chip Cookies</h3>
-        <p>30 min</p>
-        <a href="{{ url_for('edit_recipe', recipe_id=4) }}">
-          <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-        </a>
-      </div>
-      <div class="recipe-box">
-        <h3>BAD RECIPE</h3>
-        <p>30 min</p>
-        <a href="{{ url_for('edit_recipe', recipe_id=5) }}">
-          <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
-        </a>
-      </div>
+      {% else %}
+      <p>No recipes found. Try creating one!</p>
+      {% endfor %}
     </div>
   </div>
+  
 
   <footer>
     <div class="footer-container">
