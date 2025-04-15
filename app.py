@@ -1,5 +1,6 @@
 from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
 from mock_data import recipes_data, my_recipes
+from decimal import Decimal
 import boto3
 import hashlib
 import time
@@ -156,12 +157,17 @@ def add_to_cart():
     username = session['user']
     product_id = int(data['product_id'])
     quantity = int(data['quantity'])
+    product = products_table.get_item(Key={'product_id': product_id}).get('Item')
+    price = product['price']
+    image = product['image']
 
     try:
         cart_table.put_item(Item={
             'username': username,
             'product_id': product_id,
             'quantity': quantity,
+            'price': Decimal(str(price)),
+            'image': image,
             'added_at': str(int(time.time()))
         })
         return jsonify({'message': f'Added {quantity} of item {product_id} to your cart!'})

@@ -38,6 +38,7 @@ function addToCart(productId, productName) {
                 const currentCount = parseInt(badge.innerText);
                 const newCount = currentCount + quantity;
                 badge.innerText = newCount;
+                badge.style.display = "inline-block";
             }
 
             document.getElementById(`quantity-${productId}`).innerText = "0";

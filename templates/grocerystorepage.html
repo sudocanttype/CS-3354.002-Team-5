@@ -92,12 +92,10 @@ margin-right: 15px;
     <a href="{{ url_for('shop') }}">Shop</a>
     <a href="{{ url_for('generate') }}">Generate</a>
           <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
-          {% if cart_count > 0 %}
-              <span class="checkout-badge" id="cart-count">{{ cart_count }}</span>
-          {% endif %}
+      <span class="checkout-badge" id="cart-count" {% if cart_count == 0 %}style="display:none;"{% endif %}>
+       {{ cart_count }}
+      </span>
       </div>
-    
-  </div>
 </nav>
 
 <div class="store-header">
