@@ -1,5 +1,5 @@
-from flask import Flask, session, render_template, request, redirect, url_for
-from mock_data import products, recipes_data, my_recipes
+from flask import Flask, session, render_template, request, redirect, url_for, flash
+from mock_data import recipes_data, my_recipes
 import boto3
 import hashlib
 from datetime import timedelta
@@ -12,6 +12,8 @@ app.permanent_session_lifetime = timedelta(days=1)
 # AWS DynamoDB Setup
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # or your region
 user_table = dynamodb.Table('Users')
+products_table = dynamodb.Table('Products')
+
 
 # Helper function to hash passwords
 def hash_password(password):
@@ -121,7 +123,16 @@ def logout():
 
 @app.route('/shop')
 def shop():
-    return render_template('grocerystorepage.html', products=products)
+    if 'user' not in session:
+        flash("You must be logged in to access the shop.")
+        return redirect(url_for('loginpage'))
+
+    response = products_table.scan()
+    products = response['Items']  # Pulled from DynamoDB
+
+    first_name = session.get('name')
+    last_name = session.get('last_name')
+    return render_template('grocerystorepage.html', products=products, first_name=first_name, last_name=last_name)
 
 @app.route('/checkout')
 def checkout():
