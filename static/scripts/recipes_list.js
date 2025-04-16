@@ -21,6 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 }); 
 function favoriteRecipe(recipeId) {
+  console.log("Sending favorite request with:", {
+    username: currentUsername,
+    recipeId: recipeId
+  });
   fetch('/favorite', {
     method: 'POST',
     headers: {
