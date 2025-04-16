@@ -20,6 +20,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 }); 
+
+const recipeFilter = document.getElementById('recipe-filter');
+  if (!recipeFilter) return;
+
+  recipeFilter.addEventListener('change', function () {
+    const filterValue = this.value;
+    const recipes = document.querySelectorAll('.recipe-box');
+
+    recipes.forEach(recipe => {
+      const recipeId = recipe.getAttribute('data-id');
+      const isFavorite = favoriteIDs.includes(recipeId);
+
+      if (filterValue === 'favorites' && !isFavorite) {
+        recipe.style.display = 'none';
+      } else {
+        recipe.style.display = 'block';
+      }
+    });
+  });
+
 function favoriteRecipe(recipeId) {
   fetch('/favorite', {
     method: 'POST',
