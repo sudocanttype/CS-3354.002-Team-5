@@ -225,6 +225,7 @@ def generate():
 
 app.route('/favorite', methods=['POST'])
 def favorite_recipe():
+    print("/favorite route was triggered")
     data = request.json
     username = data.get('username')
     recipeId = data.get('recipeId')
