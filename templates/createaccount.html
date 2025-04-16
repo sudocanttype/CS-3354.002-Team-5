@@ -1,10 +1,19 @@
 <!-- Veronika & Uma-->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>NomNom Bites Create an Account Page</title>
+
   <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif; /* same font as About Us */
+    }
+
     body {
       margin: 0;
       padding: 0;
@@ -13,32 +22,38 @@
       background-position: center; /* center it */
       background-repeat: no-repeat; /* don’t repeat it */
       height: 100vh;               /* full viewport height */
-      background-color: black;  /* 🖤 this fills the space behind/around the image */
+      background-color: #fff;      /* fills the space behind/around the image */
+      color: #333;                 /* primary text colour */
     }
-    .navbar {
+
+    /* ---------- IDENTICAL NAVBAR ---------- */
+    nav {
       display: flex;
-      justify-content: space-between; /* pushes left + right apart */
+      justify-content: space-between;
       align-items: center;
-      padding: 20px;
-      top: 0;
-    }
-    .logo {
+      padding: 15px 50px;
+      background-color: #333;
       color: white;
-      font-size: 24px;
     }
-    
-    .nav-items {
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
       display: flex;
-      gap: 20px;
+      gap: 25px;
     }
-    
-    .nav-items a {
+
+    .nav-links a {
       color: white;
       text-decoration: none;
     }
 
+    /* ---------- Page layout ---------- */
     .page-content {
-      height: 100vh;
+      height: calc(100vh - 80px); /* full height minus nav bar */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -46,13 +61,13 @@
 
     /* The login box */
     .login-box {
-      background-color: rgba(0, 0, 0, 0.7); /* semi-transparent black */
+      background-color: rgba(255, 255, 255, 0.95); /* semi‑transparent white */
       padding: 50px;
       border-radius: 10px;
       width: 400px;
       text-align: center;
-      color: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+      color: #333;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
     }
     
     /* Input fields */
@@ -70,7 +85,7 @@
       width: 60%;
       padding: 12px;
       margin: 10px 0;
-      background-color: #4CAF50;
+      background-color: #333;   /* dark button */
       color: white;
       border: none;
       border-radius: 5px;
@@ -80,48 +95,90 @@
     }
     
     .login-box button:hover {
-      background-color: #45a049;
+      background-color: #555;
     }
 
     .login {
-      color:white; 
-      padding:20px;
-      text-align:"center";
+      color: #333;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .disabled-link {
+        color: gray;
+        cursor: not-allowed;
+        text-decoration: none;
+    }
+
+    .login-banner {
+        background-color: #ffe0e0;
+        color: #b20000;
+        padding: 10px;
+        text-align: center;
+        border-radius: 6px;
+        margin: 10px 20px;
+        font-weight: bold;
     }
   </style>
 </head>
-<body>  
-  <section>
+<script>
+  function showBanner() {
+    const banner = document.getElementById("login-banner");
+    banner.style.display = "block";
+    setTimeout(() => {
+      banner.style.display = "none";
+    }, 3000);
+  }
+</script>
+<body>
+<!-- Navigation Bar (identical to About Us) -->
     <nav>
-      <div class="navbar">
-      <div class="logo">NomNom Bites</div>
-      <div class="nav-items">
+      <div class="nav-brand">NomNom Bites</div>
+      <div class="nav-links">
         <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-        <a href="{{url_for('myrecipes')}}">My Recipes</a>
-        <a href="{{url_for('aboutus')}}">About</a>
+
+      {% if logged_in %}
+        <a href="{{ url_for('myrecipes') }}">My Recipes</a>
         <a href="{{ url_for('shop') }}">Shop</a>
         <a href="{{ url_for('generate') }}">Generate</a>
-      </div>
+      {% else %}
+        <a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
+         <a href="{{ url_for('aboutus') }}">About</a>
+        <a class="disabled-link" href="#" onclick="showBanner()">Shop</a>
+        <a class="disabled-link" href="#" onclick="showBanner()">Generate</a>
+      {% endif %}
+
       </div>
     </nav>
 
+      <!-- Banner to show when user is not logged in -->
+      <div id="login-banner" class="login-banner" style="display: none;">
+          ⚠️ You must login to access this feature.
+      </div>
+
+    <section>
     <div class="page-content">
   	<div class="login-box">
       <h2 style="text-align: center;">Create an Account</h2>
-      <form>
-        <input type="text" placeholder="Name" required>
-        <input type="text" placeholder="Email" required>
-        <input type="text" placeholder="Username" required>
-        <input type="password" placeholder="Password" required>  <!-- need to add check if password and confirm password are the same-->
-        <input type="password" placeholder="Confirm Password" required>
-        <button style="justify-content: center;" type="submit">Create account</button>
-        <div class="login">
-            <a style="color:white;" href="{{ url_for('loginpage') }}">Already have an account? Login here!</a>
+        {% if error %}
+            <div class="login-banner">
+                {{ error }}
+            </div>
+        {% endif %}
+        <form method="POST" action="{{ url_for('createaccount') }}">
+            <input name="name" type="text" placeholder="Name" required>
+            <input name="last_name" type="text" placeholder="Last Name" required>
+            <input name="email" type="text" placeholder="Email" required>
+            <input name="username" type="text" placeholder="Username" required> <!-- need to add check if password and confirm password are the same-->
+            <input name="password" type="password" placeholder="Password" required>
+            <input name="confirm" type="password" placeholder="Confirm Password" required>
+            <button type="submit">Create Account</button>
+
+            <div class="login">
+            <a style="color:#333;" href="{{ url_for('loginpage') }}">Already have an account? Login here!</a>
         </div>
       </form>
-    </div>
-    </div>
-  </section>
+    </section>
 </body>
 </html>
 
@@ -138,4 +195,3 @@
     - if it is and user DNE yet, then create account by adding info to database
     - if not, error msg is displayed and prompts user to reenter password info
 -->
-

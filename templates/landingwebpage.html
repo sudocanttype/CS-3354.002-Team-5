@@ -1,155 +1,220 @@
 <!-- Veronika & Uma-->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>NomNom Bites Homepage</title>
 
     <style>
-        body 
-        {
-          background-color: black;
+        /* ---------- Reset & base styles ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;          /* same font as About Us */
         }
 
-		.navbar {
-	      display: flex;
-	      justify-content: space-between; /* pushes left + right apart */
-	      align-items: center;
-	      padding: 20px;
-    	}
-
-    	.logo {
-	      color: white;
-	      font-size: 24px;
-		}
-    
-		.nav-items {
-	      display: flex;
-	      gap: 20px;
-    	}
-    
-    	.nav-items a {
-	      color: white;
-	      text-decoration: none;
-    	}
-
-        .fancy-button 
-        {
-          background-color: #000000; /* black */
-          color: white;
-          font-family: 'Verdana', sans-serif;
-          font-size: 18px;
-          padding: 10px 20px;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
+        body {
+            background-color: #fff;                  /* light base like About Us */
+            color: #333;                             /* primary text colour */
         }
-    
+
+        /* ---------- IDENTICAL NAVBAR ---------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* ---------- Buttons ---------- */
+        .fancy-button {
+            background-color: #333;                 /* dark button */
+            color: #fff;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
         .fancy-button:hover {
-          background-color: #82BCBC;  /* light blue-green */
-		  color: black;
+            background-color: #333;                 /* dark hover */
+            color: #fff;
         }
 
-		.hero {
-      		padding: 120px 20px;
-      		text-align: left;
-      		background-color: white;
-    	}
+        /* ---------- Sections ---------- */
+        .hero {
+            padding: 120px 20px;
+            text-align: left;
+            background-color: #fff;
+        }
 
-    	.hero h1 {
-	      font-size: 3rem;
-	      margin-bottom: 0.5rem;
-		  margin-top: auto;
-    	}
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            margin-top: auto;
+        }
 
-    	.hero h2 {
-	      font-size: 1.5rem;
-	      font-weight: normal;
-	      margin-bottom: 1rem;
-    	}
+        .hero h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
+            margin-bottom: 1rem;
+        }
 
-		.hero p {
-	      font-size: 1rem;
-	      margin-bottom: 2rem;
-	      color: #666;
-		}
-		
-		.how-it-works {
-	      padding: 60px 20px;
-	      text-align: center;
-		  background-color: #ab3737;
-	    }
-	
-	    .how-it-works h2 {
-	      font-size: 2rem;
-	      margin-bottom: 40px;
-	    }
-	
-	    .card-container {
-	      display: flex;
-	      flex-wrap: wrap;
-	      justify-content: center;
-	      gap: 20px;
-	    }
-	
-	    .card {
-	      background-color: #f3f3f3;
-	      border-radius: 12px;
-	      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-	      width: 250px;
-	      padding: 30px 20px;
-	      text-align: center;
-	      transition: transform 0.3s ease;
-	    }
-	
-	    .card:hover {
-	      transform: translateY(-5px);
-	    }
-	
-	    .card-icon {
-	      font-size: 40px;
-	      margin-bottom: 20px;
-	      color: #2979ff;
-	    }
-	
-	    .card-title {
-	      font-size: 1.2rem;
-	      margin-bottom: 10px;
-	      font-weight: bold;
-	    }
-	
-	    .card-description {
-	      font-size: 0.95rem;
-	      color: #555;
-	    }
+        .hero p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
 
-		.main-img {
-			float: right;
-			padding-right: 60px;
-			margin-top: auto;
-		}
+        .how-it-works {
+            padding: 60px 20px;
+            text-align: center;
+            background-color: #f9f9f9;              /* light neutral */
+        }
+
 
 		.card-img {
-			float: center;
-			margin-top: auto;
+			display: block;
+            margin: 0 auto;
 		}
+
+        .disabled-link {
+            color: gray;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        .login-banner {
+            background-color: #ffe0e0;
+            color: #b20000;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            margin: 10px 20px;
+            font-weight: bold;
+        }
+
+        .disabled-button {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+
+        .how-it-works h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #f3f3f3;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 250px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #2979ff;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .main-img {
+            float: right;
+            padding-right: 60px;
+            margin-top: auto;
+        }
+
+        .card-img {
+            display: block;
+            margin: 0 auto;
+            margin-top: auto; /* if you still want margin at the top */
+        }
     </style>
 </head>
+<script>
+	function showBanner() {
+		const banner = document.getElementById("login-banner");
+		banner.style.display = "block";
+		setTimeout(() => {
+			banner.style.display = "none";
+		}, 3000);
+	}
+</script>
 
 <body>
+<!--nav bar-->
 	<nav>
-		<div class="navbar"> <!--nav bar-->
-	        <div class="logo">NomNom Bites</div>
-	        <div class="nav-items">
-	            <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-	            <a href="{{url_for('myrecipes')}}">My Recipes</a> 
-	            <a href="{{url_for('aboutus')}}">About</a>
-	            <a href="{{ url_for('shop') }}">Shop</a>
+		<div class="nav-brand">NomNom Bites</div>
+		 <div class="nav-links">
+			<a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+
+			{% if logged_in %}
+				<a href="{{ url_for('myrecipes') }}">My Recipes</a>
+				<a href="{{ url_for('shop') }}">Shop</a>
 				<a href="{{ url_for('generate') }}">Generate</a>
-	        </div>
-		</div>
+                <a href="{{ url_for('logout') }}">Sign Out</a> <!-- added logout link here -->
+			{% else %}
+				<a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
+                <a href="{{ url_for('aboutus') }}">About</a>
+                <a class="disabled-link" href="#" onclick="showBanner()">Shop</a>
+				<a class="disabled-link" href="#" onclick="showBanner()">Generate</a>
+
+
+			{% endif %}
+
 		</div>
 	</nav>
+    <!-- Banner message outside nav bar -->
+<div id="login-banner" class="login-banner" style="display: none;">
+	⚠️ You must login to access this feature.
+</div>
+
 	<section class="hero">  <!--welcome to nom nom bites section-->
     	<p class="main-img">
 			<img src="{{ url_for('static', filename='landingpage/landingpagepic.png') }}" alt="Main Pic" width="500" height="300">
@@ -158,10 +223,14 @@
 		<h2>Turn your pantry into a meal masterpiece</h2>
 		<p>Enter the ingredients you have, and we’ll whip up delicious recipes in seconds.</p>
 		<p style="color: black;">Generate, share, and store the recipes that you love!</p>
-		<a href="{{ url_for('loginpage') }}">
-        	<button class="fancy-button">Get Started</button>
-		</a>
-		
+        {% if logged_in %}
+        <p>Welcome, {{ first_name }} {{ last_name }}!</p>
+        <button class="fancy-button disabled-button">Get Started</button>
+        {% else %}
+            <a href="{{ url_for('loginpage') }}">
+                <button class="fancy-button">Get Started</button>
+            </a>
+        {% endif %}
 	</section>
 
 	<section class="how-it-works">  <!--how it works section with the 3 cards-->
@@ -209,24 +278,33 @@
 		<h2>Shop</h2>
 		<p>Add the ingredients you need to you cart to make your recipe a reality.</p>
 
-		<a href="{{ url_for('shop') }}">
-        	<button class="fancy-button">Shop</button>
-		</a>
+        {% if logged_in %}
+            <a href="{{ url_for('shop') }}">
+                <button class="fancy-button">Shop</button>
+            </a>
+        {% else %}
+            <button class="fancy-button disabled-button" title="Please login to access the shop">Shop</button>
+        {% endif %}
+
     </section>
 
-	<nav>
-		<div class="navbar">  <!--bottom nav bar for consistency-->
-			<div class="logo">NomNom Bites</div>
-			<div class="nav-items">
-				<a href="{{ url_for('landingpage') }}">Back to Top</a> 
-				<a href="{{url_for('myrecipes')}}">My Recipes</a> 
-				<a href="{{url_for('aboutus')}}">About</a>
-				<a href="{{ url_for('shop') }}">Shop</a>
-			</div>
-		</div>
-		</div>
-	</nav>
+    <nav> <!--bottom nav bar for consistency-->
+            <div class="nav-brand">NomNom Bites</div>
+            <div class="nav-links">
 
+                <a href="{{ url_for('landingpage') }}">Back to Top</a>
+
+                {% if logged_in %}
+                    <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+                    <a href="{{ url_for('shop') }}">Shop</a>
+                {% else %}
+                    <a class="disabled-link">My Recipes</a>
+                    <a class="disabled-link">Shop</a>
+                {% endif %}
+                <a href="{{ url_for('aboutus') }}">About</a>
+
+            </div>
+    </nav>
 </body>
 </html>
 
@@ -235,5 +313,5 @@
 
 <!-- check whether user is logged in before going to my recipes, shop, or generate page
   - if user is logged in then display their respective pages
-  - if user is not logged in, then promptthem to login
+  - if user is not logged in, then prompt them to login
 -->

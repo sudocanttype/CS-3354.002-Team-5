@@ -1,34 +1,110 @@
+<!--Jenny-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Recipe | NomNom Bites</title>
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap" rel="stylesheet">
+
+  <!-- ───── Site‑wide font & reset (matches About Us) ───── -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;        /* site‑wide font */
+    }
+
+    body {
+      background-color: #fff;                /* light base */
+      color: #333;                           /* primary text colour */
+    }
+
+    /* ─────────── Navbar (identical across pages) ─────────── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .nav-brand {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* ─────────── Button overrides ─────────── */
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .add-ingredient,
+    .add-step,
+    .tag-add,
+    .image-upload-btn,
+    .remove-ingredient,
+    .remove-step,
+    .tag-remove {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn:hover,
+    .add-ingredient:hover,
+    .add-step:hover,
+    .tag-add:hover,
+    .image-upload-btn:hover,
+    .remove-ingredient:hover,
+    .remove-step:hover,
+    .tag-remove:hover {
+      background-color: #555;
+    }
+  </style>
+
+  <!-- keep your existing project‑specific stylesheet(s) -->
   <link rel="stylesheet" href="../static/styles/main.css">
 </head>
-<body>
-  <main class="app-container">
-    <header class="app-header">
-      <div class="container">
-        <a href="/" class="logo">NomNom Bites</a>
-        <nav class="nav-menu">
-          <ul>
-            <li><a href="{{ url_for('myrecipes') }}" class="nav-link">My Recipes</a></li>
-            <li><a href="{{ url_for('create_recipe') }}" class="nav-link">Create Recipe</a></li>
-          </ul>
-          <a href="/profile" class="profile-link">
-            <img src="../static/images/profile/winnie.png" alt="Your profile" class="profile-img">
-          </a>
-        </nav>
-      </div>
-    </header>
 
+<body>
+  <!-- ─────────── Site‑wide Navbar ─────────── -->
+  <nav>
+    <div class="nav-brand">NomNom Bites</div>
+    <div class="nav-links">
+      <a href="{{ url_for('landingpage') }}">Home</a>
+      <a href="{{ url_for('myrecipes') }}">My Recipes</a>
+      <a href="{{ url_for('aboutus') }}">About Us</a>
+      <a href="{{ url_for('shop') }}">Shop</a>
+      <a href="{{ url_for('generate') }}">Generate</a>
+    </div>
+  </nav>
+
+  <main class="app-container">
     <div class="container">
+      <!-- page title section -->
       <section class="page-header">
         <h1 class="page-title">Edit Recipe</h1>
       </section>
-      
+
+      <!-- recipe edit form -->
       <form class="recipe-form" action="/update_recipe/{{ recipe.id }}" method="POST">
         <div class="form-group">
           <label for="recipe-title" class="form-label">Recipe Title</label>
@@ -36,11 +112,13 @@
         </div>
 
         <div class="recipe-editor">
+          <!-- recipe image section -->
           <div class="recipe-image-container">
             <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image">
             <button type="button" class="image-upload-btn">
               <span class="visually-hidden">Change image</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
                 <path d="m15 7 4-4"></path>
                 <path d="M9 15h3"></path>
@@ -52,6 +130,7 @@
           </div>
 
           <div class="recipe-details-container">
+            <!-- ingredients section -->
             <section class="recipe-section">
               <h2 class="section-title">Ingredients</h2>
               <div class="ingredient-list">
@@ -60,7 +139,8 @@
                   <img src="{{ ingredient.image }}" alt="{{ ingredient.name }}" class="ingredient-img">
                   <input type="text" name="ingredients" class="form-control" value="{{ ingredient.name }}">
                   <button type="button" class="btn-icon remove-ingredient" aria-label="Remove {{ ingredient.name }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
                       <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
@@ -68,8 +148,10 @@
                 </div>
                 {% endfor %}
 
+                <!-- add ingredient button -->
                 <button type="button" class="btn-add add-ingredient">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
@@ -78,6 +160,7 @@
               </div>
             </section>
 
+            <!-- instructions section -->
             <section class="recipe-section">
               <h2 class="section-title">Instructions</h2>
               <div class="instruction-list">
@@ -85,8 +168,9 @@
                 <div class="instruction-item">
                   <span class="step-number">{{ loop.index }}</span>
                   <input type="text" class="form-control" name="instruction-{{ loop.index }}" value="{{ instruction }}">
-                  <button type="button" class="btn-icon remove-step" aria-label="Remove step">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <button type="button" class="btn-icon remove-step" aria-label="Remove step"> <!--remove step button-->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
                       <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
@@ -94,8 +178,9 @@
                 </div>
                 {% endfor %}
 
-                <button type="button" class="btn-add add-step">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button" class="btn-add add-step"> <!--add step button-->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>
@@ -104,51 +189,60 @@
               </div>
             </section>
 
+            <!-- recipe details section -->
             <section class="recipe-section">
-              <h2 class="section-title">Details</h2>
+              <h2 class="section-title">Details</h2> <!--recipe details-->
               <div class="details-grid">
                 <div class="form-group">
-                  <label for="prep-time" class="form-label">Preparation Time</label>
+                  <label for="prep-time" class="form-label">Preparation Time</label> <!--preparation time-->
                   <div class="time-input">
-                    <input type="number" id="prep-time" name="prep_time" class="form-control" value="{{ recipe.prep_time }}">
+                    <input type="number" id="prep-time" name="prep_time" class="form-control"
+                      value="{{ recipe.prep_time }}"> <!--preparation time input-->
                     <span class="time-unit">minutes</span>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="cook-time" class="form-label">Cooking Time</label>
+                  <label for="cook-time" class="form-label">Cooking Time</label> <!--cooking time-->
                   <div class="time-input">
-                    <input type="number" id="cook-time" name="cook_time" class="form-control" value="{{ recipe.cook_time }}">
+                    <input type="number" id="cook-time" name="cook_time" class="form-control"
+                      value="{{ recipe.cook_time }}"> <!--cooking time input-->
                     <span class="time-unit">minutes</span>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="serving-size" class="form-label">Serving Size</label>
-                  <input type="number" id="serving-size" name="serving_size" class="form-control" value="{{ recipe.serving_size }}">
+                  <label for="serving-size" class="form-label">Serving Size</label> <!--serving size-->
+                  <input type="number" id="serving-size" name="serving_size" class="form-control"
+                    value="{{ recipe.serving_size }}"> <!--serving size input-->
                 </div>
               </div>
             </section>
 
+            <!-- tags section -->
             <section class="recipe-section">
-              <h2 class="section-title">Tags</h2>
+              <h2 class="section-title">Tags</h2> <!--tags section-->
               <div class="tags-container">
                 {% for tag in recipe.tags %}
                 <div class="tag">
-                  <span class="tag-text">{{ tag }}</span>
+                  <span class="tag-text">{{ tag }}</span> <!--tag text-->
                   <button type="button" class="btn-icon tag-remove" aria-label="Remove {{ tag }} tag">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <!--remove tag button-->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
                       <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                   </button>
                 </div>
                 {% endfor %}
-                
+
+                <!-- tag input field -->
                 <div class="tag-input-container">
-                  <input type="text" class="tag-input" placeholder="Add a tag...">
-                  <button type="button" class="btn-icon tag-add" aria-label="Add tag">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <input type="text" class="tag-input" placeholder="Add a tag..."> <!--tag input-->
+                  <button type="button" class="btn-icon tag-add" aria-label="Add tag"> <!--add tag button-->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
@@ -159,21 +253,24 @@
           </div>
         </div>
 
+        <!-- form action buttons -->
         <div class="form-actions">
-          <a href="{{ url_for('myrecipes') }}" class="btn btn-secondary">Cancel</a>
-          <button type="submit" class="btn btn-primary">Save Recipe</button>
+          <a href="{{ url_for('myrecipes') }}" class="btn btn-secondary">Cancel</a> <!--cancel button-->
+          <button type="submit" class="btn btn-primary">Save Recipe</button> <!--save button-->
         </div>
       </form>
     </div>
   </main>
-  
+
+  <!-- javascript for removing ingredients -->
   <script>
+    // Remove ingredient
     document.querySelectorAll('.remove-ingredient').forEach(button => {
       button.addEventListener('click', function () {
         this.closest('.ingredient-item').remove();
       });
     });
   </script>
-  
+
 </body>
 </html>
