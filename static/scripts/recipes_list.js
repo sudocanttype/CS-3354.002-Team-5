@@ -32,6 +32,17 @@ function favoriteRecipe(recipeId) {
     })
   })
   .then(res => res.json())
-  .then(data => alert(data.message))
-  .catch(err => console.error('Failed to favorite recipe:', err));
+  .then(data => {
+    if (data.message) {
+      alert(data.message);  // ✅ success
+    } else if (data.error) {
+      alert("Error: " + data.error);  // ❌ shows error clearly
+    } else {
+      alert("Unexpected response");
+    }
+  })
+  .catch(err => {
+    console.error('Favorite failed:', err);
+    alert("Request failed");
+  });
 }
