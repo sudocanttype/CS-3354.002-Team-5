@@ -19,6 +19,7 @@ cart_table = dynamodb.Table('Cart')
 
 
 recipes_table = dynamodb.Table('RecipeActual')
+generate_recipe_table = dynamodb.Table('GenerateRecipes')
 
 # Helper function to hash passwords
 def hash_password(password):
@@ -311,28 +312,73 @@ def generate():
     if request.method == 'POST':
         action = request.form.get('action')
         
+        if request.is_json:
+            username = session.get('user')
+            if not username:
+                return jsonify({'success': False, 'message': 'Not logged in'})
+
+            recipe_title = request.json.get('recipe_title')
+
+            # Check if already added
+            existing = recipes_table.query(
+                KeyConditionExpression=Key('username').eq(username) & Key('recipe_title').eq(recipe_title)
+            )
+            if existing.get('Items'):
+                return jsonify({'success': False, 'message': 'Already added'})
+
+            # Get from general table and add to user collection
+            recipe = generate_recipe_table.get_item(Key={'recipe_title': recipe_title}).get('Item')
+            if not recipe:
+                return jsonify({'success': False, 'message': 'Recipe not found'})
+
+            recipe['username'] = username
+            recipes_table.put_item(Item=recipe)
+
+            return jsonify({'success': True, 'message': 'Recipe added'})
+
         if action == 'search':
             if 'user' not in session:
                 return redirect(url_for('loginpage'))
     
-            username = session['user']
+            # username = session['user']
 
             search_name = request.form.get('query', '').strip()
-            ingredients_given = request.form.get('ingredients', '').strip() #.lower()
+            ingredients_given = request.form.get('ingredients_search', '').strip().lower()
 
-            filter_exp = Attr('username').eq(username)
+            filter_exp = Attr('recipe_title').contains(search_name)
 
             if search_name:  #filter by recipe name 
-                filter_exp = filter_exp & Attr('recipe_title').contains(search_name)
-            
-            ingredients_list = []
+                # filter_exp = filter_exp & Attr('recipe_title').contains(search_name)
+                response = generate_recipe_table.scan(FilterExpression=filter_exp)
+                recipes = response.get('Items', [])
+          
             if ingredients_given: #filter by ingredients
-                ingredients_list = [item.strip() for item in ingredients_given.split(',') if item.strip()]
-                for ingredient in ingredients_list:
-                    filter_exp = filter_exp & Attr('ingredients').contains(ingredient)     
+                response = generate_recipe_table.scan(FilterExpression=filter_exp)
+                recipes = response.get('Items', [])
 
-            response = recipes_table.scan(FilterExpression=filter_exp)
-            recipes = response.get('Items', [])   
+                ingredients_list = [item.strip().lower() for item in ingredients_given.split(',') if item.strip()]
+
+                filtered_recipes = []
+                for r in recipes:
+                    matched = []
+                    unmatched = []
+                    for db_ing in r.get('ingredients', []):
+                        db_ing_lower = db_ing.lower()
+                        matched_flag = False
+                        for input_ing in ingredients_list:
+                            if input_ing in db_ing_lower:
+                                matched.append(db_ing)
+                                matched_flag = True
+                                break
+                        if not matched_flag:
+                            unmatched.append(db_ing)
+                    
+                    if matched:
+                        r['matched_ingredients'] = matched
+                        r['unmatched_ingredients'] = unmatched
+                        filtered_recipes.append(r)
+
+                recipes = filtered_recipes  # replace with the filtered list
 
             return render_template('generaterecipe.html', result=recipes)
         elif action == 'subs':
