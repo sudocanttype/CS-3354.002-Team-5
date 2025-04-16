@@ -183,6 +183,19 @@
       </select>
     </div>
 
+    <div class="filter">
+      <label for="recipe-filter">Filter (Cuisine):</label> <!-- Favorites Filter which corresponds to use case for this module-->
+      <select id="recipe-filter3">
+        <option value="all">All Results</option>
+        <option value="american">American</option>
+        <option value="chinese">Chinese</option>
+        <option value="italian">Italian</option>
+        <option value="indian">Indian</option>
+        <option value="mexican">Mexican</option>
+        <option value="thai">Thai</option>
+      </select>
+    </div>
+
     <div class="recipes" id="recipes-container">
       {% for recipe in recipes %}
       <div class="recipe-box" 
@@ -206,6 +219,7 @@
     // Get filter elements
     const favoriteFilter = document.getElementById('recipe-filter');
     const dietaryFilter = document.getElementById('recipe-filter2');
+    const cuisineFilter = document.getElementById('recipe-filter3');
     const recipesContainer = document.getElementById('recipes-container');
     const recipeBoxes = document.querySelectorAll('.recipe-box');
     const noRecipesMessage = document.querySelector('.no-recipes');
@@ -213,11 +227,13 @@
     // Add event listeners to filters
     favoriteFilter.addEventListener('change', filterRecipes);
     dietaryFilter.addEventListener('change', filterRecipes);
+    cuisineFilter.addEventListener('change', filterRecipes);
     
     // Filter function
     function filterRecipes() {
       const favoriteValue = favoriteFilter.value;
       const dietaryValue = dietaryFilter.value;
+      const cuisineValue = cuisineFilter.value;
       let visibleCount = 0;
       
       // Loop through all recipe boxes
@@ -249,6 +265,10 @@
               if (tags.includes('gluten')) showRecipe = false;
               break;
           }
+        }
+
+        if (showRecipe && cuisineValue !== 'all') {
+          if (!tags.includes(cuisineValue)) showRecipe = false;
         }
         
         // Show or hide recipe
