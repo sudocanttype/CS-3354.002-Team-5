@@ -21,15 +21,22 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   const recipeFilter = document.getElementById('recipe-filter');
-  if (!recipeFilter) return;
+
+  // Avoid multiple event listeners being added
+  if (!recipeFilter || recipeFilter.dataset.listenerAttached === 'true') return;
+
+  console.log("Favorite IDs:", favoriteIDs);
 
   recipeFilter.addEventListener('change', function () {
     const filterValue = this.value;
     const recipes = document.querySelectorAll('.recipe-box');
 
+    console.log("Filter changed to:", filterValue);
+
     recipes.forEach(recipe => {
       const recipeId = String(recipe.getAttribute('data-id'));
       const isFavorite = favoriteIDs.includes(recipeId);
+      console.log(`Recipe ID ${recipeId} - isFavorite: ${isFavorite}`);
 
       if (filterValue === 'favorites' && !isFavorite) {
         recipe.style.display = 'none';
@@ -38,7 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-}); 
+
+  // Mark listener as attached so it doesn't get added again
+  recipeFilter.dataset.listenerAttached = 'true';
+});
 
 
 function favoriteRecipe(recipeId) {
