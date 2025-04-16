@@ -20,3 +20,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 }); 
+function favoriteRecipe(recipeId) {
+  fetch('/favorite', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: currentUsername,
+      recipeId: recipeId
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.message) {
+      alert(data.message);
+      // Optional: visually toggle heart icon here
+    } else {
+      alert("Error: " + data.error);
+    }
+  })
+  .catch(err => {
+    console.error('Favorite toggle failed:', err);
+    alert("Something went wrong");
+  });
+}

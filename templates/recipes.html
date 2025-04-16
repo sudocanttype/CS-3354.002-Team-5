@@ -176,6 +176,7 @@
       {% for recipe in recipes %}
       <div class="recipe-box">
         <h3>{{recipe.recipe_title}}</h3>
+        <button id="fav-{{ recipe.recipeId }}" onclick="favoriteRecipe('{{ recipe.recipeId }}')">❤️</button>
         <p>{{recipe.cook_time}}</p>
         <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
           <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
@@ -222,5 +223,11 @@
       </div>
     </div>
   </footer>
+  
+  <!-- project‑specific JS -->
+  <script>
+    const currentUsername = "{{ username }}";
+  </script>
+  <script src="{{ url_for('static', filename='scripts/recipes_list.js') }}"></script>
 </body>
 </html>

@@ -255,7 +255,7 @@ def myrecipes():
     recipes = response.get('Items', [])
 
     # Pass recipes to the template
-    return render_template('recipes.html', recipes=recipes)
+    return render_template('recipes.html', recipes=recipes, username=username)
 
 @app.route('/aboutus')
 def aboutus():
@@ -351,7 +351,43 @@ def generate():
 
     return render_template('generaterecipe.html')
 
+@app.route('/favorite', methods=['POST'])
+def toggle_favorite():
+    data = request.json
+    username = data.get('username')
+    recipeId = data.get('recipeId')
 
+    if not username or not recipeId:
+        return jsonify({'error': 'Missing username or recipeId'}), 400
+
+    try:
+        # Get user
+        response = user_table.get_item(Key={'username': username})
+        user = response.get('Item')
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        favorites = user.get('favorites', [])
+
+        if recipeId in favorites:
+            favorites.remove(recipeId)
+            message = "Recipe unfavorited!"
+        else:
+            favorites.append(recipeId)
+            message = "Recipe favorited!"
+
+        # Update the user's favorites
+        user_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET favorites = :favs',
+            ExpressionAttributeValues={':favs': favorites}
+        )
+
+        return jsonify({'message': message, 'favorites': favorites})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
