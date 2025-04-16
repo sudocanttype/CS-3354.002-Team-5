@@ -256,9 +256,15 @@ def myrecipes():
 
     recipes = response.get('Items', [])
 
-    print("Queried recipes:")
+    # ✅ OPTIONAL: Deduplicate recipes based on recipeId
+    seen = set()
+    unique_recipes = []
     for r in recipes:
-        print(f"- {r['recipeId']} : {r['recipe_title']}")
+        rid = str(r['recipeId'])  # normalize to string
+        if rid not in seen:
+            unique_recipes.append(r)
+            seen.add(rid)
+    recipes = unique_recipes
 
     # Get favorite recipe IDs from the user's record
     user_data = user_table.get_item(Key={'username': username})
