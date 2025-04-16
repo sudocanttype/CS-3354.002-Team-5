@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const recipes = document.querySelectorAll('.recipe-box');
 
     recipes.forEach(recipe => {
-      const recipeId = recipe.getAttribute('data-id');
+      cconst recipeId = String(recipe.getAttribute('data-id'));
       const isFavorite = favoriteIDs.includes(recipeId);
 
       if (filterValue === 'favorites' && !isFavorite) {
