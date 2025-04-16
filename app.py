@@ -240,7 +240,9 @@ def remove_from_cart():
         return jsonify({'message': f'Error: {str(e)}'}), 500
 
 
-
+# ----------------------
+# My Recipes
+# ----------------------
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():
     if 'user' not in session:
@@ -254,8 +256,12 @@ def myrecipes():
 
     recipes = response.get('Items', [])
 
+    # Get favorite recipe IDs from the user's record
+    user_data = users_table.get_item(Key={'username': username})
+    favorite_ids = user_data['Item'].get('favorite_recipes', [])
+
     # Pass recipes to the template
-    return render_template('recipes.html', recipes=recipes, username=username)
+    return render_template('recipes.html', recipes=recipes, username=username, favorite_ids=favorite_ids)
 
 @app.route('/aboutus')
 def aboutus():
