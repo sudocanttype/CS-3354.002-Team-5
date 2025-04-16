@@ -129,9 +129,18 @@
   }
 </script>
 
-<body>  
+<body>
   <section>
     <nav>
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for message in messages %}
+        <p class="alert">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 
         <div class="nav-brand">NomNom Bites</div> <!--nav bar-->
         <div class="nav-links">

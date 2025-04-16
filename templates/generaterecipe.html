@@ -184,7 +184,7 @@
 
             <!--input box to enter ingredients then find a recipe that matches-->
             <label for="ingredients" style="padding-top: 50px;">Enter the ingredients you have, and we'll find a recipe for you!</label>
-            <textarea name="query" id="ingredients" rows="5" placeholder="e.g. eggs, milk, sugar"></textarea>
+            <input class="search-box" type="text" name="ingredients_search" id="ingredients" placeholder="e.g. eggs, milk, sugar">
             
             <!--generate recipes button for the 2 possible inputs above-->
             <div style="text-align: center;"> 
@@ -203,7 +203,7 @@
     <!-- database: recipes will be generated using a post endpoint that return a block of json
      (referring to the individual divs starting a generation process returning the recipes from the db). -->
 
-    <div class="container"> <!--container to return the results of inputs from above-->
+    <div class="recipe-container"> <!--container to return the results of inputs from above-->
         {% if suggestions %}   <!--return results of a substitution-->
         <div class="results">
             <h2>Smart Ingredient Swaps</h2>
@@ -216,22 +216,21 @@
         <!--maybe output a message if no substitution exist?-->
         {% endif %} 
 
-        {% if result %}  <!--return results of a recipe based on name or ingredients-->
-        <div class="recipe-container">
-            <div class="recipes"> 
-                <div class="recipe-box">
-                    <h2>{{ result.title }}</h2>
-                    <p>{{ result.description }}</p>
-                    <a href="{{ url_for('edit_recipe', recipe_id=1) }}">
-                        <button class="edit-btn">Edit Recipe</button>
-                    </a>
-                    <button class="edit-btn">Add Recipe</button> <!--backend: clicking this button would add recipe to the user's my recipe page/list in the db-->
-                    <!--do we need a view recipe button too?-->
-                </div>
-            </div> 
+        {% if result %}
+        <div class="recipes"> <!--return results of a recipe based on name or ingredients-->
+            {% for recipe in result %}
+            <div class="recipe-box">
+                <h3>{{recipe.recipe_title}}</h3>
+                <p>{{recipe.cook_time}}</p>
+
+                <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
+                    <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+                </a>
+            </div>
+        {% else %}
+            <p>No recipes found. Try creating one!</p>
+        {% endfor %}
         </div>
-        {% elif request.method == 'POST' and not suggestions %} 
-            <p>No recipes found. :( Try a different name, recipe, or add more ingredients!</p>
         {% endif %} 
     </div>
 

@@ -12,6 +12,7 @@ class Product: #class for the products the user is able to add to their cart
     
     def addToCart(self):
         pass
+    # Using DynamoDB database for the products
 
 
 class Recipe:  #class for recipes so that the user can view its details, edit, or create a recipe

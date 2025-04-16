@@ -1,7 +1,9 @@
-from flask import Flask, jsonify, session, render_template, request, redirect, url_for
-from mock_data import products, recipes_data, my_recipes
+from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
+from mock_data import recipes_data, my_recipes
+from decimal import Decimal
 import boto3
 import hashlib
+import time
 from datetime import timedelta
 from boto3.dynamodb.conditions import Attr, Key
 
@@ -12,7 +14,12 @@ app.permanent_session_lifetime = timedelta(days=1)
 # AWS DynamoDB Setup
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # or your region
 user_table = dynamodb.Table('Users')
+products_table = dynamodb.Table('Products')
+cart_table = dynamodb.Table('Cart')
+
+
 recipes_table = dynamodb.Table('RecipeActual')
+
 # Helper function to hash passwords
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -121,12 +128,118 @@ def logout():
 
 @app.route('/shop')
 def shop():
-    return render_template('grocerystorepage.html', products=products)
+    if 'user' not in session:
+        flash("You must be logged in to access the shop.")
+        return redirect(url_for('loginpage'))
 
+    username = session['user']
+    response = products_table.scan()
+    products = response['Items']  # Pulled from DynamoDB
+
+    cart_response = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    )
+    cart_items = cart_response.get('Items', [])
+    total_quantity = sum(item['quantity'] for item in cart_items)
+
+
+    first_name = session.get('name')
+    last_name = session.get('last_name')
+    return render_template('grocerystorepage.html', products=products, first_name=first_name, last_name=last_name, cart_count=total_quantity)
+
+
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    if 'user' not in session:
+        return jsonify({'message': 'Please log in first'}), 403
+
+    data = request.get_json()
+    username = session['user']
+    product_id = int(data['product_id'])
+    quantity = int(data['quantity'])
+    product = products_table.get_item(Key={'product_id': product_id}).get('Item')
+    name = product['name']
+    price = product['price']
+    image = product['image']
+
+    try:
+        cart_table.put_item(Item={
+            'username': username,
+            'product_id': product_id,
+            'name': name,
+            'quantity': quantity,
+            'price': Decimal(str(price)),
+            'image': image,
+            'added_at': str(int(time.time()))
+        })
+        return jsonify({'message': f'Added {quantity} of item {product_id} to your cart!'})
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
 @app.route('/checkout')
 def checkout():
-    cart_items = []
-    return render_template('checkout.html', cart_items=cart_items)
+    if 'user' not in session:
+        flash("You must be logged in to access the shop.")
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+
+    # Get all items from the Cart table for this user
+    response = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    )
+    cart_items = response.get('Items', [])
+
+    total_items = sum(int(item['quantity']) for item in cart_items)
+
+    # Calculate subtotal
+    subtotal = sum(float(item['price']) * int(item['quantity']) for item in cart_items)
+    tax = 5.00
+    convenience_fee = 1.00
+    total = subtotal + tax + convenience_fee
+
+    return render_template('checkout.html',subtotal=subtotal, tax=tax, convenience_fee=convenience_fee, total=total, cart_items=cart_items, total_items=total_items)
+
+@app.route('/update_quantity', methods=['PATCH'])
+def update_quantity():
+    if 'user' not in session:
+        return jsonify({'message': 'Unauthorized'}), 403
+
+    data = request.get_json()
+    username = session['user']
+    product_id = int(data['product_id'])
+    new_qty = int(data['quantity'])
+
+    try:
+        cart_table.update_item(
+            Key={'username': username, 'product_id': product_id},
+            UpdateExpression="SET quantity = :q",
+            ExpressionAttributeValues={':q': new_qty}
+        )
+        return jsonify({'message': 'Quantity updated successfully'})
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+@app.route('/remove_from_cart', methods=['DELETE'])
+def remove_from_cart():
+    if 'user' not in session:
+        return jsonify({'message': 'Not authorized'}), 403
+
+    data = request.get_json()
+    username = session['user']
+    product_id = int(data['product_id'])
+
+    try:
+        cart_table.delete_item(
+            Key={
+                'username': username,
+                'product_id': product_id
+            }
+        )
+        return jsonify({'message': 'Item removed from cart'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
 
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():
@@ -197,16 +310,31 @@ def generate():
 
     if request.method == 'POST':
         action = request.form.get('action')
-        query = request.form.get('query', '').strip().lower()
-        result = None
         
         if action == 'search':
-            if(query == 'lemonade'):
-                result = {
-                    'title': 'Lemonade', 
-                    'description': 'Refreshing drink' 
-                }
-            return render_template('generaterecipe.html', result=result)
+            if 'user' not in session:
+                return redirect(url_for('loginpage'))
+    
+            username = session['user']
+
+            search_name = request.form.get('query', '').strip()
+            ingredients_given = request.form.get('ingredients', '').strip() #.lower()
+
+            filter_exp = Attr('username').eq(username)
+
+            if search_name:  #filter by recipe name 
+                filter_exp = filter_exp & Attr('recipe_title').contains(search_name)
+            
+            ingredients_list = []
+            if ingredients_given: #filter by ingredients
+                ingredients_list = [item.strip() for item in ingredients_given.split(',') if item.strip()]
+                for ingredient in ingredients_list:
+                    filter_exp = filter_exp & Attr('ingredients').contains(ingredient)     
+
+            response = recipes_table.scan(FilterExpression=filter_exp)
+            recipes = response.get('Items', [])   
+
+            return render_template('generaterecipe.html', result=recipes)
         elif action == 'subs':
             ingredients_input = request.form['ingredients']
             ingredients = [i.strip().lower() for i in ingredients_input.split(',')]
