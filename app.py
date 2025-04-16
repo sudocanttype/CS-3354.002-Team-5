@@ -197,16 +197,31 @@ def generate():
 
     if request.method == 'POST':
         action = request.form.get('action')
-        query = request.form.get('query', '').strip().lower()
-        result = None
         
         if action == 'search':
-            if(query == 'lemonade'):
-                result = {
-                    'title': 'Lemonade', 
-                    'description': 'Refreshing drink' 
-                }
-            return render_template('generaterecipe.html', result=result)
+            if 'user' not in session:
+                return redirect(url_for('loginpage'))
+    
+            username = session['user']
+
+            search_name = request.form.get('query', '').strip()
+            ingredients_given = request.form.get('ingredients', '').strip() #.lower()
+
+            filter_exp = Attr('username').eq(username)
+
+            if search_name:  #filter by recipe name 
+                filter_exp = filter_exp & Attr('recipe_title').contains(search_name)
+            
+            ingredients_list = []
+            if ingredients_given: #filter by ingredients
+                ingredients_list = [item.strip() for item in ingredients_given.split(',') if item.strip()]
+                for ingredient in ingredients_list:
+                    filter_exp = filter_exp & Attr('ingredients').contains(ingredient)     
+
+            response = recipes_table.scan(FilterExpression=filter_exp)
+            recipes = response.get('Items', [])   
+
+            return render_template('generaterecipe.html', result=recipes)
         elif action == 'subs':
             ingredients_input = request.form['ingredients']
             ingredients = [i.strip().lower() for i in ingredients_input.split(',')]
