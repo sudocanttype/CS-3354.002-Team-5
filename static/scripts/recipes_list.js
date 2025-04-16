@@ -56,6 +56,7 @@ function favoriteRecipe(recipeId) {
   .then(data => {
     if (data.message) {
       alert(data.message);
+      favoriteIDs.push(String(recipeId));  // ✅ Add it to the list manually
       // Optional: visually toggle heart icon here
     } else {
       alert("Error: " + data.error);
