@@ -223,7 +223,7 @@ def generate():
 
     return render_template('generaterecipe.html')
 
-app.route('/favorite', methods=['POST'])
+@app.route('/favorite', methods=['POST'])
 def favorite_recipe():
     print("/favorite route was triggered")
     data = request.json
