@@ -258,7 +258,7 @@ def myrecipes():
 
     # Get favorite recipe IDs from the user's record
     user_data = users_table.get_item(Key={'username': username})
-    favorite_ids = user_data['Item'].get('favorite_recipes', [])
+    favorite_ids = user_data['Item'].get('favorites', [])
 
     # Pass recipes to the template
     return render_template('recipes.html', recipes=recipes, username=username, favorite_ids=favorite_ids)
