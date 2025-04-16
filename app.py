@@ -223,11 +223,6 @@ def generate():
 
     return render_template('generaterecipe.html')
 
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
 @app.route('/favorite', methods=['POST'])
 def favorite_recipe():
     data = request.json
@@ -257,3 +252,6 @@ def favorite_recipe():
         )
 
     return jsonify({'message': 'Recipe favorited!', 'favorites': favorites})
+
+if __name__ == '__main__':
+    app.run(debug=True)
