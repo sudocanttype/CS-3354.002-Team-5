@@ -174,7 +174,7 @@
 
     <div class="recipes"> <!-- DB Access Psuedocode: The recipes will be generated using a post endpoint that return a block of json. The json will refer to the individual divs initiating a generation process returning the recipes from the database. -->
       {% for recipe in recipes %}
-      <div class="recipe-box">
+      <div class="recipe-box" data-id="{{ recipe.recipeId }}">
         <h3>{{recipe.recipe_title}}</h3>
         <button id="fav-{{ recipe.recipeId }}" onclick="favoriteRecipe('{{ recipe.recipeId }}')">❤️</button>
         <p>{{recipe.cook_time}}</p>
@@ -227,6 +227,7 @@
   <!-- project‑specific JS -->
   <script>
     const currentUsername = "{{ username }}";
+    const favoriteIDs = {{ favorite_ids | tojson | safe }};
   </script>
   <script src="{{ url_for('static', filename='scripts/recipes_list.js') }}"></script>
 </body>
