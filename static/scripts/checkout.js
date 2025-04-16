@@ -71,7 +71,7 @@ function updateCheckoutTotals() {
     if (itemCountEl && cartCountText) {
         itemCountEl.innerText = totalItems;
 
-
+        const plural = totalItems === 1 ? "item" : "items"; // ✅ Add this line
         cartCountText.innerHTML = `🛒 You have <span id="cart-total-items">${totalItems}</span> ${plural} in your cart`;
     }
 }
@@ -91,14 +91,28 @@ function removeItem(productId) {
     .then(data => {
         alert(data.message);
 
-        //  Remove the item from DOM
+        // Remove the item from the DOM
         const itemElement = document.getElementById(`cart-item-${productId}`);
         if (itemElement) itemElement.remove();
 
-        updateCheckoutTotals(); // 👈 Update subtotal/total after removal
+        // Update totals
+        updateCheckoutTotals();
+
+        // Now check if any items remain
+        const remainingItems = document.querySelectorAll('.cart-item');
+        if (remainingItems.length === 0) {
+            const cartItemsSection = document.querySelector('.cart-items');
+
+            // Replace entire cart section with empty message
+            cartItemsSection.innerHTML = `
+                <h2>Items</h2>
+                <p class="empty-cart">You don't have any items in your cart.</p>
+            `;
+        }
     })
     .catch(err => {
         console.error("Error removing item:", err);
     });
 }
+
 
