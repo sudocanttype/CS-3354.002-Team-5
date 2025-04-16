@@ -19,9 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 100);
     });
   });
-}); 
 
-const recipeFilter = document.getElementById('recipe-filter');
+  const recipeFilter = document.getElementById('recipe-filter');
   if (!recipeFilter) return;
 
   recipeFilter.addEventListener('change', function () {
@@ -39,6 +38,8 @@ const recipeFilter = document.getElementById('recipe-filter');
       }
     });
   });
+}); 
+
 
 function favoriteRecipe(recipeId) {
   fetch('/favorite', {
