@@ -224,46 +224,42 @@ def generate():
     return render_template('generaterecipe.html')
 
 @app.route('/favorite', methods=['POST'])
-def favorite_recipe():
-    print("/favorite route was triggered")
+def toggle_favorite():
     data = request.json
     username = data.get('username')
     recipeId = data.get('recipeId')
 
-    print("Incoming data:", data)
-
     if not username or not recipeId:
-        print("Missing username or recipeId")
         return jsonify({'error': 'Missing username or recipeId'}), 400
 
     try:
+        # Get user
         response = user_table.get_item(Key={'username': username})
         user = response.get('Item')
-        print("Retrieved user:", user)
 
         if not user:
-            print("User not found")
             return jsonify({'error': 'User not found'}), 404
 
         favorites = user.get('favorites', [])
-        if recipeId not in favorites:
-            favorites.append(recipeId)
-            print("New favorites list:", favorites)
 
-            user_table.update_item(
-                Key={'username': username},
-                UpdateExpression='SET favorites = :favs',
-                ExpressionAttributeValues={':favs': favorites}
-            )
-            print("DynamoDB update sent")
+        if recipeId in favorites:
+            favorites.remove(recipeId)
+            message = "Recipe unfavorited!"
         else:
-            print("Recipe already in favorites")
+            favorites.append(recipeId)
+            message = "Recipe favorited!"
 
-        return jsonify({'message': 'Recipe favorited!', 'favorites': favorites})
+        # Update the user's favorites
+        user_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET favorites = :favs',
+            ExpressionAttributeValues={':favs': favorites}
+        )
+
+        return jsonify({'message': message, 'favorites': favorites})
 
     except Exception as e:
-        print("Error:", e)
         return jsonify({'error': str(e)}), 500
-print("THIS FILE IS RUNNING")
+
 if __name__ == '__main__':
     app.run(debug=True)
