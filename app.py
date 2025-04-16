@@ -229,39 +229,39 @@ def favorite_recipe():
     username = data.get('username')
     recipeId = data.get('recipeId')
 
-    print("📦 Incoming data:", data)
+    print("Incoming data:", data)
 
     if not username or not recipeId:
-        print("❌ Missing username or recipeId")
+        print("Missing username or recipeId")
         return jsonify({'error': 'Missing username or recipeId'}), 400
 
     try:
         response = user_table.get_item(Key={'username': username})
         user = response.get('Item')
-        print("👤 Retrieved user:", user)
+        print("Retrieved user:", user)
 
         if not user:
-            print("❌ User not found")
+            print("User not found")
             return jsonify({'error': 'User not found'}), 404
 
         favorites = user.get('favorites', [])
         if recipeId not in favorites:
             favorites.append(recipeId)
-            print("📥 New favorites list:", favorites)
+            print("New favorites list:", favorites)
 
             user_table.update_item(
                 Key={'username': username},
                 UpdateExpression='SET favorites = :favs',
                 ExpressionAttributeValues={':favs': favorites}
             )
-            print("✅ DynamoDB update sent")
+            print("DynamoDB update sent")
         else:
-            print("⚠️ Recipe already in favorites")
+            print("Recipe already in favorites")
 
         return jsonify({'message': 'Recipe favorited!', 'favorites': favorites})
 
     except Exception as e:
-        print("❌ Error:", e)
+        print("Error:", e)
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
