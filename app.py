@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, jsonify, session, render_template, request, redirect, url_for
 from mock_data import products, recipes_data, my_recipes
 import boto3
 import hashlib
@@ -142,7 +142,7 @@ def myrecipes():
     recipes = response.get('Items', [])
 
     # Pass recipes to the template
-    return render_template('recipes.html', recipes=recipes)
+    return render_template('recipes.html', recipes=recipes, username=username)
 
 @app.route('/aboutus')
 def aboutus():
