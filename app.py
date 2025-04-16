@@ -227,3 +227,33 @@ def generate():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/favorite', methods=['POST'])
+def favorite_recipe():
+    data = request.json
+    username = data.get('username')
+    recipeId = data.get('recipeId')
+
+    if not username or not recipeId:
+        return jsonify({'error': 'Missing username or recipeId'}), 400
+
+    # Fetch the user by username
+    response = user_table.get_item(Key={'username': username})
+    user = response.get('Item')
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    # Get or initialize the favorites list
+    favorites = user.get('favorites', [])
+
+    if recipeId not in favorites:
+        favorites.append(recipeId)
+
+        user_table.update_item(
+            Key={'username': username},
+            UpdateExpression='SET favorites = :favs',
+            ExpressionAttributeValues={':favs': favorites}
+        )
+
+    return jsonify({'message': 'Recipe favorited!', 'favorites': favorites})

@@ -20,3 +20,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 }); 
+function favoriteRecipe(recipeId) {
+  fetch('/favorite', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: currentUsername,
+      recipeId: recipeId
+    })
+  })
+  .then(res => res.json())
+  .then(data => alert(data.message))
+  .catch(err => console.error('Failed to favorite recipe:', err));
+}
