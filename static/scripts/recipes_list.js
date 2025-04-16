@@ -68,11 +68,23 @@ function favoriteRecipe(recipeId) {
         alert(data.message);
 
         const idStr = String(recipeId);
-        if (!favoriteIDs.includes(idStr)) {
+        const index = favoriteIDs.indexOf(idStr);
+
+        if (index !== -1) {
+          // Unfavorite: remove from the array
+          favoriteIDs.splice(index, 1);
+        } else {
+          // Favorite: add to the array
           favoriteIDs.push(idStr);
         }
 
-        // ✅ Reapply filter so duplicates don't show
+        // Optional: update the heart icon
+        const heartButton = document.getElementById(`fav-${recipeId}`);
+        if (heartButton) {
+          heartButton.textContent = favoriteIDs.includes(idStr) ? '❤️' : '🤍';
+        }
+
+        // If filter is set to "favorites", reapply the filter
         const recipeFilter = document.getElementById('recipe-filter');
         if (recipeFilter && recipeFilter.value === 'favorites') {
           recipeFilter.dispatchEvent(new Event('change'));
