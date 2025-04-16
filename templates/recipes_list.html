@@ -203,6 +203,7 @@
             {% endif %}
             <div class="recipe-card-content">
               <h2 class="recipe-card-title">{{ recipe.title }}</h2>
+              <button onclick="favoriteRecipe('{{ recipe.recipeId }}')">❤️ Favorite</button>
               <div class="recipe-card-meta">
                 <span>{{ recipe.prep_time + recipe.cook_time }} mins</span>
                 <span>{{ recipe.serving_size }} serving(s)</span>
