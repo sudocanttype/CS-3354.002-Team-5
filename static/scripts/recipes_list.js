@@ -34,15 +34,14 @@ function favoriteRecipe(recipeId) {
   .then(res => res.json())
   .then(data => {
     if (data.message) {
-      alert(data.message);  // ✅ success
-    } else if (data.error) {
-      alert("Error: " + data.error);  // ❌ shows error clearly
+      alert(data.message);
+      // Optional: visually toggle heart icon here
     } else {
-      alert("Unexpected response");
+      alert("Error: " + data.error);
     }
   })
   .catch(err => {
-    console.error('Favorite failed:', err);
-    alert("Request failed");
+    console.error('Favorite toggle failed:', err);
+    alert("Something went wrong");
   });
 }
