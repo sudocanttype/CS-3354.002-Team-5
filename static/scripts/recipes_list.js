@@ -62,20 +62,29 @@ function favoriteRecipe(recipeId) {
       recipeId: recipeId
     })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data.message) {
-      alert(data.message);
-      favoriteIDs.push(String(recipeId));  // ✅ Add it to the list manually
-      // Optional: visually toggle heart icon here
-    } else {
-      alert("Error: " + data.error);
-    }
-  })
-  .catch(err => {
-    console.error('Favorite toggle failed:', err);
-    alert("Something went wrong");
-  });
+    .then(res => res.json())
+    .then(data => {
+      if (data.message) {
+        alert(data.message);
+
+        const idStr = String(recipeId);
+        if (!favoriteIDs.includes(idStr)) {
+          favoriteIDs.push(idStr);
+        }
+
+        // ✅ Reapply filter so duplicates don't show
+        const recipeFilter = document.getElementById('recipe-filter');
+        if (recipeFilter && recipeFilter.value === 'favorites') {
+          recipeFilter.dispatchEvent(new Event('change'));
+        }
+      } else {
+        alert("Error: " + data.error);
+      }
+    })
+    .catch(err => {
+      console.error('Favorite toggle failed:', err);
+      alert("Something went wrong");
+    });
 }
 
 window.favoriteRecipe = favoriteRecipe;
