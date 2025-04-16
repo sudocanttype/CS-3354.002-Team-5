@@ -187,23 +187,25 @@
   </nav>
 
   <!-- ─────────── Main content ─────────── -->
-  <main class="app-container">
-    <div class="container">
-      <section class="page-header">
-        <h1 class="page-title">My Recipes</h1>
-      </section>
-      
-      <div class="recipe-grid">
-        {% for recipe_id, recipe in recipes.items() %}
-          <a href="{{ url_for('edit_recipe', recipe_id=recipe_id) }}" class="recipe-card">
+<main class="app-container">
+  <div class="container">
+    <section class="page-header">
+      <h1 class="page-title">My Recipes</h1>
+    </section>
+
+    <div class="recipe-grid">
+      {% for recipe_id, recipe in recipes.items() %}
+        <div class="recipe-card">
+
+          <a href="{{ url_for('edit_recipe', recipe_id=recipe_id) }}">
             {% if recipe.image %}
-            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-card-img">
+              <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-card-img">
             {% else %}
-            <div class="recipe-card-img empty-card-img"></div>
+              <div class="recipe-card-img empty-card-img"></div>
             {% endif %}
+
             <div class="recipe-card-content">
               <h2 class="recipe-card-title">{{ recipe.title }}</h2>
-              <button onclick="favoriteRecipe('{{ recipe_id }}')">❤️ Favorite</button>
               <div class="recipe-card-meta">
                 <span>{{ recipe.prep_time + recipe.cook_time }} mins</span>
                 <span>{{ recipe.serving_size }} serving(s)</span>
@@ -215,22 +217,27 @@
               </div>
             </div>
           </a>
-        {% endfor %}
-        
-        <a href="{{ url_for('create_recipe') }}" class="add-recipe">
-          <div class="add-recipe-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-          </div>
-          <span class="add-recipe-text">Add New Recipe</span>
-        </a>
+
+          <!-- Favorite Button -->
+          <button onclick="favoriteRecipe('{{ recipe_id }}')">❤️ Favorite</button>
+
+        </div> <!-- closes .recipe-card -->
+      {% endfor %}
+    </div> <!-- closes .recipe-grid -->
+
+    <a href="{{ url_for('create_recipe') }}" class="add-recipe">
+      <div class="add-recipe-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
       </div>
-    </div>
-  </main>
+      <span class="add-recipe-text">Add New Recipe</span>
+    </a>
+  </div>
+</main>
 
   <!-- project‑specific JS -->
   <script>
