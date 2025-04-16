@@ -1,3 +1,4 @@
+console.log("recipes_list.js loaded!");
 document.addEventListener('DOMContentLoaded', function() {
   const addRecipeBtn = document.querySelector('.add-recipe');
   if (addRecipeBtn) {
