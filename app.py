@@ -158,6 +158,7 @@ def add_to_cart():
     product_id = int(data['product_id'])
     quantity = int(data['quantity'])
     product = products_table.get_item(Key={'product_id': product_id}).get('Item')
+    name = product['name']
     price = product['price']
     image = product['image']
 
@@ -165,6 +166,7 @@ def add_to_cart():
         cart_table.put_item(Item={
             'username': username,
             'product_id': product_id,
+            'name': name,
             'quantity': quantity,
             'price': Decimal(str(price)),
             'image': image,
@@ -175,8 +177,69 @@ def add_to_cart():
         return jsonify({'message': f'Error: {str(e)}'}), 500
 @app.route('/checkout')
 def checkout():
-    cart_items = []
-    return render_template('checkout.html', cart_items=cart_items)
+    if 'user' not in session:
+        flash("You must be logged in to access the shop.")
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+
+    # Get all items from the Cart table for this user
+    response = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    )
+    cart_items = response.get('Items', [])
+
+    total_items = sum(int(item['quantity']) for item in cart_items)
+
+    # Calculate subtotal
+    subtotal = sum(float(item['price']) * int(item['quantity']) for item in cart_items)
+    tax = 5.00
+    convenience_fee = 1.00
+    total = subtotal + tax + convenience_fee
+
+    return render_template('checkout.html',subtotal=subtotal, tax=tax, convenience_fee=convenience_fee, total=total, cart_items=cart_items, total_items=total_items)
+
+@app.route('/update_quantity', methods=['PATCH'])
+def update_quantity():
+    if 'user' not in session:
+        return jsonify({'message': 'Unauthorized'}), 403
+
+    data = request.get_json()
+    username = session['user']
+    product_id = int(data['product_id'])
+    new_qty = int(data['quantity'])
+
+    try:
+        cart_table.update_item(
+            Key={'username': username, 'product_id': product_id},
+            UpdateExpression="SET quantity = :q",
+            ExpressionAttributeValues={':q': new_qty}
+        )
+        return jsonify({'message': 'Quantity updated successfully'})
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+@app.route('/remove_from_cart', methods=['DELETE'])
+def remove_from_cart():
+    if 'user' not in session:
+        return jsonify({'message': 'Not authorized'}), 403
+
+    data = request.get_json()
+    username = session['user']
+    product_id = int(data['product_id'])
+
+    try:
+        cart_table.delete_item(
+            Key={
+                'username': username,
+                'product_id': product_id
+            }
+        )
+        return jsonify({'message': 'Item removed from cart'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+
 
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():

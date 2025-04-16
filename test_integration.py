@@ -4,7 +4,7 @@ from mock_data import products, recipes_data, my_recipes
 
 class TestUserWorkflow(unittest.TestCase):
     def setUp(self):
-        self.user = User("Test", "User", "testuser", "password")
+        self.user = User("Test", "User", "testuser", "testuser123", "password")
         self.lemonade = recipes_data[1]
         self.pizza = recipes_data[2]
         self.pear = products[0]
