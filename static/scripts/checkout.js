@@ -68,11 +68,11 @@ function updateCheckoutTotals() {
     const itemCountEl = document.getElementById("cart-total-items");
     const cartCountText = document.getElementById("cart-count-text");
 
-    if (itemCountEl) {
+    if (itemCountEl && cartCountText) {
         itemCountEl.innerText = totalItems;
 
 
-        itemCountEl.parentElement.innerHTML = `🛒 You have <span id="cart-total-items">${totalItems}</span> ${pluralText} in your cart`;
+        cartCountText.innerHTML = `🛒 You have <span id="cart-total-items">${totalItems}</span> ${plural} in your cart`;
     }
 }
 
