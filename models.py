@@ -1,3 +1,4 @@
+# Product class made by Ahmed Sherwani
 class Product: #class for the products the user is able to add to their cart
     def __init__(self, product_id, name, description, price, image):
         self.product_id = product_id
@@ -53,10 +54,11 @@ class MyRecipes:  #collection of the user's recipes including the favorites and 
 
 
 class User:  #user object to store user info and manage user details for login/log out and their recipes/cart
-    def __init__(self, name, lastName, userName, password):
+    def __init__(self, name, lastName, email, userName, password):
         self.name = name
         self.lastName = lastName
         self.userName = userName
+        self.email = email
         self.password = password 
         self.favorites = Favorites()
         self.myRecipes = MyRecipes()
