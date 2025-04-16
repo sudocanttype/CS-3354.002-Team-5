@@ -155,6 +155,16 @@
             border-radius: 5px;
         }
 
+        .add-btn {
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
         .edit-btn:hover {
             background-color: #555;
         }
@@ -221,11 +231,35 @@
             {% for recipe in result %}
             <div class="recipe-box">
                 <h3>{{recipe.recipe_title}}</h3>
-                <p>{{recipe.cook_time}}</p>
+                <p>Prep time: {{recipe.prep_time}}</p>
+                <p>Cook time: {{recipe.cook_time}}</p>
+                <p>Rating: {{recipe.rating}}</p>
+                <p>Serving size: {{recipe.serving_size}}</p>
+
+                {% if recipe.matched_ingredients %}
+                    <p><strong>Ingredients you have:</strong> 
+                        <span style="color: green;">
+                        {{ recipe.matched_ingredients | join(', ') }}
+                        </span>
+                    </p>
+                    <p><strong>Ingredients you need:</strong> 
+                        <span style="color: red;">
+                        {{ recipe.unmatched_ingredients | join(', ') }}
+                        </span>
+                    </p>
+                {% else %}
+                    <p><em>No ingredients from your input matched.</em></p>
+                {% endif %}
 
                 <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
                     <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
                 </a>
+                <form action="{{ url_for('generate') }}" method="POST">
+                    <input type="hidden" name="recipe_title" value="{{ recipe.recipe_title }}">
+                    <button class="add-btn" data-title="{{ recipe.recipe_title }}">Add to My Collection</button>
+                </form>
+                <!-- <button type="button" class="add-btn" data-title="{{ recipe.recipe_title }}">Add to My Collection</button> -->
+
             </div>
         {% else %}
             <p>No recipes found. Try creating one!</p>
@@ -238,6 +272,37 @@
         ✽ Built with love by the NomNom Team ✽
     </footer>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.add-btn').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent page reload
+        
+                    const recipeTitle = this.dataset.title;
+        
+                    fetch('/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ recipe_title: recipeTitle })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.textContent = '✅ Added';
+                            this.disabled = true;
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 
