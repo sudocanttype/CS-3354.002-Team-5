@@ -256,6 +256,10 @@ def myrecipes():
 
     recipes = response.get('Items', [])
 
+    print("Queried recipes:")
+    for r in recipes:
+        print(f"- {r['recipeId']} : {r['recipe_title']}")
+
     # Get favorite recipe IDs from the user's record
     user_data = user_table.get_item(Key={'username': username})
     favorite_ids = list(set(user_data['Item'].get('favorites', [])))
