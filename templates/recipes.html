@@ -87,6 +87,17 @@
     .create-btn:hover {
       background-color: #555;
     }
+    .no-recipes {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 10px;
+    }
+    .favorite-icon {
+      color: gold;
+      margin-left: 5px;
+    }
 
     /* Footer */
     footer {
@@ -172,22 +183,91 @@
       </select>
     </div>
 
-    <div class="recipes"> <!-- DB Access Psuedocode: The recipes will be generated using a post endpoint that return a block of json. The json will refer to the individual divs initiating a generation process returning the recipes from the database. -->
+    <div class="recipes" id="recipes-container">
       {% for recipe in recipes %}
-      <div class="recipe-box" data-id="{{ recipe.recipeId }}">
-        <h3>{{recipe.recipe_title}}</h3>
-        <button id="fav-{{ recipe.recipeId }}" onclick="favoriteRecipe('{{ recipe.recipeId|string }}')">❤️</button>
-        <p>{{recipe.cook_time}}</p>
+      <div class="recipe-box" 
+           data-favorite="{{ recipe.favorite|lower }}" 
+           data-tags="{{ recipe.tags|join(',') }}">
+        <h3>{{ recipe.recipe_title}} {% if recipe.favorite %}<i class="fas fa-star favorite-icon"></i>{% endif %}</h3>
+        <p>Prep Time: {{ recipe.prep_time }}</p>
+        <p>Cook Time: {{ recipe.cook_time }}</p>
         <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
-          <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+          <button class="edit-btn">Edit Recipe</button>
         </a>
       </div>
-      {% else %}
-      <p>No recipes found. Try creating one!</p>
       {% endfor %}
+      <div class="no-recipes" style="display: none;">
+        <p>No recipes found with the selected filters.</p>
+      </div>
     </div>
   </div>
   
+  <script>
+    // Get filter elements
+    const favoriteFilter = document.getElementById('recipe-filter');
+    const dietaryFilter = document.getElementById('recipe-filter2');
+    const recipesContainer = document.getElementById('recipes-container');
+    const recipeBoxes = document.querySelectorAll('.recipe-box');
+    const noRecipesMessage = document.querySelector('.no-recipes');
+    
+    // Add event listeners to filters
+    favoriteFilter.addEventListener('change', filterRecipes);
+    dietaryFilter.addEventListener('change', filterRecipes);
+    
+    // Filter function
+    function filterRecipes() {
+      const favoriteValue = favoriteFilter.value;
+      const dietaryValue = dietaryFilter.value;
+      let visibleCount = 0;
+      
+      // Loop through all recipe boxes
+      recipeBoxes.forEach(box => {
+        const isFavorite = box.dataset.favorite === 'true';
+        const tags = box.dataset.tags.toLowerCase().split(',');
+        
+        // Flag to determine if recipe should be shown
+        let showRecipe = true;
+        
+        // Apply favorites filter
+        if (favoriteValue === 'favorites' && !isFavorite) {
+          showRecipe = false;
+        }
+        
+        // Apply dietary filter if recipe should still be shown
+        if (showRecipe && dietaryValue !== 'all') {
+          switch(dietaryValue) {
+            case 'nomeat':
+              if (tags.includes('chicken') || tags.includes('pork') || tags.includes('meat') || tags.includes('beef') || tags.includes('goat') || tags.includes('lamb')) showRecipe = false;
+              break;
+            case 'nodairy':
+              if (tags.includes('dairy')) showRecipe = false;
+              break;
+            case 'noegg':
+              if (tags.includes('egg')) showRecipe = false;
+              break;
+            case 'nogluten':
+              if (tags.includes('gluten')) showRecipe = false;
+              break;
+          }
+        }
+        
+        // Show or hide recipe
+        if (showRecipe) {
+          box.style.display = 'block';
+          visibleCount++;
+        } else {
+          box.style.display = 'none';
+        }
+      });
+      
+      // Show or hide "No recipes found" message
+      if (visibleCount === 0) {
+        noRecipesMessage.style.display = 'block';
+      } else {
+        noRecipesMessage.style.display = 'none';
+      }
+    }
+  </script>
 
   <footer>
     <div class="footer-container">
@@ -223,12 +303,6 @@
       </div>
     </div>
   </footer>
-  
-  <!-- project‑specific JS -->
-  <script>
-    const currentUsername = "{{ username }}";
-    const favoriteIDs = {{ favorite_ids | tojson | safe }};
-  </script>
-  <script src="{{ url_for('static', filename='scripts/recipes_list.js') }}"></script>
 </body>
 </html>
+
