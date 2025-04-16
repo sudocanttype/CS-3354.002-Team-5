@@ -66,3 +66,5 @@ function favoriteRecipe(recipeId) {
     alert("Something went wrong");
   });
 }
+
+window.favoriteRecipe = favoriteRecipe;
