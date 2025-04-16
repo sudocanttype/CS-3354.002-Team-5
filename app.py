@@ -264,6 +264,6 @@ def favorite_recipe():
     except Exception as e:
         print("Error:", e)
         return jsonify({'error': str(e)}), 500
-
+print("THIS FILE IS RUNNING")
 if __name__ == '__main__':
     app.run(debug=True)
