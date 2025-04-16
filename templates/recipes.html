@@ -228,6 +228,6 @@
   <script>
     const currentUsername = "{{ username }}";
   </script>
-  <script src="../static/scripts/recipes_list.js"></script>
+  <script src="{{ url_for('static', filename='scripts/recipes_list.js') }}"></script>
 </body>
 </html>
