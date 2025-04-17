@@ -138,11 +138,22 @@
   <nav>
     <div class="nav-brand">NomNom Bites</div> <!-- Navigation Bar for page -->
     <div class="nav-links">
+      {% if logged_in %}
       <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
       <a href="{{ url_for('myrecipes') }}">My Recipes</a>
-      <a href="{{ url_for('aboutus') }}">About Us</a>
+      <a href="{{ url_for('aboutus') }}">About</a>
       <a href="{{ url_for('shop') }}">Shop</a>
       <a href="{{ url_for('generate') }}">Generate</a>
+      <a href="{{ url_for('logout') }}">Sign Out</a> <!-- added logout link here -->
+    {% else %}
+    <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
+      <a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
+      <a href="{{ url_for('aboutus') }}">About</a>
+      <a class="disabled-link" href="#" onclick="showBanner()">Shop</a>
+      <a class="disabled-link" href="#" onclick="showBanner()">Generate</a>
+
+
+    {% endif %}
     </div>
   </nav>
 

@@ -50,6 +50,7 @@ def loginpage():
                 session['user'] = username
                 session['name'] = user['name']
                 session['last_name'] = user['last_name']
+                session.permanent = True
                 return redirect(url_for('landingpage'))
 
             else:
@@ -272,11 +273,19 @@ def myrecipes():
     favorite_ids = list(set(user_data['Item'].get('favorites', [])))
     
     # Pass recipes to the template
-    return render_template('recipes.html', recipes=recipes, username=username, favorite_ids=favorite_ids)
+    user_logged_in = 'user' in session
+    first_name = session.get('name')
+    last_name = session.get('last_name')
+    return render_template('recipes.html', recipes=recipes, username=username, favorite_ids=favorite_ids, logged_in=user_logged_in, first_name=first_name, last_name=last_name)
 
 @app.route('/aboutus')
 def aboutus():
-    return render_template('aboutus.html')
+    user_logged_in = 'user' in session
+    first_name = session.get('name')
+    last_name = session.get('last_name')
+  
+
+    return render_template('aboutus.html', logged_in=user_logged_in, first_name=first_name, last_name=last_name)
 
 @app.route('/createrecipe') # displays the create recipe form
 def create_recipe():
