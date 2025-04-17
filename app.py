@@ -363,55 +363,41 @@ def generate():
     if request.method == 'POST':
         action = request.form.get('action')
 
-        if request.is_json:
-            username = session.get('user')
-
-            if not username:
-                return jsonify({'success': False, 'message': 'Not logged in'})
-
-            recipe_title = request.json.get('recipe_title')
-
-            # Check if already added
-            existing = recipes_table.query(
-                KeyConditionExpression=Key('username').eq(username) & Key('recipe_title').eq(recipe_title)
-            )
-
-            if existing.get('Items'):
-                return jsonify({'success': False, 'message': 'Already added'})
-
-            # Get from general table and add to user collection
-            recipe = generate_recipe_table.get_item(Key={'recipe_title': recipe_title}).get('Item')
-
-            if not recipe:
-                return jsonify({'success': False, 'message': 'Recipe not found'})
-
-            recipe['username'] = username
-            recipes_table.put_item(Item=recipe)
-
-            return jsonify({'success': True, 'message': 'Recipe added'})
-
-        if action == 'search':
+        if action == 'add':  #add to my collection button
             if 'user' not in session:
                 return redirect(url_for('loginpage'))
 
-            # username = session['user']
+            username = session['user']
+            recipe_title = request.form.get('recipe_title')
+
+            if not recipe_title:
+                return jsonify({'status': 'error', 'message': 'Missing recipe title'}), 400
+
+            #get recipe from generate recipes table
+            response = generate_recipe_table.get_item(Key={'recipe_title': recipe_title})
+            recipe = response.get('Item')
+
+            if not recipe:
+                return jsonify({'status': 'error', 'message': 'Recipe not found'}), 404
+
+            recipe['username'] = username
+            recipes_table.put_item(Item=recipe)  #add to my recipes (recipes actual table)
+
+            return jsonify({'status': 'success', 'message': 'Recipe added'})
+
+        if action == 'search':  #search for recipe by name/ingredients
+            if 'user' not in session:
+                return redirect(url_for('loginpage'))
 
             search_name = request.form.get('query', '').strip()
             ingredients_given = request.form.get('ingredients_search', '').strip().lower()
 
             filter_exp = Attr('recipe_title').contains(search_name)
+            response = generate_recipe_table.scan(FilterExpression=filter_exp)
+            recipes = response.get('Items', [])
 
-            if search_name:  #filter by recipe name
-                # filter_exp = filter_exp & Attr('recipe_title').contains(search_name)
-                response = generate_recipe_table.scan(FilterExpression=filter_exp)
-                recipes = response.get('Items', [])
-
-            if ingredients_given: #filter by ingredients
-                response = generate_recipe_table.scan(FilterExpression=filter_exp)
-                recipes = response.get('Items', [])
-
+            if ingredients_given: #filter by ingredients too if given
                 ingredients_list = [item.strip().lower() for item in ingredients_given.split(',') if item.strip()]
-
                 filtered_recipes = []
 
                 for r in recipes:
@@ -426,18 +412,17 @@ def generate():
                             if input_ing in db_ing_lower:
                                 matched.append(db_ing)
                                 matched_flag = True
-
                                 break
 
                         if not matched_flag:
                             unmatched.append(db_ing)
 
-                    if matched:
+                    if matched:   #keep track of matched & unmatched recipes
                         r['matched_ingredients'] = matched
                         r['unmatched_ingredients'] = unmatched
                         filtered_recipes.append(r)
 
-                recipes = filtered_recipes  # replace with the filtered list
+                recipes = filtered_recipes 
 
             return render_template('generaterecipe.html', result=recipes)
         elif action == 'subs':
