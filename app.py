@@ -31,6 +31,7 @@ def landingpage():
     user_logged_in = 'user' in session
     first_name = session.get('name')
     last_name = session.get('last_name')
+
     return render_template('landingwebpage.html', logged_in=user_logged_in, first_name=first_name, last_name=last_name)
 
 # ----------------------
@@ -55,6 +56,7 @@ def loginpage():
 
             else:
                 error = "Invalid username and password. Please check your credentials."
+
                 return render_template('loginpage.html', error=error)
 
         except Exception as e:
@@ -82,6 +84,7 @@ def createaccount():
         #  Check if username already exists
         try:
             existing_user = user_table.get_item(Key={'username': username}).get('Item')
+
             if existing_user:
                 return render_template('createaccount.html',
                                        error="Username already exists. Please choose another one.")
@@ -93,6 +96,7 @@ def createaccount():
             email_check = user_table.scan(
                 FilterExpression=Attr('email').eq(email)
             )
+
             if email_check['Items']:
                 return render_template('createaccount.html', error="An account with this email already exists.")
         except Exception as e:
@@ -112,6 +116,7 @@ def createaccount():
             session['user'] = username
             session['name'] = name
             session['last_name'] = last_name
+
             return redirect(url_for('landingpage'))
 
         except Exception as e:
@@ -125,6 +130,7 @@ def createaccount():
 @app.route('/logout')
 def logout():
     session.clear()
+
     return redirect(url_for('landingpage'))
 
 
@@ -132,6 +138,7 @@ def logout():
 def shop():
     if 'user' not in session:
         flash("You must be logged in to access the shop.")
+
         return redirect(url_for('loginpage'))
 
     username = session['user']
@@ -147,6 +154,7 @@ def shop():
 
     first_name = session.get('name')
     last_name = session.get('last_name')
+
     return render_template('grocerystorepage.html', products=products, first_name=first_name, last_name=last_name, cart_count=total_quantity)
 
 
@@ -174,6 +182,7 @@ def add_to_cart():
             'image': image,
             'added_at': str(int(time.time()))
         })
+
         return jsonify({'message': f'Added {quantity} of item {product_id} to your cart!'})
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
@@ -181,6 +190,7 @@ def add_to_cart():
 def checkout():
     if 'user' not in session:
         flash("You must be logged in to access the shop.")
+
         return redirect(url_for('loginpage'))
 
     username = session['user']
@@ -217,6 +227,7 @@ def update_quantity():
             UpdateExpression="SET quantity = :q",
             ExpressionAttributeValues={':q': new_qty}
         )
+
         return jsonify({'message': 'Quantity updated successfully'})
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
@@ -237,6 +248,7 @@ def remove_from_cart():
                 'product_id': product_id
             }
         )
+
         return jsonify({'message': 'Item removed from cart'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
@@ -249,7 +261,7 @@ def remove_from_cart():
 def myrecipes():
     if 'user' not in session:
         return redirect(url_for('loginpage'))
-    
+
     username = session['user']
 
     response = recipes_table.query(
@@ -258,11 +270,13 @@ def myrecipes():
 
     recipes = response.get('Items', [])
 
-    # ✅ OPTIONAL: Deduplicate recipes based on recipeId
+    # remove recipes based on recipeId
     seen = set()
     unique_recipes = []
+
     for r in recipes:
         rid = str(r['recipeId'])  # normalize to string
+
         if rid not in seen:
             unique_recipes.append(r)
             seen.add(rid)
@@ -270,8 +284,16 @@ def myrecipes():
 
     # Get favorite recipe IDs from the user's record
     user_data = user_table.get_item(Key={'username': username})
-    favorite_ids = list(set(user_data['Item'].get('favorites', [])))
-    
+    favorite_ids = (set(user_data['Item'].get('favorites', [])))
+
+    for i in range(len(recipes)):
+        if str(recipes[i]["recipeId"]) in favorite_ids:
+            recipes[i]['favorite'] = True
+        else:
+            recipes[i]['favorite'] = False
+
+    favorite_ids = list(favorite_ids)
+
     # Pass recipes to the template
     user_logged_in = 'user' in session
     first_name = session.get('name')
@@ -294,14 +316,16 @@ def create_recipe():
 @app.route('/save_recipe', methods=['POST']) # handles submission of new recipe form
 def save_recipe():
     # todo: save the recipe data from the form to the database
+
     return redirect(url_for('myrecipes'))
 
 @app.route('/edit_recipe/<int:recipe_id>') # displays form to edit an existing recipe
 def edit_recipe(recipe_id):
     recipe = recipes_data.get(recipe_id)
+
     if not recipe:
         return redirect(url_for('myrecipes'))
-        
+
     # format the recipe data for the template
     recipe_data = {
         'id': recipe.id,
@@ -314,12 +338,13 @@ def edit_recipe(recipe_id):
         'serving_size': recipe.serving_size,
         'tags': recipe.tags
     }
-    
+
     return render_template('editingpage.html', recipe=recipe_data)
 
 @app.route('/update_recipe/<int:recipe_id>', methods=['POST']) # handles submission of edited recipe
 def update_recipe(recipe_id):
     # todo: save the updated recipe data from the form to the database
+
     return redirect(url_for('myrecipes'))
 
 @app.route('/generate', methods=['GET', 'POST'])
@@ -336,9 +361,10 @@ def generate():
 
     if request.method == 'POST':
         action = request.form.get('action')
-        
+
         if request.is_json:
             username = session.get('user')
+
             if not username:
                 return jsonify({'success': False, 'message': 'Not logged in'})
 
@@ -348,11 +374,13 @@ def generate():
             existing = recipes_table.query(
                 KeyConditionExpression=Key('username').eq(username) & Key('recipe_title').eq(recipe_title)
             )
+
             if existing.get('Items'):
                 return jsonify({'success': False, 'message': 'Already added'})
 
             # Get from general table and add to user collection
             recipe = generate_recipe_table.get_item(Key={'recipe_title': recipe_title}).get('Item')
+
             if not recipe:
                 return jsonify({'success': False, 'message': 'Recipe not found'})
 
@@ -364,7 +392,7 @@ def generate():
         if action == 'search':
             if 'user' not in session:
                 return redirect(url_for('loginpage'))
-    
+
             # username = session['user']
 
             search_name = request.form.get('query', '').strip()
@@ -372,11 +400,11 @@ def generate():
 
             filter_exp = Attr('recipe_title').contains(search_name)
 
-            if search_name:  #filter by recipe name 
+            if search_name:  #filter by recipe name
                 # filter_exp = filter_exp & Attr('recipe_title').contains(search_name)
                 response = generate_recipe_table.scan(FilterExpression=filter_exp)
                 recipes = response.get('Items', [])
-          
+
             if ingredients_given: #filter by ingredients
                 response = generate_recipe_table.scan(FilterExpression=filter_exp)
                 recipes = response.get('Items', [])
@@ -384,20 +412,25 @@ def generate():
                 ingredients_list = [item.strip().lower() for item in ingredients_given.split(',') if item.strip()]
 
                 filtered_recipes = []
+
                 for r in recipes:
                     matched = []
                     unmatched = []
+
                     for db_ing in r.get('ingredients', []):
                         db_ing_lower = db_ing.lower()
                         matched_flag = False
+
                         for input_ing in ingredients_list:
                             if input_ing in db_ing_lower:
                                 matched.append(db_ing)
                                 matched_flag = True
+
                                 break
+
                         if not matched_flag:
                             unmatched.append(db_ing)
-                    
+
                     if matched:
                         r['matched_ingredients'] = matched
                         r['unmatched_ingredients'] = unmatched
@@ -415,6 +448,7 @@ def generate():
                     suggested_subs[item] = substitutions[item]
                 elif item.endswith('s'):
                     singular = item[:-1]
+
                     if singular in substitutions:
                         suggested_subs[item] = substitutions[singular]
 
