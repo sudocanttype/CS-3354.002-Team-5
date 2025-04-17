@@ -165,6 +165,10 @@
             border-radius: 5px;
         }
 
+        .add-btn:hover {
+            background-color: #555;
+        }
+
         .edit-btn:hover {
             background-color: #555;
         }
@@ -236,7 +240,7 @@
                 <p>Rating: {{recipe.rating}}</p>
                 <p>Serving size: {{recipe.serving_size}}</p>
 
-                {% if recipe.matched_ingredients %}
+                {% if recipe.matched_ingredients %} <!--returns ingredients that matched/unmatched-->
                     <p><strong>Ingredients you have:</strong> 
                         <span style="color: green;">
                         {{ recipe.matched_ingredients | join(', ') }}
@@ -254,12 +258,11 @@
                 <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
                     <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
                 </a>
-                <form action="{{ url_for('generate') }}" method="POST">
+                <form method="POST"> <!-- Add to collection Button, script at bottom -->
                     <input type="hidden" name="recipe_title" value="{{ recipe.recipe_title }}">
                     <button class="add-btn" data-title="{{ recipe.recipe_title }}">Add to My Collection</button>
+                    <span class="add-status" id="status-{{ recipe.recipe_title|replace(' ', '-') }}"></span>
                 </form>
-                <!-- <button type="button" class="add-btn" data-title="{{ recipe.recipe_title }}">Add to My Collection</button> -->
-
             </div>
         {% else %}
             <p>No recipes found. Try creating one!</p>
@@ -272,33 +275,36 @@
         ✽ Built with love by the NomNom Team ✽
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.add-btn').forEach(button => {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault(); // Prevent page reload
+    <script>  //script for add to my collection button
+        document.querySelectorAll('.add-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
         
-                    const recipeTitle = this.dataset.title;
+                const recipeTitle = this.getAttribute('data-title');
+                const statusSpan = document.getElementById(`status-${recipeTitle.replace(/ /g, '-')}`);
         
-                    fetch('/generate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ recipe_title: recipeTitle })
+                fetch("/generate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        action: 'add',
+                        recipe_title: recipeTitle
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            this.textContent = '✅ Added';
-                            this.disabled = true;
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        statusSpan.textContent = "Added!";
+                        this.disabled = true;
+                    } else {
+                        statusSpan.textContent = "Error: " + data.message;
+                    }
+                })
+                .catch(err => {
+                    statusSpan.textContent = "Error adding recipe";
+                    console.error(err);
                 });
             });
         });
