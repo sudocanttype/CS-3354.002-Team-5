@@ -113,6 +113,7 @@ def createaccount():
                 'email': email,
                 'password_hash': hashed
             })
+            session.permanent = True
             session['user'] = username
             session['name'] = name
             session['last_name'] = last_name
