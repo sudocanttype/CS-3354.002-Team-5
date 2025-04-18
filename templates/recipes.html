@@ -336,7 +336,11 @@
       </div>
     </div>
   </footer>
-  <script src="{{ url_for('static', filename='recipes_list.js') }}"></script>
+  <script>
+    const currentUsername = "{{ username }}";
+    const favoriteIDs = {{ favorite_ids | tojson | safe }};
+  </script>
+  <script src="{{ url_for('static', filename='scripts/recipes_list.js') }}"></script>
 </body>
 </html>
 
