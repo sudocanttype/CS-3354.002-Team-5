@@ -7,6 +7,10 @@ import time
 from datetime import timedelta
 from boto3.dynamodb.conditions import Attr, Key
 
+# Helper function to hash passwords
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
 app = Flask(__name__)
 app.secret_key = 'PKkqBBiNrVDTQtUc5oxd0zMUD3/qpvINvefbmlTt'
 app.permanent_session_lifetime = timedelta(days=1)
@@ -20,10 +24,6 @@ cart_table = dynamodb.Table('Cart')
 
 recipes_table = dynamodb.Table('RecipeActual')
 generate_recipe_table = dynamodb.Table('GenerateRecipes')
-
-# Helper function to hash passwords
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
 
 
 @app.route('/')
