@@ -213,6 +213,7 @@
            data-favorite="{{ recipe.favorite|lower }}" 
            data-tags="{{ recipe.tags|join(',') }}">
         <h3>{{ recipe.title or recipe.recipe_title or "Untitled Recipe" }} {% if recipe.favorite %}<i class="fas fa-star favorite-icon"></i>{% endif %}</h3>
+        <button onclick="favoriteRecipe('{{ recipe.recipe_id }}')">❤️ Favorite</button>
         <p>Prep Time: {{ recipe.prep_time }}</p>
         <p>Cook Time: {{ recipe.cook_time }}</p>
         <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
