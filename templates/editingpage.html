@@ -78,6 +78,55 @@
     .tag-remove:hover {
       background-color: #555;
     }
+    
+    /* image upload styles */
+    .recipe-image-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    
+    .recipe-image {
+      width: 100%;
+      height: 200px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f0f0f0;
+      object-fit: cover;
+    }
+    
+    .image-upload-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: rgba(51, 51, 51, 0.8);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .image-upload-btn:hover {
+      background-color: rgba(51, 51, 51, 1);
+    }
+    
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
   </style>
 
   <!-- keep your existing project‑specific stylesheet(s) -->
@@ -106,7 +155,7 @@
       </section>
 
       <!-- recipe edit form -->
-      <form class="recipe-form" action="/update_recipe/{{ recipe.id }}" method="POST">
+      <form class="recipe-form" id="edit-recipe-form" action="/update_recipe/{{ recipe.id }}" method="POST">
         <div class="form-group">
           <label for="recipe-title" class="form-label">Recipe Title</label>
           <input type="text" id="recipe-title" name="title" class="form-control" value="{{ recipe.title }}">
@@ -115,8 +164,9 @@
         <div class="recipe-editor">
           <!-- recipe image section -->
           <div class="recipe-image-container">
-            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image">
-            <button type="button" class="image-upload-btn">
+            <img src="{{ recipe.image }}" alt="{{ recipe.title }}" class="recipe-image" id="recipe-image">
+            <input type="hidden" name="image_url" id="image-url-input" value="{{ recipe.image }}">
+            <button type="button" class="image-upload-btn" id="image-upload-btn">
               <span class="visually-hidden">Change image</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -128,6 +178,7 @@
                 <path d="m18 3 3 3"></path>
               </svg>
             </button>
+            <input type="file" id="image-file-input" accept="image/*" style="display: none;">
           </div>
 
           <div class="recipe-details-container">
@@ -135,11 +186,10 @@
             <section class="recipe-section">
               <h2 class="section-title">Ingredients</h2>
               <div class="ingredient-list">
-                {% for ingredient in recipe.ingredients %}
+                {% for ingredient_string in recipe.ingredients %}
                 <div class="ingredient-item">
-                  <img src="{{ ingredient.image }}" alt="{{ ingredient.name }}" class="ingredient-img">
-                  <input type="text" name="ingredients" class="form-control" value="{{ ingredient.name }}">
-                  <button type="button" class="btn-icon remove-ingredient" aria-label="Remove {{ ingredient.name }}">
+                  <input type="text" name="ingredients" class="form-control" value="{{ ingredient_string }}">
+                  <button type="button" class="btn-icon remove-ingredient" aria-label="Remove {{ ingredient_string }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -147,6 +197,8 @@
                     </svg>
                   </button>
                 </div>
+                {% else %}
+                <p>No ingredients listed.</p>
                 {% endfor %}
 
                 <!-- add ingredient button -->
@@ -169,7 +221,7 @@
                 <div class="instruction-item">
                   <span class="step-number">{{ loop.index }}</span>
                   <input type="text" class="form-control" name="instruction-{{ loop.index }}" value="{{ instruction }}">
-                  <button type="button" class="btn-icon remove-step" aria-label="Remove step"> <!--remove step button-->
+                  <button type="button" class="btn-icon remove-step" aria-label="Remove step">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -179,7 +231,7 @@
                 </div>
                 {% endfor %}
 
-                <button type="button" class="btn-add add-step"> <!--add step button-->
+                <button type="button" class="btn-add add-step">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -192,43 +244,43 @@
 
             <!-- recipe details section -->
             <section class="recipe-section">
-              <h2 class="section-title">Details</h2> <!--recipe details-->
+              <h2 class="section-title">Details</h2>
               <div class="details-grid">
                 <div class="form-group">
-                  <label for="prep-time" class="form-label">Preparation Time</label> <!--preparation time-->
+                  <label for="prep-time" class="form-label">Preparation Time</label>
                   <div class="time-input">
                     <input type="number" id="prep-time" name="prep_time" class="form-control"
-                      value="{{ recipe.prep_time }}"> <!--preparation time input-->
+                      value="{{ recipe.prep_time }}">
                     <span class="time-unit">minutes</span>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="cook-time" class="form-label">Cooking Time</label> <!--cooking time-->
+                  <label for="cook-time" class="form-label">Cooking Time</label>
                   <div class="time-input">
                     <input type="number" id="cook-time" name="cook_time" class="form-control"
-                      value="{{ recipe.cook_time }}"> <!--cooking time input-->
+                      value="{{ recipe.cook_time }}">
                     <span class="time-unit">minutes</span>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="serving-size" class="form-label">Serving Size</label> <!--serving size-->
+                  <label for="serving-size" class="form-label">Serving Size</label>
                   <input type="number" id="serving-size" name="serving_size" class="form-control"
-                    value="{{ recipe.serving_size }}"> <!--serving size input-->
+                    value="{{ recipe.serving_size }}">
                 </div>
               </div>
             </section>
 
             <!-- tags section -->
             <section class="recipe-section">
-              <h2 class="section-title">Tags</h2> <!--tags section-->
+              <h2 class="section-title">Tags</h2>
               <div class="tags-container">
                 {% for tag in recipe.tags %}
                 <div class="tag">
-                  <span class="tag-text">{{ tag }}</span> <!--tag text-->
+                  <span class="tag-text">{{ tag }}</span>
+                  <input type="hidden" name="tags" value="{{ tag }}">
                   <button type="button" class="btn-icon tag-remove" aria-label="Remove {{ tag }} tag">
-                    <!--remove tag button-->
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -240,8 +292,8 @@
 
                 <!-- tag input field -->
                 <div class="tag-input-container">
-                  <input type="text" class="tag-input" placeholder="Add a tag..."> <!--tag input-->
-                  <button type="button" class="btn-icon tag-add" aria-label="Add tag"> <!--add tag button-->
+                  <input type="text" class="tag-input" placeholder="Add a tag...">
+                  <button type="button" class="btn-icon tag-add" aria-label="Add tag">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -256,8 +308,16 @@
 
         <!-- form action buttons -->
         <div class="form-actions">
-          <a href="{{ url_for('myrecipes') }}" class="btn btn-secondary">Cancel</a> <!--cancel button-->
-          <button type="submit" class="btn btn-primary">Save Recipe</button> <!--save button-->
+          <a href="{{ url_for('myrecipes') }}" class="btn btn-secondary">Cancel</a>
+                   
+          {% if not recipe.preview_mode %}
+          <a href="{{ url_for('delete_recipe', recipe_id=recipe.id) }}" class="btn btn-danger" 
+             onclick="return confirm('Are you sure you want to delete this recipe? This cannot be undone.');">Delete Recipe</a>
+          {% endif %}
+
+          <button type="submit" class="btn btn-primary" form="edit-recipe-form">
+            {% if recipe.preview_mode %}Save to My Collection{% else %}Save Recipe{% endif %}
+          </button>
         </div>
       </form>
     </div>
@@ -270,6 +330,147 @@
       button.addEventListener('click', function () {
         this.closest('.ingredient-item').remove();
       });
+    });
+
+
+    document.querySelectorAll('.remove-step').forEach(button => {
+      button.addEventListener('click', function() {
+        this.closest('.instruction-item').remove();
+        renumberInstructions();
+      });
+    });
+
+
+    document.querySelector('.add-step').addEventListener('click', function() {
+      const instructionList = document.querySelector('.instruction-list');
+      const instructionItems = instructionList.querySelectorAll('.instruction-item');
+      const newIndex = instructionItems.length + 1;
+      
+
+      const newItem = document.createElement('div');
+      newItem.className = 'instruction-item';
+      newItem.innerHTML = `
+        <span class="step-number">${newIndex}</span>
+        <input type="text" class="form-control" name="instruction-${newIndex}" value="">
+        <button type="button" class="btn-icon remove-step" aria-label="Remove step">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      `;
+      
+      instructionList.insertBefore(newItem, this);
+      
+      newItem.querySelector('.remove-step').addEventListener('click', function() {
+        this.closest('.instruction-item').remove();
+        renumberInstructions();
+      });
+    });
+
+    document.querySelector('.add-ingredient').addEventListener('click', function() {
+      const ingredientList = document.querySelector('.ingredient-list');
+      
+      const newItem = document.createElement('div');
+      newItem.className = 'ingredient-item';
+      newItem.innerHTML = `
+        <input type="text" name="ingredients" class="form-control" value="">
+        <button type="button" class="btn-icon remove-ingredient" aria-label="Remove ingredient">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      `;
+      
+      ingredientList.insertBefore(newItem, this);
+      
+      newItem.querySelector('.remove-ingredient').addEventListener('click', function() {
+        this.closest('.ingredient-item').remove();
+      });
+    });
+
+    function renumberInstructions() {
+      const instructionItems = document.querySelectorAll('.instruction-item');
+      instructionItems.forEach((item, index) => {
+        const stepNumber = index + 1;
+        item.querySelector('.step-number').textContent = stepNumber;
+        
+        const input = item.querySelector('input');
+        input.name = `instruction-${stepNumber}`;
+      });
+    }
+
+    document.getElementById('edit-recipe-form').addEventListener('submit', function(e) {
+      renumberInstructions();
+    });
+     
+    renumberInstructions();
+    
+    document.querySelectorAll('.tag-remove').forEach(button => {
+      button.addEventListener('click', function() {
+        this.closest('.tag').remove();
+      });
+    });
+    
+    document.querySelector('.tag-add').addEventListener('click', function() {
+      const tagInput = document.querySelector('.tag-input');
+      const tagsContainer = document.querySelector('.tags-container');
+      
+      if (tagInput.value.trim()) {
+        const newTag = document.createElement('div');
+        newTag.className = 'tag';
+        newTag.innerHTML = `
+          <span class="tag-text">${tagInput.value.trim()}</span>
+          <input type="hidden" name="tags" value="${tagInput.value.trim()}">
+          <button type="button" class="btn-icon tag-remove" aria-label="Remove tag">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        `;
+        
+        tagsContainer.insertBefore(newTag, document.querySelector('.tag-input-container'));
+        
+        newTag.querySelector('.tag-remove').addEventListener('click', function() {
+          this.closest('.tag').remove();
+        });
+        
+        tagInput.value = '';
+      }
+    });
+    
+    document.querySelector('.tag-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault(); 
+        document.querySelector('.tag-add').click();
+      }
+    });
+    
+    const imageUploadBtn = document.getElementById('image-upload-btn');
+    const imageFileInput = document.getElementById('image-file-input');
+    const recipeImage = document.getElementById('recipe-image');
+    const imageUrlInput = document.getElementById('image-url-input');
+    
+    imageUploadBtn.addEventListener('click', function() {
+      imageFileInput.click();
+    });
+    
+    imageFileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          recipeImage.src = e.target.result;
+          imageUrlInput.value = e.target.result;
+        };
+        
+        reader.readAsDataURL(this.files[0]);
+      }
     });
   </script>
 

@@ -256,10 +256,10 @@
                     <p><em>No ingredients from your input matched.</em></p>
                 {% endif %}
 
-                <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
+                <a href="{{ url_for('add_and_edit_recipe', recipe_title=recipe.recipe_title) }}">
                     <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
                 </a>
-                <form method="POST"> <!-- Add to collection Button, script at bottom -->
+                <form method="POST" style="display: inline;"> <!-- Add to collection Button, script at bottom -->
                     <input type="hidden" name="recipe_title" value="{{ recipe.recipe_title }}">
                     <button class="add-btn" data-title="{{ recipe.recipe_title }}">Add to My Collection</button>
                     <span class="add-status" id="status-{{ recipe.recipe_title|replace(' ', '-') }}"></span>
