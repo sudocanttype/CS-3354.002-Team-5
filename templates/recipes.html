@@ -210,6 +210,7 @@
     <div class="recipes" id="recipes-container">
       {% for recipe in recipes %}
       <div class="recipe-box" 
+           data-id="{{ recipe.recipeId }}"
            data-favorite="{{ recipe.favorite|lower }}" 
            data-tags="{{ recipe.tags|join(',') }}">
         <h3>{{ recipe.title or recipe.recipe_title or "Untitled Recipe" }} {% if recipe.favorite %}<i class="fas fa-star favorite-icon"></i>{% endif %}</h3>
