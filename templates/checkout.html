@@ -77,6 +77,135 @@ Usher should be able to fill personal information, address, and payment informat
         color: #2e7d32;
         margin-top: 10px;
     }
+    .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+    .modal-content {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-content form label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #f0f0f0;
+}
+
+.modal-content form input {
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.85);
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.modal-content form input:focus {
+    box-shadow: 0 0 0 2px #2e7d32;
+}
+
+.modal-content form button {
+    padding: 12px;
+    background-color: #2e7d32;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+.modal-buttons .cancel-btn {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.modal-buttons .cancel-btn:hover {
+    background-color: #c82333 !important;
+}
+
+.modal-content form button:hover {
+    background-color: #256428;
+}
+
+.show-form-btn {
+    padding: 12px 24px;
+    margin-right: 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.modal-buttons button {
+    flex: 1;
+}
+
+.cancel-btn {
+    background-color: #dc3545;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+}
+
+.confirm-order-btn {
+    padding: 12px 24px;
+    background-color: #2e7d32;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.order-success-popup {
+    display: none;
+    margin-top: 30px;
+    padding: 20px;
+    background: #d4edda;
+    border-left: 6px solid #28a745;
+    color: #155724;
+    font-size: 18px;
+    border-radius: 8px;
+}
 
 
 </style>
@@ -155,10 +284,101 @@ Usher should be able to fill personal information, address, and payment informat
                             </button>
                         </div>
                     </div>
-            {% endfor %}
-        </div>
+                    <section class="order-form-section">
+                        <!-- Personal Info Modal -->
+                        <div class="modal" id="personalModal">
+                            <div class="modal-content">
+                                <h3>Personal Information</h3>
+                                <form onsubmit="event.preventDefault(); storePersonalInfo();">
+                                    <label for="first-name">First Name</label>
+                                    <input type="text" id="first-name" name="first_name" placeholder="First Name"
+                                           required/>
+
+                                    <label for="last-name">Last Name</label>
+                                    <input type="text" id="last-name" name="last_name" placeholder="Last Name"
+                                           required/>
+
+                                    <label for="address">Address</label>
+                                    <input type="text" id="address" name="address" placeholder="Address" required/>
+
+                                    <label for="state">State</label>
+                                    <input type="text" id="state" name="state" placeholder="State" required/>
+
+                                    <label for="zip">Zip Code</label>
+                                    <input type="text" id="zip" name="zip" placeholder="Zip Code" required/>
+
+                                    <div class="modal-buttons">
+                                        <button type="submit">Confirm Info</button>
+                                        <button type="button" onclick="closeModal('personalModal')" class="cancel-btn">
+                                            Leave Window
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Payment Info Modal -->
+                        <div class="modal" id="paymentModal">
+                            <div class="modal-content">
+                                <h3>Payment Information</h3>
+                                <form onsubmit="event.preventDefault(); storePaymentInfo();">
+                                    <label for="cc-first-name">First Name</label>
+                                    <input type="text" id="cc-first-name" name="cc_first_name" placeholder="First Name"
+                                           required/>
+
+                                    <label for="cc-last-name">Last Name</label>
+                                    <input type="text" id="cc-last-name" name="cc_last_name" placeholder="Last Name"
+                                           required/>
+
+                                    <label for="cc-address">Billing Address</label>
+                                    <input type="text" id="cc-address" name="cc_address" placeholder="Billing Address"
+                                           required/>
+
+                                    <label for="cc-number">Credit Card Number</label>
+                                    <input type="text" id="cc-number" name="cc_number" placeholder="Credit Card Number"
+                                           required/>
+
+                                    <label for="cc-exp">Expiration Date</label>
+                                    <input type="text" id="cc-exp" name="cc_exp" placeholder="MM/YY" required/>
+
+                                    <label for="cc-cvv">CVV</label>
+                                    <input type="text" id="cc-cvv" name="cc_cvv" placeholder="CVV" required/>
+
+                                    <div class="modal-buttons">
+                                        <button type="submit">Confirm Payment</button>
+                                        <button type="button" onclick="closeModal('paymentModal')" class="cancel-btn">
+                                            Leave Window
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Open Buttons -->
+                        <div style="margin-top: 40px;">
+                            <button class="show-form-btn" onclick="openModal('personalModal')">Enter Personal
+                                Information
+                            </button>
+                            <button class="show-form-btn" onclick="openModal('paymentModal')">Enter Payment
+                                Information
+                            </button>
+                        </div>
+
+                        <!-- Confirm Order Button + Success Message -->
+                        <div style="margin-top: 20px;">
+                            <button class="confirm-order-btn" onclick="confirmOrder()">Confirm Order</button>
+                        </div>
+                        <div id="order-success" class="order-success-popup">
+                            <p>✅ Order Successful!</p>
+                            <p>Your order number is <strong id="order-number"></strong>.</p>
+                        </div>
+
+                    </section>
+
+                {% endfor %}
+            </div>
         {% else %}
-        <p class="empty-cart">You don't have any items in your cart.</p>
+            <p class="empty-cart">You don't have any items in your cart.</p>
         {% endif %}
     </section>
 </main>

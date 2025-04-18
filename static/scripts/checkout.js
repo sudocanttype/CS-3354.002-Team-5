@@ -71,7 +71,7 @@ function updateCheckoutTotals() {
     if (itemCountEl && cartCountText) {
         itemCountEl.innerText = totalItems;
 
-        const plural = totalItems === 1 ? "item" : "items"; // ✅ Add this line
+        const plural = totalItems === 1 ? "item" : "items"; 
         cartCountText.innerHTML = `🛒 You have <span id="cart-total-items">${totalItems}</span> ${plural} in your cart`;
     }
 }
@@ -114,5 +114,63 @@ function removeItem(productId) {
         console.error("Error removing item:", err);
     });
 }
+
+function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+let personalInfo = {};
+let paymentInfo = {};
+
+function storePersonalInfo() {
+    personalInfo = {
+        first_name: document.getElementById('first-name').value,
+        last_name: document.getElementById('last-name').value,
+        address: document.getElementById('address').value,
+        state: document.getElementById('state').value,
+        zip: document.getElementById('zip').value
+    };
+    closeModal('personalModal');
+}
+
+function storePaymentInfo() {
+    paymentInfo = {
+        cc_first_name: document.getElementById('cc-first-name').value,
+        cc_last_name: document.getElementById('cc-last-name').value,
+        cc_address: document.getElementById('cc-address').value,
+        cc_number: document.getElementById('cc-number').value,
+        cc_exp: document.getElementById('cc-exp').value,
+        cc_cvv: document.getElementById('cc-cvv').value
+    };
+    closeModal('paymentModal');
+}
+
+function confirmOrder() {
+    const orderData = {
+        personal: personalInfo,
+        payment: paymentInfo,
+        cart: getCartData() // Optional: if you want to include cart
+    };
+
+    fetch('/place_order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        showSuccessPopup(data.orderNumber);
+    })
+    .catch(err => console.error("Order failed", err));
+}
+
+
+
 
 
