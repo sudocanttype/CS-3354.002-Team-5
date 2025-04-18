@@ -18,7 +18,7 @@ Antony Sajesh
 Elsha Valluru
 
 # How to Boot Website Locally on Your Computer
-Prerequisites: IDE of your choice and installing Python libarys from https://www.python.org/
+Prerequisites: Python IDE of your choice and installing Python libarys from https://www.python.org/
 
 1. Cick the green button "Code" and click "Download ZIP" or clone using GitBash from the repository. Check where the repository was cloned or downloaded, feel free to move the project anywhere on your computer.
 2. Start up your IDE and open the project where it is saved. NOTE some IDE's require to click import project to recongize as a python project.
