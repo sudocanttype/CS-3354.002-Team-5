@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // ✅ Update heart icons to match favorite state
+  // Update heart icons to match favorite state
   document.querySelectorAll('.recipe-box').forEach(recipeBox => {
     const recipeId = String(recipeBox.getAttribute('data-id'));
     const heartButton = document.getElementById(`fav-${recipeId}`);
