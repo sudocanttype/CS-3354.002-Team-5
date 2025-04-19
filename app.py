@@ -1,9 +1,12 @@
 from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
 from mock_data import recipes_data, my_recipes
 from decimal import Decimal
+from datetime import datetime
 import boto3
 import hashlib
 import time
+import random
+import string
 from datetime import timedelta
 from boto3.dynamodb.conditions import Attr, Key
 
@@ -16,6 +19,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # or your region
 user_table = dynamodb.Table('Users')
 products_table = dynamodb.Table('Products')
 cart_table = dynamodb.Table('Cart')
+orders_table = dynamodb.Table('Orders')
 
 
 recipes_table = dynamodb.Table('RecipeActual')
@@ -197,7 +201,10 @@ def checkout():
     convenience_fee = 1.00
     total = subtotal + tax + convenience_fee
 
-    return render_template('checkout.html',subtotal=subtotal, tax=tax, convenience_fee=convenience_fee, total=total, cart_items=cart_items, total_items=total_items)
+    first_name = session.get('name')
+    last_name = session.get('last_name')
+
+    return render_template('checkout.html',subtotal=subtotal, tax=tax, convenience_fee=convenience_fee, total=total, cart_items=cart_items, total_items=total_items, first_name=first_name, last_name=last_name)
 
 @app.route('/update_quantity', methods=['PATCH'])
 def update_quantity():
@@ -238,6 +245,73 @@ def remove_from_cart():
         return jsonify({'message': 'Item removed from cart'}), 200
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
+
+@app.route('/place_order', methods=['POST'])
+def place_order():
+    if 'user' not in session:
+        return jsonify({"error": "Not logged in"}), 403
+
+    data = request.get_json()
+    personal = data.get('personal')
+    payment = data.get('payment')
+    username = session['user']
+    order_id = generate_order_number()
+
+    # Get current user's cart
+    cart_items = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    ).get('Items', [])
+
+    # Calculate total
+    subtotal = sum(float(item['price']) * int(item['quantity']) for item in cart_items)
+    tax = 5.00
+    convenience_fee = 1.00
+    total = subtotal + tax + convenience_fee
+
+    try:
+        orders_table.put_item(Item={
+            'order_id': order_id,
+            'username': username,
+            'personal_info': personal,
+            'payment_info': payment,
+            'cart_items': cart_items,
+            'subtotal': Decimal(str(subtotal)),
+            'tax': Decimal(str(tax)),
+            'convenience_fee': Decimal(str(convenience_fee)),
+            'total_paid': Decimal(str(total)),
+            'timestamp': int(time.time())
+        })
+
+        # ✅ Clear cart after saving the order
+        for item in cart_items:
+            cart_table.delete_item(
+                Key={'username': username, 'product_id': item['product_id']}
+            )
+
+        return jsonify({"orderNumber": order_id})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def generate_order_number():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
+
+@app.route('/myorders')
+def myorders():
+    if 'user' not in session:
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+    response = orders_table.scan(
+        FilterExpression=Attr('username').eq(username)
+    )
+    orders = response.get('Items', [])
+    return render_template('myorders.html', orders=orders)
+
+@app.template_filter('datetime')
+def format_datetime(value):
+    if isinstance(value, Decimal):
+        value = float(value)
+    return datetime.fromtimestamp(value).strftime('%Y-%m-%d %I:%M %p')
 
 
 

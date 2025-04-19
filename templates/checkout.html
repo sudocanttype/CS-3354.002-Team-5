@@ -207,6 +207,13 @@ Usher should be able to fill personal information, address, and payment informat
     border-radius: 8px;
 }
 
+input[readonly] {
+    background-color: #e0e0e0;
+    color: #666;
+    cursor: not-allowed;
+}
+
+
 
 </style>
 <html lang="en">
@@ -229,6 +236,7 @@ Usher should be able to fill personal information, address, and payment informat
             <a href="{{ url_for('aboutus') }}">About Us</a>
             <a href="{{ url_for('shop') }}" class="shop-btn">Shop</a>
             <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
+            <a href="{{ url_for('myorders') }}" class="past-orders">View My Past Orders</a>
         </div>
     </nav>
 </header>
@@ -284,19 +292,22 @@ Usher should be able to fill personal information, address, and payment informat
                             </button>
                         </div>
                     </div>
-                    <section class="order-form-section">
+
+
+                {% endfor %}
+            </div>
+
+            <section class="order-form-section">
                         <!-- Personal Info Modal -->
                         <div class="modal" id="personalModal">
                             <div class="modal-content">
                                 <h3>Personal Information</h3>
                                 <form onsubmit="event.preventDefault(); storePersonalInfo();">
                                     <label for="first-name">First Name</label>
-                                    <input type="text" id="first-name" name="first_name" placeholder="First Name"
-                                           required/>
+                                    <input type="text" id="first-name" name="first_name" value="{{ first_name }}" readonly required/>
 
                                     <label for="last-name">Last Name</label>
-                                    <input type="text" id="last-name" name="last_name" placeholder="Last Name"
-                                           required/>
+                                    <input type="text" id="last-name" name="last_name" value="{{ last_name }}" readonly required/>
 
                                     <label for="address">Address</label>
                                     <input type="text" id="address" name="address" placeholder="Address" required/>
@@ -368,15 +379,12 @@ Usher should be able to fill personal information, address, and payment informat
                         <div style="margin-top: 20px;">
                             <button class="confirm-order-btn" onclick="confirmOrder()">Confirm Order</button>
                         </div>
-                        <div id="order-success" class="order-success-popup">
+                        <div id="order-success" class="order-success-popup" style="display: none;">
                             <p>✅ Order Successful!</p>
                             <p>Your order number is <strong id="order-number"></strong>.</p>
                         </div>
 
                     </section>
-
-                {% endfor %}
-            </div>
         {% else %}
             <p class="empty-cart">You don't have any items in your cart.</p>
         {% endif %}

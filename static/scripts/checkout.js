@@ -135,6 +135,7 @@ function storePersonalInfo() {
         zip: document.getElementById('zip').value
     };
     closeModal('personalModal');
+    alert("Personal information saved!");
 }
 
 function storePaymentInfo() {
@@ -147,27 +148,67 @@ function storePaymentInfo() {
         cc_cvv: document.getElementById('cc-cvv').value
     };
     closeModal('paymentModal');
+    alert("Payment information saved!");
 }
 
 function confirmOrder() {
-    const orderData = {
-        personal: personalInfo,
-        payment: paymentInfo,
-        cart: getCartData() // Optional: if you want to include cart
-    };
+     // Check if all personal info fields are filled
+    const personalFieldsFilled = personalInfo.first_name && personalInfo.last_name &&
+                                 personalInfo.address && personalInfo.state && personalInfo.zip;
 
-    fetch('/place_order', {
-        method: 'POST',
+    // Check if all payment info fields are filled
+    const paymentFieldsFilled = paymentInfo.cc_first_name && paymentInfo.cc_last_name &&
+                                 paymentInfo.cc_address && paymentInfo.cc_number &&
+                                 paymentInfo.cc_exp && paymentInfo.cc_cvv;
+
+    if (!personalFieldsFilled || !paymentFieldsFilled) {
+        alert("Please complete both personal and payment information before confirming your order.");
+        return;
+    }
+
+    fetch("/place_order", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify({
+            personal: personalInfo,
+            payment: paymentInfo
+        })
     })
     .then(res => res.json())
     .then(data => {
-        showSuccessPopup(data.orderNumber);
+        if (data.orderNumber) {
+            document.getElementById("order-number").innerText = data.orderNumber;
+            document.getElementById("order-success").style.display = "block";
+
+
+            const confirmBtn = document.querySelector(".confirm-order-btn");
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.style.opacity = "0.6";
+                confirmBtn.innerText = "Order Submitted";
+            }
+
+
+            //  Disable personal/payment buttons
+            document.querySelectorAll(".show-form-btn").forEach(btn => btn.style.display = "none");
+
+            //  Disable quantity and remove buttons
+            document.querySelectorAll(".decrease, .increase, .remove-item").forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = "0.6";
+                btn.style.cursor = "not-allowed";
+            });
+
+        } else {
+            alert("Error placing order: " + (data.error || "Unknown error"));
+        }
     })
-    .catch(err => console.error("Order failed", err));
+    .catch(err => {
+        console.error("Error:", err);
+        alert("Something went wrong!");
+    });
 }
 
 
