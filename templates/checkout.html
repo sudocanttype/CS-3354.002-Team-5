@@ -11,6 +11,27 @@ Usher should be able to fill personal information, address, and payment informat
 -->
 <!DOCTYPE html>
 <style>
+
+    .checkout-container .price {
+    margin-top: 4px;
+    color: #2e7d32;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
+  }
+
+  .checkout-container .title-price {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 48px;
+  }
+
+  .checkout-container .title-price h3 {
+    font-size: 18px;
+    margin: 0;
+  }
+
     .quantity-control {
         display: flex;
         align-items: center;
@@ -31,18 +52,27 @@ Usher should be able to fill personal information, address, and payment informat
     }
 
     .title-price {
-        margin-bottom: 8px;
-    }
+    min-height: 48px; /* Ensures consistent height even for long names */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;  /* Adds space between product name and price */
+    margin-bottom: 10px;
+}
 
-    .title-price h3 {
-        margin-bottom: 4px;
-    }
+.title-price h3 {
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Or whatever fits your layout */
+}
 
-    .price {
-        font-weight: bold;
-        color: #2e7d32;
-        margin: 4px 0 0 0;
-    }
+.title-price .price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin: 0;
+}
 
     .quantity-control {
         display: flex;

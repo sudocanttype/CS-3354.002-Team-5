@@ -109,6 +109,28 @@
             cursor: pointer;
             text-decoration: underline;
         }
+
+        .order-details h4 {
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #444;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 4px;
+        }
+
+        .order-details .shipping-info {
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .order-details .order-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -125,7 +147,7 @@
         </div>
     </nav>
 
-    <h1>📦 My Past Orders</h1>
+    <h1>My Past Orders</h1>
 
     {% if orders %}
         {% for order in orders %}
@@ -136,8 +158,10 @@
 
                 <div id="details-{{ order.order_id }}" class="order-details" style="display: none; margin-top: 15px;">
                     <h4>Shipping Info</h4>
+                <div class="shipping-info">
                     <p>{{ order.personal_info.first_name }} {{ order.personal_info.last_name }}</p>
                     <p>{{ order.personal_info.address }}, {{ order.personal_info.state }} {{ order.personal_info.zip }}</p>
+                </div>
 
                     <h4>Items Ordered</h4>
                     <div class="order-items">
