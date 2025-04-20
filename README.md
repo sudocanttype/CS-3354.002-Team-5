@@ -17,6 +17,10 @@ Veronika Mangotic
 Antony Sajesh
 Elsha Valluru
 
+# How to Boot Website Locally on Your Computer(Without Installations)
+1. Just click this link to see the web app: https://nom-nombitesapp.onrender.com
+2. Use login credentials username: asherwani1, password: abc or make a new account and login to see the features of the web app.
+
 # How to Boot Website Locally on Your Computer
 Prerequisites: Python IDE of your choice and installing Python libarys from https://www.python.org/
 
