@@ -95,6 +95,7 @@ margin-right: 15px;
       <span class="checkout-badge" id="cart-count" {% if cart_count == 0 %}style="display:none;"{% endif %}>
        {{ cart_count }}
       </span>
+      <a href="{{ url_for('logout') }}">Sign Out</a> <!-- added logout link here -->
       </div>
 </nav>
 

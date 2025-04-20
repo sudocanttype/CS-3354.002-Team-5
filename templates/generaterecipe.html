@@ -155,6 +155,20 @@
             border-radius: 5px;
         }
 
+        .add-btn {
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .add-btn:hover {
+            background-color: #555;
+        }
+
         .edit-btn:hover {
             background-color: #555;
         }
@@ -171,6 +185,7 @@
             <a href="{{ url_for('aboutus') }}">About Us</a>                
             <a href="{{ url_for('shop') }}">Shop</a>
             <a href="{{ url_for('generate') }}">Generate</a>
+            <a href="{{ url_for('logout') }}">Sign Out</a> <!-- added logout link here -->
         </div>
     </nav>
 
@@ -184,7 +199,7 @@
 
             <!--input box to enter ingredients then find a recipe that matches-->
             <label for="ingredients" style="padding-top: 50px;">Enter the ingredients you have, and we'll find a recipe for you!</label>
-            <textarea name="query" id="ingredients" rows="5" placeholder="e.g. eggs, milk, sugar"></textarea>
+            <input class="search-box" type="text" name="ingredients_search" id="ingredients" placeholder="e.g. eggs, milk, sugar">
             
             <!--generate recipes button for the 2 possible inputs above-->
             <div style="text-align: center;"> 
@@ -203,7 +218,7 @@
     <!-- database: recipes will be generated using a post endpoint that return a block of json
      (referring to the individual divs starting a generation process returning the recipes from the db). -->
 
-    <div class="container"> <!--container to return the results of inputs from above-->
+    <div class="recipe-container"> <!--container to return the results of inputs from above-->
         {% if suggestions %}   <!--return results of a substitution-->
         <div class="results">
             <h2>Smart Ingredient Swaps</h2>
@@ -216,22 +231,44 @@
         <!--maybe output a message if no substitution exist?-->
         {% endif %} 
 
-        {% if result %}  <!--return results of a recipe based on name or ingredients-->
-        <div class="recipe-container">
-            <div class="recipes"> 
-                <div class="recipe-box">
-                    <h2>{{ result.title }}</h2>
-                    <p>{{ result.description }}</p>
-                    <a href="{{ url_for('edit_recipe', recipe_id=1) }}">
-                        <button class="edit-btn">Edit Recipe</button>
-                    </a>
-                    <button class="edit-btn">Add Recipe</button> <!--backend: clicking this button would add recipe to the user's my recipe page/list in the db-->
-                    <!--do we need a view recipe button too?-->
-                </div>
-            </div> 
+        {% if result %}
+        <div class="recipes"> <!--return results of a recipe based on name or ingredients-->
+            {% for recipe in result %}
+            <div class="recipe-box">
+                <h3>{{recipe.recipe_title}}</h3>
+                <p>Prep time: {{recipe.prep_time}}</p>
+                <p>Cook time: {{recipe.cook_time}}</p>
+                <p>Rating: {{recipe.rating}}</p>
+                <p>Serving size: {{recipe.serving_size}}</p>
+
+                {% if recipe.matched_ingredients %} <!--returns ingredients that matched/unmatched-->
+                    <p><strong>Ingredients you have:</strong> 
+                        <span style="color: green;">
+                        {{ recipe.matched_ingredients | join(', ') }}
+                        </span>
+                    </p>
+                    <p><strong>Ingredients you need:</strong> 
+                        <span style="color: red;">
+                        {{ recipe.unmatched_ingredients | join(', ') }}
+                        </span>
+                    </p>
+                {% else %}
+                    <p><em>No ingredients from your input matched.</em></p>
+                {% endif %}
+
+                <a href="{{ url_for('add_and_edit_recipe', recipe_title=recipe.recipe_title) }}">
+                    <button class="edit-btn">Edit Recipe</button> <!-- Edit Recipe Button -->
+                </a>
+                <form method="POST" style="display: inline;"> <!-- Add to collection Button, script at bottom -->
+                    <input type="hidden" name="recipe_title" value="{{ recipe.recipe_title }}">
+                    <button class="add-btn" data-title="{{ recipe.recipe_title }}">Add to My Collection</button>
+                    <span class="add-status" id="status-{{ recipe.recipe_title|replace(' ', '-') }}"></span>
+                </form>
+            </div>
+        {% else %}
+            <p>No recipes found. Try creating one!</p>
+        {% endfor %}
         </div>
-        {% elif request.method == 'POST' and not suggestions %} 
-            <p>No recipes found. :( Try a different name, recipe, or add more ingredients!</p>
         {% endif %} 
     </div>
 
@@ -239,6 +276,40 @@
         ✽ Built with love by the NomNom Team ✽
     </footer>
 
+    <script>  //script for add to my collection button
+        document.querySelectorAll('.add-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+        
+                const recipeTitle = this.getAttribute('data-title');
+                const statusSpan = document.getElementById(`status-${recipeTitle.replace(/ /g, '-')}`);
+        
+                fetch("/generate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                        action: 'add',
+                        recipe_title: recipeTitle
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        statusSpan.textContent = "Added!";
+                        this.disabled = true;
+                    } else {
+                        statusSpan.textContent = "Error: " + data.message;
+                    }
+                })
+                .catch(err => {
+                    statusSpan.textContent = "Error adding recipe";
+                    console.error(err);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 
