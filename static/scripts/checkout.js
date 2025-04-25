@@ -139,17 +139,55 @@ function storePersonalInfo() {
 }
 
 function storePaymentInfo() {
+    const ccFirstName = document.getElementById("cc-first-name").value.trim();
+    const ccLastName = document.getElementById("cc-last-name").value.trim();
+    const ccAddress = document.getElementById("cc-address").value.trim();
+    const ccNumber = document.getElementById("cc-number").value.trim();
+    const ccExp = document.getElementById("cc-exp").value.trim();
+    const ccCVV = document.getElementById("cc-cvv").value.trim();
+
+    // 🔒 Validation
+    const ccNumberRegex = /^\d{16}$/;
+    const cvvRegex = /^\d{3}$/;
+    const expRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+
+    if (!ccNumberRegex.test(ccNumber)) {
+        alert("Credit Card Number must be exactly 16 digits.");
+        return;
+    }
+
+    if (!cvvRegex.test(ccCVV)) {
+        alert("CVV must be exactly 3 digits.");
+        return;
+    }
+
+    if (!expRegex.test(ccExp)) {
+        alert("Expiration Date must be in MM/YY format with a valid month.");
+        return;
+    }
+
+    // Enforce expiration year to be 25 or later
+    const expParts = ccExp.split("/");
+    const year = parseInt(expParts[1]);
+    if (year < 25) {
+        alert("Expiration year must be 25 or later.");
+        return;
+    }
+
+    // Save to localStorage or session (or wherever you're storing)
     paymentInfo = {
-        cc_first_name: document.getElementById('cc-first-name').value,
-        cc_last_name: document.getElementById('cc-last-name').value,
-        cc_address: document.getElementById('cc-address').value,
-        cc_number: document.getElementById('cc-number').value,
-        cc_exp: document.getElementById('cc-exp').value,
-        cc_cvv: document.getElementById('cc-cvv').value
+        cc_first_name: ccFirstName,
+        cc_last_name: ccLastName,
+        cc_address: ccAddress,
+        cc_number: ccNumber,
+        cc_exp: ccExp,
+        cc_cvv: ccCVV
     };
-    closeModal('paymentModal');
-    alert("Payment information saved!");
+
+    alert("Payment Info saved!");
+    closeModal("paymentModal");
 }
+
 
 function confirmOrder() {
      // Check if all personal info fields are filled

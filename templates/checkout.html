@@ -309,7 +309,8 @@ input[readonly] {
             <a href="{{url_for('myrecipes')}}">My Recipes</a>
             <a href="{{ url_for('generate') }}">Generate</a>
             <a href="{{ url_for('aboutus') }}">About Us</a>
-            <a href="{{ url_for('shop') }}" class="shop-btn">Shop</a>
+            <a href="{{ url_for('shop') }}" >Shop</a>
+            <a href="{{ url_for('generate') }}">Generate</a>
             <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
             <a href="{{ url_for('myorders') }}" class="past-orders">View My Past Orders</a>
             <a href="{{ url_for('logout') }}">Sign Out</a>
@@ -423,14 +424,13 @@ input[readonly] {
                                            required/>
 
                                     <label for="cc-number">Credit Card Number</label>
-                                    <input type="text" id="cc-number" name="cc_number" placeholder="Credit Card Number"
-                                           required/>
+                                    <input type="text" id="cc-number" name="cc_number" maxlength="16" placeholder="Credit Card Number" required />
 
                                     <label for="cc-exp">Expiration Date</label>
-                                    <input type="text" id="cc-exp" name="cc_exp" placeholder="MM/YY" required/>
+                                    <input type="text" id="cc-exp" name="cc_exp" maxlength="5" placeholder="MM/YY" required />
 
                                     <label for="cc-cvv">CVV</label>
-                                    <input type="text" id="cc-cvv" name="cc_cvv" placeholder="CVV" required/>
+                                    <input type="text" id="cc-cvv" name="cc_cvv" maxlength="3" placeholder="CVV" required />
 
                                     <div class="modal-buttons">
                                         <button type="submit">Confirm Payment</button>

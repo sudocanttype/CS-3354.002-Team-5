@@ -140,3 +140,11 @@ header nav a:hover {
 .add-to-cart:hover {
   background-color: #218838;
 }
+
+.checkout-btn{
+    background-color: blueviolet;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 2px white; /* Add a black border for visibility */
+}
