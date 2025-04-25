@@ -473,9 +473,9 @@ input[readonly] {
 <footer>
     <div class="footer-links">
         <div class="section">
-            <h4>My Recipes</h4>
+            <h4>Recipes</h4>
+            <a href="{{ url_for('myrecipes') }}">My Recipes </a>
             <a href="{{ url_for('myrecipes') }}">Favorite Recipes </a>
-            <a href="{{ url_for('myrecipes') }}">Disliked Recipes</a>
             <a href="{{ url_for('generate') }}">Generate Recipes </a>
         </div>
         <div class="section">
@@ -484,8 +484,8 @@ input[readonly] {
             <a href="{{ url_for('checkout') }}">Checkout</a>
         </div>
         <div class="section">
-            <h4>Help</h4>
-            <a href="#">Customer Support</a>
+            <h4>Orders</h4>
+            <a href="{{ url_for('myorders') }}">View My Past Orders</a>
         </div>
     </div>
 </footer>

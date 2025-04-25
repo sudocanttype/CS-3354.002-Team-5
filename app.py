@@ -144,7 +144,7 @@ def logout():
 @app.route('/shop')
 def shop():
     if 'user' not in session:
-        flash("You must be logged in to access the shop.")
+        flash("You must be logged in to access the shop")
 
         return redirect(url_for('loginpage'))
 
@@ -196,7 +196,7 @@ def add_to_cart():
 @app.route('/checkout')
 def checkout():
     if 'user' not in session:
-        flash("You must be logged in to access the shop.")
+        flash("You must be logged in to access checkout")
 
         return redirect(url_for('loginpage'))
 
@@ -299,7 +299,7 @@ def place_order():
             'timestamp': int(time.time())
         })
 
-        # ✅ Clear cart after saving the order
+        # Clear the cart after saving the order
         for item in cart_items:
             cart_table.delete_item(
                 Key={'username': username, 'product_id': item['product_id']}
@@ -315,6 +315,7 @@ def generate_order_number():
 @app.route('/myorders')
 def myorders():
     if 'user' not in session:
+        flash("You must be logged to view your orders")
         return redirect(url_for('loginpage'))
 
     username = session['user']
@@ -357,6 +358,7 @@ def get_cart():
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():
     if 'user' not in session:
+        flash("You must be logged to view recipes page")
         return redirect(url_for('loginpage'))
 
     username = session['user']
@@ -694,6 +696,11 @@ def update_recipe(recipe_id):
 
 @app.route('/generate', methods=['GET', 'POST'])
 def generate():
+    if 'user' not in session:
+        flash("You must be logged in to access generate recipe page")
+        return redirect(url_for('loginpage'))
+
+
     substitutions = {
         'egg': '1/4 Cup Applesauce or Mashed Banana',
         'milk': 'Almond Milk or Oat Milk',
