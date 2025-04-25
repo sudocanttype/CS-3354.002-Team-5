@@ -5,16 +5,20 @@ function updateQuantity(productId, change) {
     let currentQty = parseInt(quantitySpan.innerText);
     const newQty = currentQty + change;
 
-    if (newQty >= 0) {
+    // Limit: quantity must be between 0 and 5
+    if (newQty >= 0 && newQty <= 5) {
         quantitySpan.innerText = newQty;
 
-        // Enable "Add to Cart" button if quantity > 0
+        // Enable/disable Add to Cart button
         const addToCartBtn = document.getElementById(`add-to-cart-${productId}`);
         addToCartBtn.disabled = newQty === 0;
+    } else if (newQty > 5) {
+        alert("You can only add up to 5 of each item.");
     }
+
 }
 
-// For now, just simulate adding to cart
+
 function addToCart(productId, productName) {
     const quantity = parseInt(document.getElementById(`quantity-${productId}`).innerText);
 
@@ -33,14 +37,19 @@ function addToCart(productId, productName) {
         .then(data => {
             alert(`Added ${quantity} of ${productName} to your cart!`);
 
-            const badge = document.getElementById("cart-count");
-            if (badge) {
-                const currentCount = parseInt(badge.innerText);
-                const newCount = currentCount + quantity;
-                badge.innerText = newCount;
-                badge.style.display = "inline-block";
-            }
+            // Only fetch updated cart count AFTER item is successfully added
+            fetch('/cart')
+                .then(res => res.json())
+                .then(cartData => {
+                    const items = cartData.items || [];
+                    const totalCount = items.reduce((sum, item) => sum + Number(item.quantity), 0);
 
+                    const badge = document.getElementById("cart-count");
+                    badge.innerText = totalCount;
+                    badge.style.display = totalCount > 0 ? "inline-block" : "none";
+                });
+
+            // Reset quantity and disable button
             document.getElementById(`quantity-${productId}`).innerText = "0";
             document.getElementById(`add-to-cart-${productId}`).disabled = true;
         })
@@ -49,3 +58,41 @@ function addToCart(productId, productName) {
         });
     }
 }
+
+
+function updateCartCount() {
+  fetch("/cart")
+    .then(res => res.json())
+    .then(data => {
+      const badge = document.getElementById("cart-count");
+      const items = data.items || [];
+      const totalCount = items.reduce((sum, item) => sum + item.quantity, 0); // ✅ fixed
+      badge.innerText = totalCount;
+      badge.style.display = totalCount > 0 ? "inline-block" : "none";
+    })
+    .catch(err => {
+      console.error("Error fetching cart data:", err);
+    });
+}
+
+
+function updateCartBadge() {
+  fetch('/cart')
+    .then(res => res.json())
+    .then(data => {
+      const items = data.items || [];
+      const totalCount = items.reduce((sum, item) => sum + Number(item.quantity), 0);
+      const badge = document.getElementById("cart-count");
+
+      if (badge) {
+        badge.innerText = totalCount;
+        badge.style.display = totalCount > 0 ? "inline-block" : "none";
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching cart data:", err);
+    });
+}
+
+
+

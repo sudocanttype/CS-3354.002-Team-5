@@ -330,6 +330,26 @@ def format_datetime(value):
         value = float(value)
     return datetime.fromtimestamp(value).strftime('%Y-%m-%d %I:%M %p')
 
+@app.route('/cart_total_items')
+def cart_total_items():
+    cart = session.get("cart", [])
+    total_items = sum(item["quantity"] for item in cart)
+    return jsonify(total_items=total_items)
+
+@app.route('/cart')
+def get_cart():
+    if 'user' not in session:
+        return jsonify({'items': []})
+
+    username = session['user']
+    response = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    )
+    items = response.get('Items', [])
+
+    return jsonify({'items': items})
+
+
 
 # ----------------------
 # My Recipes

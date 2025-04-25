@@ -83,7 +83,28 @@ header nav a:hover {
 }
 
 .item h3 {
-  margin: 10px 0;
+  margin: 12px 0 6px;
+}
+
+.item p {
+  margin: 6px 0;
+  line-height: 1.4;
+}
+
+.price {
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+.quantity-control {
+  margin: 12px 0;
+}
+
+.add-to-cart {
+  margin-top: 10px;
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 6px;
 }
 
 .item:hover {
