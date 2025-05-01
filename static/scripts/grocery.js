@@ -59,41 +59,6 @@ function addToCart(productId, productName) {
     }
 }
 
-
-function updateCartCount() {
-  fetch("/cart")
-    .then(res => res.json())
-    .then(data => {
-      const badge = document.getElementById("cart-count");
-      const items = data.items || [];
-      const totalCount = items.reduce((sum, item) => sum + item.quantity, 0); //  fixed
-      badge.innerText = totalCount;
-      badge.style.display = totalCount > 0 ? "inline-block" : "none";
-    })
-    .catch(err => {
-      console.error("Error fetching cart data:", err);
-    });
-}
-
-
-function updateCartBadge() {
-  fetch('/cart')
-    .then(res => res.json())
-    .then(data => {
-      const items = data.items || [];
-      const totalCount = items.reduce((sum, item) => sum + Number(item.quantity), 0);
-      const badge = document.getElementById("cart-count");
-
-      if (badge) {
-        badge.innerText = totalCount;
-        badge.style.display = totalCount > 0 ? "inline-block" : "none";
-      }
-    })
-    .catch(err => {
-      console.error("Error fetching cart data:", err);
-    });
-}
-
 // Search functionality
 function searchProducts() {
   const searchInput = document.getElementById('search-input');

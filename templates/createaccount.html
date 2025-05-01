@@ -166,13 +166,31 @@
             </div>
         {% endif %}
         <form method="POST" action="{{ url_for('createaccount') }}">
+            <label>
             <input name="name" type="text" placeholder="Name" required>
+            </label>
+
+            <label>
             <input name="last_name" type="text" placeholder="Last Name" required>
-            <input name="email" type="text" placeholder="Email" required>
+            </label>
+
+            <label>
+            <input name="email" type="email" placeholder="Email" required>
+            </label>
+
+            <label>
+
             <input name="username" type="text" placeholder="Username" required> <!-- need to add check if password and confirm password are the same-->
+            </label>
+
+            <label>
             <input name="password" type="password" placeholder="Password" required>
+            </label>
+
+            <label>
             <input name="confirm" type="password" placeholder="Confirm Password" required>
             <button type="submit">Create Account</button>
+            </label>
 
             <div class="login">
             <a style="color:#333;" href="{{ url_for('loginpage') }}">Already have an account? Login here!</a>

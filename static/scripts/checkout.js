@@ -120,14 +120,50 @@ function removeItem(productId) {
 
 function openModal(id) {
     document.getElementById(id).style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevent scrolling of background content
 }
 
 function closeModal(id) {
     document.getElementById(id).style.display = 'none';
+    document.body.style.overflow = ''; // Restore scrolling of background content
+
+    // Reset payment button state if closing payment modal
+    if (id === 'paymentModal') {
+        const submitButton = document.getElementById("submit-payment");
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = "Confirm Payment";
+        }
+
+
+        const paymentError = document.getElementById('payment-error');
+        if (paymentError) {
+            paymentError.style.display = 'none';
+        }
+
+        // Clean up Stripe Elements if they exist
+        if (paymentElement) {
+            paymentElement.unmount();
+            paymentElement = null;
+        }
+        if (elements) {
+            elements = null;
+        }
+
+        // Reset the payment element container
+        const paymentElementContainer = document.getElementById('payment-element');
+        if (paymentElementContainer) {
+            paymentElementContainer.innerHTML = '';
+        }
+    }
 }
 
 let personalInfo = {};
 let paymentInfo = {};
+let stripe;
+let elements;
+let paymentElement;
+let clientSecret;
 
 function storePersonalInfo() {
     personalInfo = {
@@ -141,70 +177,179 @@ function storePersonalInfo() {
     alert("Personal information saved!");
 }
 
-function storePaymentInfo() {
+// Initialize Stripe when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Stripe with your publishable key
+    stripe = Stripe("pk_test_51RFkha4CIKoglRouRwgnFxHzUaW7vWCRELLnWAT5wVXo4dQiXWHHvLqdM7T7Fb2CIsML2HniahWELmmpwCZc1Ufh00yTgzbljc"); // Replace with your actual publishable key
+});
+
+
+function initializeStripeElements() {
+    // Get the total amount from the page
+    const totalElement = document.querySelector('.total-amount');
+    const totalText = totalElement ? totalElement.textContent : '';
+    const totalMatch = totalText.match(/\$(\d+\.\d+)/);
+    const total = totalMatch ? parseFloat(totalMatch[1]) * 100 : 0; // Convert to cents
+
+
+    fetch("/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: Math.round(total) })
+    })
+    .then(res => res.json())
+    .then(data => {
+        clientSecret = data.clientSecret;
+
+        // Create the Stripe Elements instance
+        elements = stripe.elements({
+            clientSecret: clientSecret,
+            appearance: {
+                theme: 'stripe',
+                variables: {
+                    colorPrimary: '#2e7d32',
+                    colorText: '#000000',
+                    colorTextSecondary: '#000000',
+                    colorTextPlaceholder: '#000000',
+                    colorBackground: 'rgba(255, 255, 255, 0.95)',
+                    fontFamily: 'Arial, sans-serif',
+                },
+                rules: {
+                    '.Label': {
+                        color: '#000000',
+                        fontWeight: 'bold'
+                    },
+                    '.Tab': {
+                        color: '#000000',
+                        borderColor: '#2e7d32'
+                    },
+                    '.Tab:hover': {
+                        color: '#2e7d32'
+                    },
+                    '.Tab--selected': {
+                        borderColor: '#2e7d32',
+                        color: '#2e7d32'
+                    },
+                    '.Input': {
+                        backgroundColor: '#ffffff',
+                        borderColor: '#cccccc'
+                    },
+                    '.Input:focus': {
+                        borderColor: '#2e7d32'
+                    },
+                    '.CheckboxInput': {
+                        backgroundColor: '#ffffff',
+                        borderColor: '#cccccc'
+                    },
+                    '.CheckboxInput--checked': {
+                        backgroundColor: '#2e7d32'
+                    }
+                }
+            }
+        });
+
+
+        paymentElement = elements.create('payment');
+        paymentElement.mount('#payment-element');
+    })
+    .catch(error => {
+        console.error('Error creating payment intent:', error);
+        document.getElementById('payment-error').textContent = 'Failed to initialize payment system. Please try again.';
+        document.getElementById('payment-error').style.display = 'block';
+    });
+}
+
+const originalOpenModal = openModal;
+openModal = function(id) {
+    originalOpenModal(id);
+    if (id === 'paymentModal') {
+        initializeStripeElements();
+    }
+};
+
+// Handle payment submission
+async function handlePaymentSubmission() {
     const ccFirstName = document.getElementById("cc-first-name").value.trim();
     const ccLastName = document.getElementById("cc-last-name").value.trim();
     const ccAddress = document.getElementById("cc-address").value.trim();
-    const ccNumber = document.getElementById("cc-number").value.trim();
-    const ccExp = document.getElementById("cc-exp").value.trim();
-    const ccCVV = document.getElementById("cc-cvv").value.trim();
 
-    // Validation
-    const ccNumberRegex = /^\d{16}$/;
-    const cvvRegex = /^\d{3}$/;
-    const expRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
-
-    if (!ccNumberRegex.test(ccNumber)) {
-        alert("Credit Card Number must be exactly 16 digits.");
+    if (!ccFirstName || !ccLastName || !ccAddress) {
+        alert("Please fill in all billing information fields.");
         return;
     }
 
-    if (!cvvRegex.test(ccCVV)) {
-        alert("CVV must be exactly 3 digits.");
-        return;
+    // Show loading state
+    const submitButton = document.getElementById("submit-payment");
+    submitButton.disabled = true;
+    submitButton.textContent = "Processing...";
+
+    try {
+        // Confirm the payment with Stripe
+        const { error, paymentIntent } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: window.location.origin + "/checkout",
+                payment_method_data: {
+                    billing_details: {
+                        name: `${ccFirstName} ${ccLastName}`,
+                        address: {
+                            line1: ccAddress
+                        }
+                    }
+                }
+            },
+            redirect: 'if_required'
+        });
+
+        if (error) {
+            // Stripe already shows its own error messages in the UI
+            submitButton.disabled = false;
+            submitButton.textContent = "Confirm Payment";
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+            // Payment succeeded, store payment info and close modal
+            paymentInfo = {
+                cc_first_name: ccFirstName,
+                cc_last_name: ccLastName,
+                cc_address: ccAddress,
+                payment_intent_id: paymentIntent.id,
+                payment_method: paymentIntent.payment_method,
+                payment_status: paymentIntent.status
+            };
+
+            alert("Payment processed successfully!");
+            closeModal("paymentModal");
+        }
+    } catch (e) {
+        console.error('Payment error:', e);
+        // Only show our error message for unexpected errors not handled by Stripe
+        document.getElementById('payment-error').textContent = 'An unexpected error occurred. Please try again.';
+        document.getElementById('payment-error').style.display = 'block';
+        submitButton.disabled = false;
+        submitButton.textContent = "Confirm Payment";
     }
-
-    if (!expRegex.test(ccExp)) {
-        alert("Expiration Date must be in MM/YY format with a valid month.");
-        return;
-    }
-
-    // Enforce expiration year to be 25 or later
-    const expParts = ccExp.split("/");
-    const year = parseInt(expParts[1]);
-    if (year < 25) {
-        alert("Expiration year must be 25 or later.");
-        return;
-    }
-
-    // Save to localStorage or session (or wherever you're storing)
-    paymentInfo = {
-        cc_first_name: ccFirstName,
-        cc_last_name: ccLastName,
-        cc_address: ccAddress,
-        cc_number: ccNumber,
-        cc_exp: ccExp,
-        cc_cvv: ccCVV
-    };
-
-    alert("Payment Info saved!");
-    closeModal("paymentModal");
 }
 
 
 function confirmOrder() {
-     // Check if all personal info fields are filled
+    // Check if all personal info fields are filled
     const personalFieldsFilled = personalInfo.first_name && personalInfo.last_name &&
-                                 personalInfo.address && personalInfo.state && personalInfo.zip;
+                                personalInfo.address && personalInfo.state && personalInfo.zip;
 
-    // Check if all payment info fields are filled
+    // Check if payment info is filled (now includes Stripe payment details)
     const paymentFieldsFilled = paymentInfo.cc_first_name && paymentInfo.cc_last_name &&
-                                 paymentInfo.cc_address && paymentInfo.cc_number &&
-                                 paymentInfo.cc_exp && paymentInfo.cc_cvv;
+                                paymentInfo.cc_address && paymentInfo.payment_intent_id &&
+                                paymentInfo.payment_status === 'succeeded';
 
     if (!personalFieldsFilled || !paymentFieldsFilled) {
         alert("Please complete both personal and payment information before confirming your order.");
         return;
+    }
+
+    // Show loading state on the confirm order button
+    const confirmBtn = document.querySelector(".confirm-order-btn");
+    if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = "Processing...";
     }
 
     fetch("/place_order", {
@@ -223,19 +368,16 @@ function confirmOrder() {
             document.getElementById("order-number").innerText = data.orderNumber;
             document.getElementById("order-success").style.display = "block";
 
-
-            const confirmBtn = document.querySelector(".confirm-order-btn");
             if (confirmBtn) {
                 confirmBtn.disabled = true;
                 confirmBtn.style.opacity = "0.6";
                 confirmBtn.innerText = "Order Submitted";
             }
 
-
-            //  Disable personal/payment buttons
+            // Disable personal/payment buttons
             document.querySelectorAll(".show-form-btn").forEach(btn => btn.style.display = "none");
 
-            //  Disable quantity and remove buttons
+            // Disable quantity and remove buttons
             document.querySelectorAll(".decrease, .increase, .remove-item").forEach(btn => {
                 btn.disabled = true;
                 btn.style.opacity = "0.6";
@@ -244,15 +386,18 @@ function confirmOrder() {
 
         } else {
             alert("Error placing order: " + (data.error || "Unknown error"));
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = "Confirm Order";
+            }
         }
     })
     .catch(err => {
         console.error("Error:", err);
         alert("Something went wrong!");
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = "Confirm Order";
+        }
     });
 }
-
-
-
-
-

@@ -128,15 +128,17 @@ Usher should be able to fill personal information, address, and payment informat
 }
 
     .modal-content {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 16px;
     padding: 30px;
     width: 90%;
     max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-    color: white;
+    color: #333333;
 }
 
 
@@ -148,8 +150,9 @@ Usher should be able to fill personal information, address, and payment informat
 
 .modal-content form label {
     font-size: 14px;
-    font-weight: 500;
-    color: #f0f0f0;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 5px;
 }
 
 .modal-content form input {
@@ -249,6 +252,25 @@ input[readonly] {
     cursor: not-allowed;
 }
 
+#payment-element-container {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #cccccc;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.payment-error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 4px solid #d32f2f;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
 
 
 .checkout-wrapper {
@@ -296,6 +318,7 @@ input[readonly] {
     <title>Checkout - NomNom Bites</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
     <script src="{{ url_for('static', filename='scripts/checkout.js') }}"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -410,7 +433,7 @@ input[readonly] {
                         <div class="modal" id="paymentModal">
                             <div class="modal-content">
                                 <h3>Payment Information</h3>
-                                <form onsubmit="event.preventDefault(); storePaymentInfo();">
+                                <form id="payment-form" onsubmit="event.preventDefault(); handlePaymentSubmission();">
                                     <label for="cc-first-name">First Name</label>
                                     <input type="text" id="cc-first-name" name="cc_first_name" placeholder="First Name"
                                            required/>
@@ -423,17 +446,17 @@ input[readonly] {
                                     <input type="text" id="cc-address" name="cc_address" placeholder="Billing Address"
                                            required/>
 
-                                    <label for="cc-number">Credit Card Number</label>
-                                    <input type="text" id="cc-number" name="cc_number" maxlength="16" placeholder="Credit Card Number" required />
+                                    <!-- Stripe Elements will be inserted here -->
+                                    <div id="payment-element-container">
+                                        <label for="payment-element">Card Details</label>
+                                        <div id="payment-element"></div>
+                                    </div>
 
-                                    <label for="cc-exp">Expiration Date</label>
-                                    <input type="text" id="cc-exp" name="cc_exp" maxlength="5" placeholder="MM/YY" required />
-
-                                    <label for="cc-cvv">CVV</label>
-                                    <input type="text" id="cc-cvv" name="cc_cvv" maxlength="3" placeholder="CVV" required />
+                                    <!-- Display payment processing errors -->
+                                    <div id="payment-error" class="payment-error" style="display: none;"></div>
 
                                     <div class="modal-buttons">
-                                        <button type="submit">Confirm Payment</button>
+                                        <button id="submit-payment" type="submit">Confirm Payment</button>
                                         <button type="button" onclick="closeModal('paymentModal')" class="cancel-btn">
                                             Leave Window
                                         </button>
