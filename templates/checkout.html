@@ -318,6 +318,7 @@ input[readonly] {
     <title>Checkout - NomNom Bites</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
     <script src="{{ url_for('static', filename='scripts/checkout.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/name_validation.js') }}"></script>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
@@ -513,5 +514,11 @@ input[readonly] {
     </div>
 </footer>
 
+<script>
+  // Set up name validation when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    setupNameValidation('#cc-first-name', '#cc-last-name');
+  });
+</script>
 </body>
 </html>

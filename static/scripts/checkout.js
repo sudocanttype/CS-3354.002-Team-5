@@ -120,12 +120,12 @@ function removeItem(productId) {
 
 function openModal(id) {
     document.getElementById(id).style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Prevent scrolling of background content
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal(id) {
     document.getElementById(id).style.display = 'none';
-    document.body.style.overflow = ''; // Restore scrolling of background content
+    document.body.style.overflow = '';
 
     // Reset payment button state if closing payment modal
     if (id === 'paymentModal') {
@@ -177,7 +177,7 @@ function storePersonalInfo() {
     alert("Personal information saved!");
 }
 
-// Initialize Stripe when the page loads
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Stripe with your publishable key
     stripe = Stripe("pk_test_51RFkha4CIKoglRouRwgnFxHzUaW7vWCRELLnWAT5wVXo4dQiXWHHvLqdM7T7Fb2CIsML2HniahWELmmpwCZc1Ufh00yTgzbljc"); // Replace with your actual publishable key
@@ -201,7 +201,6 @@ function initializeStripeElements() {
     .then(data => {
         clientSecret = data.clientSecret;
 
-        // Create the Stripe Elements instance
         elements = stripe.elements({
             clientSecret: clientSecret,
             appearance: {

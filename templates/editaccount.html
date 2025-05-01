@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>NomNom Bites Edit Account</title>
+  <script src="{{ url_for('static', filename='scripts/name_validation.js') }}"></script>
 
   <style>
     /* Reset and Base Styles */
@@ -170,5 +171,11 @@
     </div>
 </section>
 
+<script>
+  // Set up name validation when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    setupNameValidation('input[name="name"]', 'input[name="last_name"]');
+  });
+</script>
 </body>
 </html>
