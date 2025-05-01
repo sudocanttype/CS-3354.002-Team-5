@@ -699,6 +699,64 @@ def edit_recipe(recipe_id):
         return redirect(url_for('myrecipes'))
 
 
+@app.route('/view_recipe/<int:recipe_id>')
+def view_recipe(recipe_id):
+    if 'user' not in session:
+        flash("Please log in to view recipes.")
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+    
+    preview_recipe = session.get('preview_recipe')
+    if preview_recipe and preview_recipe.get('recipeId') == recipe_id:
+        recipe_data = {
+            'id': preview_recipe.get('recipeId'),
+            'title': preview_recipe.get('title', ''),
+            'image': preview_recipe.get('image', 'https://via.placeholder.com/150'),
+            'ingredients': preview_recipe.get('ingredients', []),
+            'instructions': preview_recipe.get('instructions', []),
+            'prep_time': preview_recipe.get('prep_time'),
+            'cook_time': preview_recipe.get('cook_time'),
+            'serving_size': preview_recipe.get('serving_size'),
+            'tags': preview_recipe.get('tags', []),
+            'preview_mode': True
+        }
+        return render_template('viewingpage.html', recipe=recipe_data)
+
+    try:
+        # fetch specific recipe from DynamoDB using the integer recipe_id
+        response = recipes_table.get_item(
+            Key={'username': username, 'recipeId': recipe_id} 
+        )
+        recipe = response.get('Item')
+
+        if not recipe:
+            flash("Recipe not found or you don't have permission to view it.")
+            return redirect(url_for('myrecipes'))
+
+        # pass fetched recipe data to template
+        recipe_data = {
+            'id': recipe.get('recipeId'), 
+            'title': recipe.get('title', ''),
+            'image': recipe.get('image', 'https://via.placeholder.com/150'),
+            'ingredients': recipe.get('ingredients', []),
+            'instructions': recipe.get('instructions', []),
+            'prep_time': recipe.get('prep_time'),
+            'cook_time': recipe.get('cook_time'),
+            'serving_size': recipe.get('serving_size'),
+            'tags': recipe.get('tags', [])
+        }
+
+        return render_template('viewingpage.html', recipe=recipe_data)
+
+    except Exception as e:
+        flash(f"Error loading recipe for viewing: {str(e)}")
+        # Check if the error is the schema mismatch again
+        print(f"Error fetching recipe {recipe_id} for user {username}: {e}")
+        if 'ValidationException' in str(e) and 'does not match the schema' in str(e):
+            print("SCHEMA MISMATCH: view_recipe received an ID that doesn't match RecipeActual's recipeId type (expected Number). Ensure the link generating this URL passes an integer.")
+        return redirect(url_for('myrecipes'))
+
 @app.route('/update_recipe/<int:recipe_id>', methods=['POST'])
 def update_recipe(recipe_id):
 
