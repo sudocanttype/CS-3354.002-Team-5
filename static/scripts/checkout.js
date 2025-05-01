@@ -146,7 +146,7 @@ function storePaymentInfo() {
     const ccExp = document.getElementById("cc-exp").value.trim();
     const ccCVV = document.getElementById("cc-cvv").value.trim();
 
-    // 🔒 Validation
+    // Validation
     const ccNumberRegex = /^\d{16}$/;
     const cvvRegex = /^\d{3}$/;
     const expRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;

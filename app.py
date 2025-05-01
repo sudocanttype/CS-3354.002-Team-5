@@ -132,6 +132,105 @@ def createaccount():
     return render_template('createaccount.html')
 
 # ----------------------
+# EDIT ACCOUNT
+# ----------------------
+@app.route('/editaccount', methods=['GET', 'POST'])
+def editaccount():
+    if 'user' not in session:
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+
+    if request.method == 'POST':
+        name = request.form['name']
+        last_name = request.form['last_name']
+        email = request.form['email']
+        password = request.form.get('password')
+        confirm = request.form.get('confirm')
+
+        if password and password != confirm:
+            return render_template('editaccount.html', error="Passwords do not match", user={
+                'name': name,
+                'last_name': last_name,
+                'email': email
+            })
+
+        update_expr = "SET name = :n, last_name = :ln, email = :e"
+        expr_vals = {
+            ':n': name,
+            ':ln': last_name,
+            ':e': email
+        }
+
+        if password:
+            update_expr += ", password_hash = :p"
+            expr_vals[':p'] = hash_password(password)
+
+        try:
+            user_table.update_item(
+                Key={'username': username},
+                UpdateExpression="SET #n = :n, last_name = :ln, email = :e" + (
+                    ", password_hash = :p" if password else ""),
+                ExpressionAttributeValues={
+                    ':n': name,
+                    ':ln': last_name,
+                    ':e': email,
+                    **({':p': hash_password(password)} if password else {})
+                },
+                ExpressionAttributeNames={
+                    '#n': 'name'  # <-- This is the fix
+                }
+            )
+
+            # Update names in past orders, if different
+            try:
+                orders = orders_table.scan(
+                    FilterExpression=Attr('username').eq(username)
+                ).get('Items', [])
+
+                for order in orders:
+                    if 'personal_info' in order:
+                        old_first = order['personal_info'].get('first_name')
+                        old_last = order['personal_info'].get('last_name')
+
+                        # Only update if the name actually changed
+                        if old_first != name or old_last != last_name:
+                            orders_table.update_item(
+                                Key={
+                                    'username': username,
+                                    'order_id': order['order_id']
+                                },
+                                UpdateExpression='SET personal_info.#first = :fn, personal_info.#last = :ln',
+                                ExpressionAttributeNames={
+                                    '#first': 'first_name',
+                                    '#last': 'last_name'
+                                },
+                                ExpressionAttributeValues={
+                                    ':fn': name,
+                                    ':ln': last_name
+                                }
+                            )
+            except Exception as e:
+                print(
+                    f"Warning: Failed to update personal_info in Orders: {e}")  # error log for production issues
+
+            session['name'] = name
+            session['last_name'] = last_name
+            return redirect(url_for('landingpage'))
+
+        except Exception as e:
+            return render_template('editaccount.html', error=f"Error updating account: {e}", user={
+                'name': name,
+                'last_name': last_name,
+                'email': email
+            })
+
+    # GET method: populate form with current user data
+    user = user_table.get_item(Key={'username': username}).get('Item')
+    return render_template('editaccount.html', user=user)
+
+
+# ----------------------
 # LOGOUT
 # ----------------------
 @app.route('/logout')
