@@ -3,12 +3,15 @@ function changeQuantity(productId, change) {
     let currentQty = parseInt(qtySpan.innerText);
     const newQty = currentQty + change;
 
-    if (newQty >= 1) {
+    // Limit: between 1 and 5 items only
+    if (newQty >= 1 && newQty <= 5) {
         qtySpan.innerText = newQty;
 
         // Show the update button
         const updateBtn = document.getElementById(`update-btn-${productId}`);
         updateBtn.style.display = "inline-block";
+    } else if (newQty > 5) {
+        alert("You can only add up to 5 of each item.");
     }
 }
 
