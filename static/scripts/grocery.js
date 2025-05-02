@@ -6,14 +6,14 @@ function updateQuantity(productId, change) {
     const newQty = currentQty + change;
 
     // Limit: quantity must be between 0 and 5
-    if (newQty >= 0 && newQty <= 5) {
+    if (newQty >= 0 && newQty <= 15) {
         quantitySpan.innerText = newQty;
 
         // Enable/disable Add to Cart button
         const addToCartBtn = document.getElementById(`add-to-cart-${productId}`);
         addToCartBtn.disabled = newQty === 0;
     } else if (newQty > 5) {
-        alert("You can only add up to 5 of each item.");
+        alert("You can only add up to 15 of each item.");
     }
 
 }

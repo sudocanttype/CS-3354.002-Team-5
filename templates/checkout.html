@@ -418,7 +418,7 @@ input[readonly] {
                                     <input type="text" id="state" name="state" placeholder="State" required/>
 
                                     <label for="zip">Zip Code</label>
-                                    <input type="text" id="zip" name="zip" placeholder="Zip Code" required/>
+                                    <input type="text" id="zip" name="zip" placeholder="Zip Code" required pattern="^[0-9\-]+$" title="Zip code must contain only numbers and optional hyphens.">
 
                                     <div class="modal-buttons">
                                         <button type="submit">Confirm Info</button>
