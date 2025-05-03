@@ -941,6 +941,10 @@ def generate():
                 return jsonify({'status': 'error', 'message': 'Recipe not found'}), 404
 
             recipe['username'] = username
+            
+            if 'recipe_title' in recipe and ('title' not in recipe or not recipe['title']):
+                recipe['title'] = recipe['recipe_title']
+                
             recipes_table.put_item(Item=recipe)  #add to my recipes (recipes actual table)
 
             return jsonify({'status': 'success', 'message': 'Recipe added'})
