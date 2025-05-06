@@ -1,9 +1,8 @@
-<!-- Veronika & Uma-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NomNom Bites Create an Account Page</title>
+  <title>NomNom Bites Edit Account</title>
   <script src="{{ url_for('static', filename='scripts/name_validation.js') }}"></script>
 
   <style>
@@ -99,18 +98,6 @@
       background-color: #555;
     }
 
-    .login {
-      color: #333;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .disabled-link {
-        color: gray;
-        cursor: not-allowed;
-        text-decoration: none;
-    }
-
     .login-banner {
         background-color: #ffe0e0;
         color: #b20000;
@@ -122,82 +109,67 @@
     }
   </style>
 </head>
-<script>
-  function showBanner() {
-    const banner = document.getElementById("login-banner");
-    banner.style.display = "block";
-    setTimeout(() => {
-      banner.style.display = "none";
-    }, 3000);
-  }
-</script>
+
 <body>
 <!-- Navigation Bar (identical to About Us) -->
     <nav>
       <div class="nav-brand">NomNom Bites</div>
       <div class="nav-links">
         <a href="{{ url_for('landingpage') }}">Home</a> <!-- landingpage calls the function in app.py-->
-
-      {% if logged_in %}
         <a href="{{ url_for('myrecipes') }}">My Recipes</a>
         <a href="{{ url_for('shop') }}">Shop</a>
         <a href="{{ url_for('generate') }}">Generate</a>
-      {% else %}
-        <a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
-         <a href="{{ url_for('aboutus') }}">About</a>
-        <a class="disabled-link" href="#" onclick="showBanner()">Shop</a>
-        <a class="disabled-link" href="#" onclick="showBanner()">Generate</a>
-      {% endif %}
 
       </div>
     </nav>
 
-      <!-- Banner to show when user is not logged in -->
-      <div id="login-banner" class="login-banner" style="display: none;">
-          ⚠️ You must login to access this feature.
-      </div>
-
-    <section>
+<section>
     <div class="page-content">
-  	<div class="login-box">
-      <h2 style="text-align: center;">Create an Account</h2>
-        {% if error %}
-            <div class="login-banner">
-                {{ error }}
-            </div>
-        {% endif %}
-        <form method="POST" action="{{ url_for('createaccount') }}">
-            <label>
-            <input name="name" type="text" placeholder="Name" required>
-            </label>
+        <div class="login-box">
+            <h2 style="text-align: center;">Edit Account</h2>
+            {% if error %}
+                <div class="login-banner">
+                    {{ error }}
+                </div>
+            {% endif %}
+            <form method="POST" action="{{ url_for('editaccount') }}">
+                <input name="name" type="text" placeholder="First Name" value="{{ user.name }}" required>
+                <input name="last_name" type="text" placeholder="Last Name" value="{{ user.last_name }}" required>
+                <input name="email" type="email" placeholder="Email" value="{{ user.email }}" required>
+                <input name="password" type="password" placeholder="New Password">
+                <input name="confirm" type="password" placeholder="Confirm New Password">
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+  <!-- Save button -->
+  <button type="submit" style="
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #333;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  ">Save Changes</button>
 
-            <label>
-            <input name="last_name" type="text" placeholder="Last Name" required>
-            </label>
+  <!-- Cancel button styled the same, but acts as a link using JS -->
+  <button type="button" onclick="window.location='{{ url_for('landingpage') }}'" style="
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #cc0000;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  ">Cancel Edits</button>
+</div>
 
-            <label>
-            <input name="email" type="email" placeholder="Email" required>
-            </label>
 
-            <label>
 
-            <input name="username" type="text" placeholder="Username" required> <!-- need to add check if password and confirm password are the same-->
-            </label>
-
-            <label>
-            <input name="password" type="password" placeholder="Password" required>
-            </label>
-
-            <label>
-            <input name="confirm" type="password" placeholder="Confirm Password" required>
-            <button type="submit">Create Account</button>
-            </label>
-
-            <div class="login">
-            <a style="color:#333;" href="{{ url_for('loginpage') }}">Already have an account? Login here!</a>
+            </form>
         </div>
-      </form>
-    </section>
+    </div>
+</section>
 
 <script>
   // Set up name validation when the page loads
@@ -207,17 +179,3 @@
 </script>
 </body>
 </html>
-
-<!-- if email is not valid, then display an error msg and prompt user to reenter email-->
-<!-- password checking? do we want to place restrictions on it?-->
-
-<!-- backend psuedocode:
-  - user types in name, username, password and confirm password
-  - system checks if username and/or email already exists in the database of current users
-    - if it does, then system asks user to login instead
-    - else, add username, password, and name to database of current users and open up user's account
-
-  - system checks if password is the same as confirm password
-    - if it is and user DNE yet, then create account by adding info to database
-    - if not, error msg is displayed and prompts user to reenter password info
--->

@@ -11,6 +11,33 @@ Usher should be able to fill personal information, address, and payment informat
 -->
 <!DOCTYPE html>
 <style>
+
+    .nav-brand {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #fff; /* This was missing */
+    }
+
+    .checkout-container .price {
+    margin-top: 4px;
+    color: #2e7d32;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
+  }
+
+  .checkout-container .title-price {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 48px;
+  }
+
+  .checkout-container .title-price h3 {
+    font-size: 18px;
+    margin: 0;
+  }
+
     .quantity-control {
         display: flex;
         align-items: center;
@@ -31,18 +58,27 @@ Usher should be able to fill personal information, address, and payment informat
     }
 
     .title-price {
-        margin-bottom: 8px;
-    }
+    min-height: 48px; /* Ensures consistent height even for long names */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;  /* Adds space between product name and price */
+    margin-bottom: 10px;
+}
 
-    .title-price h3 {
-        margin-bottom: 4px;
-    }
+.title-price h3 {
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Or whatever fits your layout */
+}
 
-    .price {
-        font-weight: bold;
-        color: #2e7d32;
-        margin: 4px 0 0 0;
-    }
+.title-price .price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin: 0;
+}
 
     .quantity-control {
         display: flex;
@@ -77,6 +113,201 @@ Usher should be able to fill personal information, address, and payment informat
         color: #2e7d32;
         margin-top: 10px;
     }
+    .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+    .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 16px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    color: #333333;
+}
+
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-content form label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 5px;
+}
+
+.modal-content form input {
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.85);
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.modal-content form input:focus {
+    box-shadow: 0 0 0 2px #2e7d32;
+}
+
+.modal-content form button {
+    padding: 12px;
+    background-color: #2e7d32;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+.modal-buttons .cancel-btn {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.modal-buttons .cancel-btn:hover {
+    background-color: #c82333 !important;
+}
+
+.modal-content form button:hover {
+    background-color: #256428;
+}
+
+.show-form-btn {
+    padding: 12px 24px;
+    margin-right: 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.modal-buttons button {
+    flex: 1;
+}
+
+.cancel-btn {
+    background-color: #dc3545;
+}
+
+.cancel-btn:hover {
+    background-color: #c82333;
+}
+
+.confirm-order-btn {
+    padding: 12px 24px;
+    background-color: #2e7d32;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.order-success-popup {
+    display: none;
+    margin-top: 30px;
+    padding: 20px;
+    background: #d4edda;
+    border-left: 6px solid #28a745;
+    color: #155724;
+    font-size: 18px;
+    border-radius: 8px;
+}
+
+input[readonly] {
+    background-color: #e0e0e0;
+    color: #666;
+    cursor: not-allowed;
+}
+
+#payment-element-container {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #cccccc;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.payment-error {
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 4px solid #d32f2f;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+
+
+.checkout-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #f7f7f7;
+  min-height: calc(100vh - 200px); /* make room for header/footer */
+}
+
+.checkout-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.checkout-container h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.checkout-summary {
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+  margin-top: 30px;
+}
+
+.checkout-summary h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
 
 
 </style>
@@ -87,23 +318,31 @@ Usher should be able to fill personal information, address, and payment informat
     <title>Checkout - NomNom Bites</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
     <script src="{{ url_for('static', filename='scripts/checkout.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/name_validation.js') }}"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
+<div class="page-wrapper">
+
 <header>
     <nav class="navbar">
-        <div class="logo">NomNom Bites</div>
+        <div class="nav-brand">NomNom Bites</div>
         <div class="nav-links">
             <a href="{{ url_for('landingpage') }}">Home</a>
             <a href="{{url_for('myrecipes')}}">My Recipes</a>
             <a href="{{ url_for('generate') }}">Generate</a>
             <a href="{{ url_for('aboutus') }}">About Us</a>
-            <a href="{{ url_for('shop') }}" class="shop-btn">Shop</a>
+            <a href="{{ url_for('shop') }}" >Shop</a>
+            <a href="{{ url_for('generate') }}">Generate</a>
             <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
+            <a href="{{ url_for('myorders') }}" class="past-orders">View My Past Orders</a>
+            <a href="{{ url_for('logout') }}">Sign Out</a>
         </div>
     </nav>
 </header>
 
+<div class="checkout-wrapper">
 <main class="checkout-container">
     <h1>Grocery Store Check Out</h1>
 
@@ -155,32 +394,131 @@ Usher should be able to fill personal information, address, and payment informat
                             </button>
                         </div>
                     </div>
-            {% endfor %}
-        </div>
+
+
+                {% endfor %}
+            </div>
+
+            <section class="order-form-section">
+                        <!-- Personal Info Modal -->
+                        <div class="modal" id="personalModal">
+                            <div class="modal-content">
+                                <h3>Personal Information</h3>
+                                <form onsubmit="event.preventDefault(); storePersonalInfo();">
+                                    <label for="first-name">First Name</label>
+                                    <input type="text" id="first-name" name="first_name" value="{{ first_name }}" readonly required/>
+
+                                    <label for="last-name">Last Name</label>
+                                    <input type="text" id="last-name" name="last_name" value="{{ last_name }}" readonly required/>
+
+                                    <label for="address">Address</label>
+                                    <input type="text" id="address" name="address" placeholder="Address" required/>
+
+                                    <label for="state">State</label>
+                                    <input type="text" id="state" name="state" placeholder="State" required/>
+
+                                    <label for="zip">Zip Code</label>
+                                    <input type="text" id="zip" name="zip" placeholder="Zip Code" required pattern="^[0-9\-]+$" title="Zip code must contain only numbers and optional hyphens.">
+
+                                    <div class="modal-buttons">
+                                        <button type="submit">Confirm Info</button>
+                                        <button type="button" onclick="closeModal('personalModal')" class="cancel-btn">
+                                            Leave Window
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Payment Info Modal -->
+                        <div class="modal" id="paymentModal">
+                            <div class="modal-content">
+                                <h3>Payment Information</h3>
+                                <form id="payment-form" onsubmit="event.preventDefault(); handlePaymentSubmission();">
+                                    <label for="cc-first-name">First Name</label>
+                                    <input type="text" id="cc-first-name" name="cc_first_name" placeholder="First Name"
+                                           required/>
+
+                                    <label for="cc-last-name">Last Name</label>
+                                    <input type="text" id="cc-last-name" name="cc_last_name" placeholder="Last Name"
+                                           required/>
+
+                                    <label for="cc-address">Billing Address</label>
+                                    <input type="text" id="cc-address" name="cc_address" placeholder="Billing Address"
+                                           required/>
+
+                                    <!-- Stripe Elements will be inserted here -->
+                                    <div id="payment-element-container">
+                                        <label for="payment-element">Card Details</label>
+                                        <div id="payment-element"></div>
+                                    </div>
+
+                                    <!-- Display payment processing errors -->
+                                    <div id="payment-error" class="payment-error" style="display: none;"></div>
+
+                                    <div class="modal-buttons">
+                                        <button id="submit-payment" type="submit">Confirm Payment</button>
+                                        <button type="button" onclick="closeModal('paymentModal')" class="cancel-btn">
+                                            Leave Window
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Open Buttons -->
+                        <div style="margin-top: 40px;">
+                            <button class="show-form-btn" onclick="openModal('personalModal')">Enter Personal
+                                Information
+                            </button>
+                            <button class="show-form-btn" onclick="openModal('paymentModal')">Enter Payment
+                                Information
+                            </button>
+                        </div>
+
+                        <!-- Confirm Order Button + Success Message -->
+                        <div style="margin-top: 20px;">
+                            <button class="confirm-order-btn" onclick="confirmOrder()">Confirm Order</button>
+                        </div>
+                        <div id="order-success" class="order-success-popup" style="display: none;">
+                            <p>✅ Order Successful!</p>
+                            <p>Your order number is <strong id="order-number"></strong>.</p>
+                        </div>
+
+                    </section>
         {% else %}
-        <p class="empty-cart">You don't have any items in your cart.</p>
+            <p class="empty-cart">You don't have any items in your cart.</p>
         {% endif %}
     </section>
 </main>
+</div>
+</div>
 
 <footer>
     <div class="footer-links">
         <div class="section">
-            <h4>My Recipes</h4>
-            <a href="#">Favorite Recipes</a>
-            <a href="#">Disliked Recipes</a>
+            <h4>Recipes</h4>
+            <a href="{{ url_for('myrecipes') }}">My Recipes </a>
+            <a href="{{ url_for('myrecipes') }}">Favorite Recipes </a>
+            <a href="{{ url_for('generate') }}">Generate Recipes </a>
         </div>
         <div class="section">
             <h4>Shop</h4>
-            <a href="#">Groceries</a>
-            <a href="#">Checkout</a>
+            <a href="{{ url_for('shop') }}">Groceries</a>
+            <a href="{{ url_for('checkout') }}">Checkout</a>
         </div>
         <div class="section">
-            <h4>Help</h4>
-            <a href="#">Customer Support</a>
+            <h4>Orders</h4>
+            <a href="{{ url_for('myorders') }}">View My Past Orders</a>
         </div>
     </div>
 </footer>
 
+<script>
+  // Set up name validation when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    setupNameValidation('#cc-first-name', '#cc-last-name');
+  });
+</script>
 </body>
 </html>

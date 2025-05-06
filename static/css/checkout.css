@@ -22,7 +22,7 @@ body {
     margin: 0 15px;
 }
 
-.shop-btn, .checkout-btn {
+.shop-btn, .checkout-btn, .past-orders {
     background-color: blueviolet;
     color: black;
     padding: 8px 15px;

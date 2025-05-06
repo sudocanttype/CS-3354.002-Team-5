@@ -65,8 +65,8 @@ margin-right: 15px;
 
 .checkout-badge {
   position: absolute;
-  top: 1px;
-  right: 37px;
+  top: 0;
+  right: 135px;
   background-color: gold;
   color: black;
   border-radius: 50%;
@@ -74,6 +74,65 @@ margin-right: 15px;
   font-size: 14px;
   font-weight: bold;
   border: 2px solid white;
+}
+
+/* Search Box Styling */
+.search-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-box {
+  display: flex;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+#search-input {
+  width: 100%;
+  padding: 15px 20px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  border-radius: 30px 0 0 30px;
+}
+
+#search-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0 20px;
+  cursor: pointer;
+  border-radius: 0 30px 30px 0;
+  transition: background-color 0.3s;
+}
+
+#search-button:hover {
+  background-color: #0056b3;
+}
+
+.clear-button {
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 10;
+}
+
+.clear-button:hover {
+  color: #333;
 }
 
 </style>
@@ -90,17 +149,36 @@ margin-right: 15px;
     <a href="{{ url_for('myrecipes') }}">My Recipes</a>
     <a href="{{ url_for('aboutus') }}">About Us</a>
     <a href="{{ url_for('shop') }}">Shop</a>
-    <a href="{{ url_for('generate') }}">Generate</a>
-          <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
+      <a href="{{ url_for('generate') }}">Generate</a>
+      <a href="{{ url_for('checkout') }}" class="checkout-btn">Checkout</a>
       <span class="checkout-badge" id="cart-count" {% if cart_count == 0 %}style="display:none;"{% endif %}>
        {{ cart_count }}
       </span>
       <a href="{{ url_for('logout') }}">Sign Out</a> <!-- added logout link here -->
-      </div>
+  </div>
 </nav>
 
 <div class="store-header">
   <h1>{{ first_name }} {{ last_name }}! Welcome to the Grocery Store</h1>
+</div>
+
+<!-- Search Box -->
+<div class="search-container">
+  <div class="search-box">
+    <input type="text" id="search-input" placeholder="Search for items (e.g., apple)">
+    <button id="clear-search" class="clear-button" style="display: none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <button id="search-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </button>
+  </div>
 </div>
 
 <section class="items-section">
@@ -131,5 +209,9 @@ margin-right: 15px;
     {% endfor %}
   </div>
 </section>
+
+<nav> <!--bottom nav bar for consistency-->
+    <div class="nav-brand">NomNom Bites</div>
+</nav>
 </body>
 </html>

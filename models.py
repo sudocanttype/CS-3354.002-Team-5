@@ -14,6 +14,18 @@ class Product: #class for the products the user is able to add to their cart
         pass
     # Using DynamoDB database for the products
 
+    class Orders:
+        def __init__(self, userName, product_id, image, name, price, quantity ):
+            self.userName = userName
+            self.product_id = product_id
+            self.image = image
+            self.name = name
+            self.price = price
+            self.quantity = quantity
+
+    def get_order_info(self):
+        return f"{self.product_id} - {self.name} - ${self.price}"
+
 
 class Recipe:  #class for recipes so that the user can view its details, edit, or create a recipe
     def __init__(self, nameOfRecipe, ingredients, instructions):

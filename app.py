@@ -1,13 +1,24 @@
 from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
 from mock_data import recipes_data, my_recipes
 from decimal import Decimal
+from datetime import datetime
 import boto3
 import hashlib
 import time
+import random
+import string
+import stripe
+import os
 from datetime import timedelta
 from boto3.dynamodb.conditions import Attr, Key
 import uuid 
 from urllib.parse import unquote
+from dotenv import load_dotenv
+load_dotenv()
+
+
+#Stripe API key
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 # Helper function to hash passwords
 def hash_password(password):
@@ -22,6 +33,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # or your region
 user_table = dynamodb.Table('Users')
 products_table = dynamodb.Table('Products')
 cart_table = dynamodb.Table('Cart')
+orders_table = dynamodb.Table('Orders')
 
 
 recipes_table = dynamodb.Table('RecipeActual')
@@ -128,6 +140,105 @@ def createaccount():
     return render_template('createaccount.html')
 
 # ----------------------
+# EDIT ACCOUNT
+# ----------------------
+@app.route('/editaccount', methods=['GET', 'POST'])
+def editaccount():
+    if 'user' not in session:
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+
+    if request.method == 'POST':
+        name = request.form['name']
+        last_name = request.form['last_name']
+        email = request.form['email']
+        password = request.form.get('password')
+        confirm = request.form.get('confirm')
+
+        if password and password != confirm:
+            return render_template('editaccount.html', error="Passwords do not match", user={
+                'name': name,
+                'last_name': last_name,
+                'email': email
+            })
+
+        update_expr = "SET name = :n, last_name = :ln, email = :e"
+        expr_vals = {
+            ':n': name,
+            ':ln': last_name,
+            ':e': email
+        }
+
+        if password:
+            update_expr += ", password_hash = :p"
+            expr_vals[':p'] = hash_password(password)
+
+        try:
+            user_table.update_item(
+                Key={'username': username},
+                UpdateExpression="SET #n = :n, last_name = :ln, email = :e" + (
+                    ", password_hash = :p" if password else ""),
+                ExpressionAttributeValues={
+                    ':n': name,
+                    ':ln': last_name,
+                    ':e': email,
+                    **({':p': hash_password(password)} if password else {})
+                },
+                ExpressionAttributeNames={
+                    '#n': 'name'  # <-- This is the fix
+                }
+            )
+
+            # Update names in past orders, if different
+            try:
+                orders = orders_table.scan(
+                    FilterExpression=Attr('username').eq(username)
+                ).get('Items', [])
+
+                for order in orders:
+                    if 'personal_info' in order:
+                        old_first = order['personal_info'].get('first_name')
+                        old_last = order['personal_info'].get('last_name')
+
+                        # Only update if the name actually changed
+                        if old_first != name or old_last != last_name:
+                            orders_table.update_item(
+                                Key={
+                                    'username': username,
+                                    'order_id': order['order_id']
+                                },
+                                UpdateExpression='SET personal_info.#first = :fn, personal_info.#last = :ln',
+                                ExpressionAttributeNames={
+                                    '#first': 'first_name',
+                                    '#last': 'last_name'
+                                },
+                                ExpressionAttributeValues={
+                                    ':fn': name,
+                                    ':ln': last_name
+                                }
+                            )
+            except Exception as e:
+                print(
+                    f"Warning: Failed to update personal_info in Orders: {e}")  # error log for production issues
+
+            session['name'] = name
+            session['last_name'] = last_name
+            return redirect(url_for('landingpage'))
+
+        except Exception as e:
+            return render_template('editaccount.html', error=f"Error updating account: {e}", user={
+                'name': name,
+                'last_name': last_name,
+                'email': email
+            })
+
+    # GET method: populate form with current user data
+    user = user_table.get_item(Key={'username': username}).get('Item')
+    return render_template('editaccount.html', user=user)
+
+
+# ----------------------
 # LOGOUT
 # ----------------------
 @app.route('/logout')
@@ -140,7 +251,7 @@ def logout():
 @app.route('/shop')
 def shop():
     if 'user' not in session:
-        flash("You must be logged in to access the shop.")
+        flash("You must be logged in to access the shop")
 
         return redirect(url_for('loginpage'))
 
@@ -192,7 +303,7 @@ def add_to_cart():
 @app.route('/checkout')
 def checkout():
     if 'user' not in session:
-        flash("You must be logged in to access the shop.")
+        flash("You must be logged in to access checkout")
 
         return redirect(url_for('loginpage'))
 
@@ -212,7 +323,10 @@ def checkout():
     convenience_fee = 1.00
     total = subtotal + tax + convenience_fee
 
-    return render_template('checkout.html',subtotal=subtotal, tax=tax, convenience_fee=convenience_fee, total=total, cart_items=cart_items, total_items=total_items)
+    first_name = session.get('name')
+    last_name = session.get('last_name')
+
+    return render_template('checkout.html',subtotal=subtotal, tax=tax, convenience_fee=convenience_fee, total=total, cart_items=cart_items, total_items=total_items, first_name=first_name, last_name=last_name)
 
 @app.route('/update_quantity', methods=['PATCH'])
 def update_quantity():
@@ -256,6 +370,138 @@ def remove_from_cart():
     except Exception as e:
         return jsonify({'message': f'Error: {str(e)}'}), 500
 
+@app.route('/place_order', methods=['POST'])
+def place_order():
+    if 'user' not in session:
+        return jsonify({"error": "Not logged in"}), 403
+
+    data = request.get_json()
+    personal = data.get('personal')
+    payment = data.get('payment')
+    username = session['user']
+    order_id = generate_order_number()
+
+    # Get current user's cart
+    cart_items = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    ).get('Items', [])
+
+    # Calculate total
+    subtotal = sum(float(item['price']) * int(item['quantity']) for item in cart_items)
+    tax = 5.00
+    convenience_fee = 1.00
+    total = subtotal + tax + convenience_fee
+
+    try:
+        # Verify payment with Stripe
+        payment_intent_id = payment.get('payment_intent_id')
+        if not payment_intent_id:
+            return jsonify({"error": "Payment information is incomplete"}), 400
+
+        # Retrieve the payment intent from Stripe to verify its status
+        payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+
+        # Ensure payment was successful
+        if payment_intent.status != 'succeeded':
+            return jsonify({"error": f"Payment not completed. Status: {payment_intent.status}"}), 400
+
+        # Store only necessary payment information (not card details)
+        safe_payment_info = {
+            'payment_intent_id': payment_intent_id,
+            'payment_method': payment.get('payment_method'),
+            'payment_status': payment_intent.status,
+            'billing_name': f"{payment.get('cc_first_name')} {payment.get('cc_last_name')}",
+            'billing_address': payment.get('cc_address')
+        }
+
+        # Save order to database
+        orders_table.put_item(Item={
+            'order_id': order_id,
+            'username': username,
+            'personal_info': personal,
+            'payment_info': safe_payment_info,
+            'cart_items': cart_items,
+            'subtotal': Decimal(str(subtotal)),
+            'tax': Decimal(str(tax)),
+            'convenience_fee': Decimal(str(convenience_fee)),
+            'total_paid': Decimal(str(total)),
+            'timestamp': int(time.time())
+        })
+
+        # Clear the cart after saving the order
+        for item in cart_items:
+            cart_table.delete_item(
+                Key={'username': username, 'product_id': item['product_id']}
+            )
+
+        return jsonify({"orderNumber": order_id})
+    except stripe.error.StripeError as se:
+        return jsonify({"error": f"Payment verification failed: {str(se)}"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def generate_order_number():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
+
+
+@app.route('/create-payment-intent', methods=['POST'])
+def create_payment():
+    try:
+        data = request.get_json()
+        amount = int(data['amount'])  # in cents $10 = 1000
+
+        intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency='usd',
+            automatic_payment_methods={"enabled": True}
+        )
+
+        return jsonify({
+            'clientSecret': intent['client_secret']
+        })
+    except Exception as e:
+        return jsonify(error=str(e)), 403
+
+
+@app.route('/myorders')
+def myorders():
+    if 'user' not in session:
+        flash("You must be logged to view your orders")
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+    response = orders_table.scan(
+        FilterExpression=Attr('username').eq(username)
+    )
+    orders = response.get('Items', [])
+    return render_template('myorders.html', orders=orders)
+
+@app.template_filter('datetime')
+def format_datetime(value):
+    if isinstance(value, Decimal):
+        value = float(value)
+    return datetime.fromtimestamp(value).strftime('%Y-%m-%d %I:%M %p')
+
+@app.route('/cart_total_items')
+def cart_total_items():
+    cart = session.get("cart", [])
+    total_items = sum(item["quantity"] for item in cart)
+    return jsonify(total_items=total_items)
+
+@app.route('/cart')
+def get_cart():
+    if 'user' not in session:
+        return jsonify({'items': []})
+
+    username = session['user']
+    response = cart_table.query(
+        KeyConditionExpression=Key('username').eq(username)
+    )
+    items = response.get('Items', [])
+
+    return jsonify({'items': items})
+
+
 
 # ----------------------
 # My Recipes
@@ -263,6 +509,7 @@ def remove_from_cart():
 @app.route('/myrecipes') # when "My Recipes" button is clicked redirected to recipes page
 def myrecipes():
     if 'user' not in session:
+        flash("You must be logged to view recipes page")
         return redirect(url_for('loginpage'))
 
     username = session['user']
@@ -290,7 +537,7 @@ def myrecipes():
             elif 'title' not in r and 'recipe_title' not in r:
                 r['title'] = "Untitled Recipe"
                 r['recipe_title'] = "Untitled Recipe"
-                
+
             unique_recipes.append(r)
             seen.add(rid)
     recipes = unique_recipes
@@ -318,7 +565,7 @@ def aboutus():
     user_logged_in = 'user' in session
     first_name = session.get('name')
     last_name = session.get('last_name')
-  
+
 
     return render_template('aboutus.html', logged_in=user_logged_in, first_name=first_name, last_name=last_name)
 
@@ -398,7 +645,7 @@ def edit_recipe(recipe_id):
         return redirect(url_for('loginpage'))
 
     username = session['user']
-    
+
     preview_recipe = session.get('preview_recipe')
     if preview_recipe and preview_recipe.get('recipeId') == recipe_id:
         recipe_data = {
@@ -452,9 +699,67 @@ def edit_recipe(recipe_id):
         return redirect(url_for('myrecipes'))
 
 
+@app.route('/view_recipe/<int:recipe_id>')
+def view_recipe(recipe_id):
+    if 'user' not in session:
+        flash("Please log in to view recipes.")
+        return redirect(url_for('loginpage'))
+
+    username = session['user']
+    
+    preview_recipe = session.get('preview_recipe')
+    if preview_recipe and preview_recipe.get('recipeId') == recipe_id:
+        recipe_data = {
+            'id': preview_recipe.get('recipeId'),
+            'title': preview_recipe.get('title', ''),
+            'image': preview_recipe.get('image', 'https://via.placeholder.com/150'),
+            'ingredients': preview_recipe.get('ingredients', []),
+            'instructions': preview_recipe.get('instructions', []),
+            'prep_time': preview_recipe.get('prep_time'),
+            'cook_time': preview_recipe.get('cook_time'),
+            'serving_size': preview_recipe.get('serving_size'),
+            'tags': preview_recipe.get('tags', []),
+            'preview_mode': True
+        }
+        return render_template('viewingpage.html', recipe=recipe_data)
+
+    try:
+        # fetch specific recipe from DynamoDB using the integer recipe_id
+        response = recipes_table.get_item(
+            Key={'username': username, 'recipeId': recipe_id} 
+        )
+        recipe = response.get('Item')
+
+        if not recipe:
+            flash("Recipe not found or you don't have permission to view it.")
+            return redirect(url_for('myrecipes'))
+
+        # pass fetched recipe data to template
+        recipe_data = {
+            'id': recipe.get('recipeId'), 
+            'title': recipe.get('title', ''),
+            'image': recipe.get('image', 'https://via.placeholder.com/150'),
+            'ingredients': recipe.get('ingredients', []),
+            'instructions': recipe.get('instructions', []),
+            'prep_time': recipe.get('prep_time'),
+            'cook_time': recipe.get('cook_time'),
+            'serving_size': recipe.get('serving_size'),
+            'tags': recipe.get('tags', [])
+        }
+
+        return render_template('viewingpage.html', recipe=recipe_data)
+
+    except Exception as e:
+        flash(f"Error loading recipe for viewing: {str(e)}")
+        # Check if the error is the schema mismatch again
+        print(f"Error fetching recipe {recipe_id} for user {username}: {e}")
+        if 'ValidationException' in str(e) and 'does not match the schema' in str(e):
+            print("SCHEMA MISMATCH: view_recipe received an ID that doesn't match RecipeActual's recipeId type (expected Number). Ensure the link generating this URL passes an integer.")
+        return redirect(url_for('myrecipes'))
+
 @app.route('/update_recipe/<int:recipe_id>', methods=['POST'])
 def update_recipe(recipe_id):
-    
+
     if 'user' not in session:
         flash("Please log in to update recipes.")
         return redirect(url_for('loginpage'))
@@ -462,9 +767,9 @@ def update_recipe(recipe_id):
     username = session['user']
 
     title = request.form.get('title')
-    
+
     ingredients = request.form.getlist('ingredients')
-    
+
     instructions = []
     i = 1
     while True:
@@ -478,15 +783,15 @@ def update_recipe(recipe_id):
             instructions.append(instruction)
         i += 1
         if i > 50: break  
-    
+
     prep_time = request.form.get('prep_time', type=int)
-    
+
     cook_time = request.form.get('cook_time', type=int)
-    
+
     serving_size = request.form.get('serving_size', type=int)
-    
+
     tags = request.form.getlist('tags')
-    
+
     image_url = request.form.get('image_url', 'https://via.placeholder.com/150')
 
     # Basic validation
@@ -496,7 +801,7 @@ def update_recipe(recipe_id):
 
     preview_recipe = session.get('preview_recipe')
     if preview_recipe and preview_recipe.get('recipeId') == recipe_id:
-        
+
         try:
             # create a new recipe item for DynamoDB
             new_recipe_id = int(time.time() * 1000)  
@@ -513,20 +818,20 @@ def update_recipe(recipe_id):
                 **( {'serving_size': serving_size} if serving_size is not None else {} ),
                 **( {'tags': tags} if tags else {} )
             }
-            
+
             # save to DynamoDB
             recipes_table.put_item(Item=recipe_item)
             flash(f"Recipe '{title}' saved to your collection!")
-            
+
             # remove preview recipe from session
             session.pop('preview_recipe', None)
-            
+
             return redirect(url_for('myrecipes'))
-            
+
         except Exception as e:
             flash(f"Error saving recipe: {str(e)}")
             return redirect(url_for('edit_recipe', recipe_id=recipe_id))
-    
+
     try:
         # first verify the recipe exists
         check_response = recipes_table.get_item(
@@ -536,7 +841,7 @@ def update_recipe(recipe_id):
             }
         )
         recipe_exists = 'Item' in check_response
-        
+
         if not recipe_exists:
             flash("Recipe not found. Cannot update a recipe that doesn't exist.")
             return redirect(url_for('myrecipes'))
@@ -553,12 +858,12 @@ def update_recipe(recipe_id):
             ':ing': ingredients,
             ':ins': instructions
         }
-        
+
         #add image if provided
         if image_url and image_url != 'https://via.placeholder.com/150':
             update_expression += ", image = :img"
             expression_attribute_values[':img'] = image_url
-        
+
         # Add optional fields to update expression only if they have values
         if prep_time is not None: 
             update_expression += ", prep_time = :pt"
@@ -569,7 +874,7 @@ def update_recipe(recipe_id):
         if serving_size is not None: 
             update_expression += ", serving_size = :ss"
             expression_attribute_values[':ss'] = serving_size
-        
+
         #update tags, empty list is valid
         update_expression += ", tags = :tg"
         expression_attribute_values[':tg'] = tags if tags else []
@@ -585,8 +890,8 @@ def update_recipe(recipe_id):
             ExpressionAttributeValues=expression_attribute_values,
             ReturnValues='ALL_NEW'  # Return the updated item
         )
-        
-        
+
+
         if 'Attributes' in update_response:
             flash(f"Recipe '{title}' updated successfully!")
         else:
@@ -600,6 +905,11 @@ def update_recipe(recipe_id):
 
 @app.route('/generate', methods=['GET', 'POST'])
 def generate():
+    if 'user' not in session:
+        flash("You must be logged in to access generate recipe page")
+        return redirect(url_for('loginpage'))
+
+
     substitutions = {
         'egg': '1/4 Cup Applesauce or Mashed Banana',
         'milk': 'Almond Milk or Oat Milk',
@@ -631,6 +941,10 @@ def generate():
                 return jsonify({'status': 'error', 'message': 'Recipe not found'}), 404
 
             recipe['username'] = username
+            
+            if 'recipe_title' in recipe and ('title' not in recipe or not recipe['title']):
+                recipe['title'] = recipe['recipe_title']
+                
             recipes_table.put_item(Item=recipe)  #add to my recipes (recipes actual table)
 
             return jsonify({'status': 'success', 'message': 'Recipe added'})
@@ -763,7 +1077,7 @@ def add_and_edit_recipe(recipe_title):
 
             #generate a temporary ID for preview
             temp_recipe_id = int(time.time() * 1000)  
-            
+
             #create the preview recipe
             preview_recipe = {
                 'username': username,
@@ -775,35 +1089,35 @@ def add_and_edit_recipe(recipe_title):
                 'image': original_recipe.get('image', original_recipe.get('img_url', 'https://via.placeholder.com/150')),
                 'preview_mode': True  # Flag to identify this as a preview
             }
-            
+
             if 'prep_time' in original_recipe and original_recipe['prep_time'] is not None:
                 try:
                     preview_recipe['prep_time'] = int(original_recipe['prep_time'])
                 except (ValueError, TypeError):
                     preview_recipe['prep_time'] = original_recipe['prep_time']
-                    
+
             if 'cook_time' in original_recipe and original_recipe['cook_time'] is not None:
                 try:
                     preview_recipe['cook_time'] = int(original_recipe['cook_time'])
                 except (ValueError, TypeError):
                     preview_recipe['cook_time'] = original_recipe['cook_time']
-                    
+
             if 'serving_size' in original_recipe and original_recipe['serving_size'] is not None:
                 try:
                     preview_recipe['serving_size'] = int(original_recipe['serving_size'])
                 except (ValueError, TypeError):
                     preview_recipe['serving_size'] = original_recipe['serving_size']
-                    
+
             if 'tags' in original_recipe:
                 preview_recipe['tags'] = original_recipe['tags']
-                
+
             if 'rating' in original_recipe:
                 preview_recipe['rating'] = original_recipe['rating']
-            
+
             session['preview_recipe'] = preview_recipe
-            
+
             flash(f"Previewing '{preview_recipe.get('title', '[No Title]')}'. Click 'Save Recipe' to add to your collection.")
-            
+
             return redirect(url_for('edit_recipe', recipe_id=temp_recipe_id))
 
     except Exception as e:
@@ -828,11 +1142,11 @@ def delete_recipe(recipe_id):
             }
         )
         recipe_exists = 'Item' in check_response
-        
+
         if not recipe_exists:
             flash("Recipe not found. It may have been deleted already.")
             return redirect(url_for('myrecipes'))
-        
+
         # recipe exists, proceed with deletion
         delete_response = recipes_table.delete_item(
             Key={
@@ -841,8 +1155,8 @@ def delete_recipe(recipe_id):
             },
             ReturnValues='ALL_OLD'
         )
-        
-        
+
+
         if 'Attributes' in delete_response:
             recipe_title = delete_response['Attributes'].get('title', 'Unknown')
             flash(f"Recipe '{recipe_title}' was deleted successfully!")

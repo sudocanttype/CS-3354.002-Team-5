@@ -161,10 +161,36 @@
             color: #666;
             text-decoration: none;
         }
+
+        .login-banner {
+            background-color: #ffe0e0;
+            color: #b20000;
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            margin: 10px 20px;
+            font-weight: bold;
+        }
+
+        .disabled-link {
+            color: gray;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
     </style>
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+<script>
+	function showBanner() {
+		const banner = document.getElementById("login-banner");
+		banner.style.display = "block";
+		setTimeout(() => {
+			banner.style.display = "none";
+		}, 3000);
+	}
+</script>
 <body>
     <!-- Navigation Bar -->
     <nav>
@@ -179,7 +205,8 @@
              <a href="{{ url_for('generate') }}">Generate</a>
               <a href="{{ url_for('logout') }}">Sign Out</a> <!-- added logout link here -->
             {% else %}
-            <a href="{{ url_for('landingpage') }}">Home</a>
+                <a href="{{ url_for('landingpage') }}">Home</a>
+                <a href="{{ url_for('loginpage') }}">Login </a>
               <a class="disabled-link" href="#" onclick="showBanner()">My Recipes</a>
                <a href="{{ url_for('aboutus') }}">About</a>
                <a class="disabled-link" href="#" onclick="showBanner()">Shop</a>
@@ -192,6 +219,12 @@
           
         </div>
     </nav>
+
+    <!-- Banner message outside nav bar -->
+    <div id="login-banner" class="login-banner" style="display: none;">
+        ⚠️ You must login to access this feature.
+    </div>
+
 
     <!-- Main Content -->
     <div class="container">
@@ -276,26 +309,26 @@
             </div>
 
             <div class="footer-section">
-                <h3>My Recipes</h3>
+                <h3>Recipes</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Favorite Recipes</a></li>
-                    <li><a href="#">Disliked Recipes</a></li>
-                    <li><a href="#">Generate Recipes</a></li>
+                    <li><a href="{{ url_for('myrecipes') }}">My Recipes</a></li>
+                    <li><a href="{{ url_for('myrecipes') }}">Favorite Recipes</a></li>
+                    <li><a href="{{ url_for('generate') }}">Generate Recipes</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
                 <h3>Shop</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Groceries</a></li>
-                    <li><a href="#">Checkout</a></li>
+                    <li><a href="{{ url_for('shop') }}">Shop</a></li>
+                    <li><a href="{{ url_for('checkout') }}">Checkout</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
-                <h3>Help</h3>
+                <h3>Orders</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Customer Support</a></li>
+                    <li><a href="{{ url_for('myorders') }}">View My Past Orders</a></li>
                 </ul>
             </div>
         </div>

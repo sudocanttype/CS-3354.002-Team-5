@@ -58,6 +58,12 @@
       padding: 15px;
       border-radius: 10px;
       text-align: center;
+      cursor: pointer;                /* Add cursor pointer to indicate clickable */
+      transition: transform 0.2s, box-shadow 0.2s;  /* Add transition for hover effect */
+    }
+    .recipe-box:hover {
+      transform: translateY(-5px);    /* Slight lift effect on hover */
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);  /* Add shadow on hover */
     }
     .edit-btn {
       background-color: #333;         /* dark button */
@@ -97,6 +103,23 @@
     .favorite-icon {
       color: gold;
       margin-left: 5px;
+    }
+    .recipe-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .view-btn {
+      background-color: #4CAF50;      /* green button */
+      color: #fff;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .view-btn:hover {
+      background-color: #45a049;
     }
 
     /* Footer */
@@ -212,7 +235,8 @@
       <div class="recipe-box" 
            data-id="{{ recipe.recipeId }}"
            data-favorite="{{ recipe.favorite|lower }}" 
-           data-tags="{{ recipe.tags|join(',') }}">
+           data-tags="{{ recipe.tags|join(',') }}"
+           onclick="viewRecipe(event, {{ recipe.recipeId }})">
         <h3>{{ recipe.title or recipe.recipe_title or "Untitled Recipe" }} {% if recipe.favorite %}<i class="fas fa-star favorite-icon"></i>{% endif %}</h3>
         <button id="fav-{{ recipe.recipeId }}" onclick="favoriteRecipe('{{ recipe.recipeId|string }}')">❤️</button>
         <p>Prep Time: {{ recipe.prep_time }}</p>
@@ -220,6 +244,7 @@
         <a href="{{ url_for('edit_recipe', recipe_id=recipe.recipeId) }}">
           <button class="edit-btn">Edit Recipe</button>
         </a>
+
       </div>
       {% endfor %}
       <div class="no-recipes" style="display: none;">
@@ -300,15 +325,34 @@
         noRecipesMessage.style.display = 'none';
       }
     }
+    
+    // Function to navigate to view recipe page
+    function viewRecipe(event, recipeId) {
+      // Prevent navigation if click was on a button
+      if (event.target.tagName === 'BUTTON' || 
+          event.target.tagName === 'A' || 
+          event.target.closest('button') || 
+          event.target.closest('a')) {
+        return;
+      }
+      // Navigate to view recipe page
+      window.location.href = `/view_recipe/${recipeId}`;
+    }
   </script>
+
+  <script>
+    const currentUsername = "{{ username }}";
+    const favoriteIDs = {{ favorite_ids | tojson | safe }};
+  </script>
+  <script src="{{ url_for('static', filename='scripts/recipes_list.js') }}"></script>
 
   <footer>
     <div class="footer-container">
       <div class="footer-section">
-        <h3>My Recipes</h3>
+        <h3>Recipes</h3>
         <ul class="footer-links">
+          <li><a href="{{ url_for('myrecipes') }}">My Recipes</a></li>
           <li><a href="{{ url_for('myrecipes') }}">Favorite Recipes</a></li>
-          <li><a href="{{ url_for('myrecipes') }}">Disliked Recipes</a></li>
           <li><a href="{{ url_for('generate') }}">Generate Recipes</a></li>
         </ul>
       </div>
@@ -317,14 +361,14 @@
         <h3>Shop</h3>
         <ul class="footer-links">
           <li><a href="{{ url_for('shop') }}">Groceries</a></li>
-          <li><a href="#">Checkout</a></li>
+          <li><a href="{{ url_for('checkout') }}">Checkout</a></li>
         </ul>
       </div>
 
       <div class="footer-section">
-        <h3>Help</h3>
+        <h3>Orders</h3>
         <ul class="footer-links">
-          <li><a href="#">Customer Support</a></li>
+          <li><a href="{{ url_for('myorders') }}">View My Past Orders</a></li>
         </ul>
       </div>
 
@@ -336,11 +380,6 @@
       </div>
     </div>
   </footer>
-  <script>
-    const currentUsername = "{{ username }}";
-    const favoriteIDs = {{ favorite_ids | tojson | safe }};
-  </script>
-  <script src="{{ url_for('static', filename='scripts/recipes_list.js') }}"></script>
 </body>
 </html>
 
